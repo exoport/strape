@@ -1,0 +1,265 @@
+name: strape release
+
+# Builds a distributable artifact from a tagged commit — and re-runs the full verification rather than
+# trusting the PR run, so a tag can never ship an artifact from an unreviewed or drifted tree.
+#
+# strape is never published to npm. The artifact is a built checkout you install with
+# strape/docs/INSTALL.md, plus a sha256 so the recipient can verify what they got.
+
+on:
+  push:
+    tags:
+      - "strape-v*"
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: Tag or SHA to build
+        required: true
+
+permissions:
+  contents: write # required only to attach the artifact to the release
+  # Keyless sigstore signing. This mints a short-lived OIDC token identifying the workflow, which Fulcio
+  # exchanges for a ~10-minute signing certificate. There is no private key to store, rotate or leak — which
+  # is the point: it removes the key-custody problem rather than relocating it. Note this token identifies the
+  # WORKFLOW, so anything else running in this job could request one too; keep the job's step list short and
+  # pinned by SHA, which it already is.
+  id-token: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      # Blocked, with a list derived from what THIS workflow does — deliberately not a copy of the one in
+      # strape-security.yml. That job runs six network scanners; this one runs only gates that read committed
+      # baselines (verify-overlay, review-attest, version, lockfile-audit, reviewed-deps, capability/sbom/
+      # high-scrutiny --check), then npm ci, an offline build, a pack, and the release upload. Copying the scan
+      # list would allow nine endpoints this job never touches AND still omit the GitHub API hosts it needs —
+      # failing at the final step of a tag build, which is the worst place to learn it.
+      #
+      # api.github.com and uploads.github.com are for action-gh-release (Octokit + asset upload). They are
+      # GitHub's own API, reached with the job's own scoped GITHUB_TOKEN, so allowing them expands no trust
+      # boundary. They cannot be confirmed by a dispatch rehearsal because the attach step is tag-gated, so
+      # they are included from the action's known transport rather than observed — the one entry here not
+      # taken from an audit run. If a tag build ever fails at "Attach to release", Harden-Runner names the
+      # endpoint and the artifact is not lost: add it and re-run.
+      - name: Harden runner
+        uses: step-security/harden-runner@4d991eb9b905ef189e4c376166672c3f2f230481 # v2.11.0
+        with:
+          egress-policy: block
+          allowed-endpoints: >
+            api.github.com:443
+            fulcio.sigstore.dev:443
+            github.com:443
+            productionresultssa2.blob.core.windows.net:443
+            registry.npmjs.org:443
+            rekor.sigstore.dev:443
+            release-assets.githubusercontent.com:443
+            results-receiver.actions.githubusercontent.com:443
+            tuf-repo-cdn.sigstore.dev:443
+            uploads.github.com:443
+            *.actions.githubusercontent.com:443
+          # github.com                        actions/checkout
+          # registry.npmjs.org                npm ci --ignore-scripts
+          # api.github.com, uploads.github.com    action-gh-release
+          # results-receiver…, productionresultssa2…   Actions results + setup-node's npm cache
+          #
+          # --- added 2026-08-11 for keyless signing ---
+          # release-assets.githubusercontent.com  where github.com redirects the pinned cosign download.
+          #                                   NOT objects.githubusercontent.com — that was the wrong guess
+          #                                   once already; release assets moved.
+          # *.actions.githubusercontent.com   the OIDC token endpoint ($ACTIONS_ID_TOKEN_REQUEST_URL). The
+          #                                   host is regional and rotates (run-actions-N-<region>-…), so it
+          #                                   cannot be pinned by name, exactly like productionresultssa2.
+          # fulcio.sigstore.dev               exchanges that token for a short-lived signing certificate
+          # rekor.sigstore.dev                the append-only transparency log the signature is recorded in
+          # tuf-repo-cdn.sigstore.dev         cosign's TUF trust root, fetched on first use
+          #
+          # These five were drafted from what cosign does and then CONFIRMED by a workflow_dispatch rehearsal
+          # on 2026-08-11 (run against main, "Attach to release" correctly skipped): the job reached
+          # "Signing artifact… Wrote bundle… Verified OK" with egress-policy: block in force, so nothing it
+          # needed was missing. That rehearsal is possible only because the signing step is deliberately NOT
+          # tag-gated — the mechanism that turned this list from predicted into observed before a tag depended
+          # on it. Re-run a dispatch after any change here. If Harden-Runner blocks something it names the
+          # endpoint in its own step output — read that, not the failing tool's, because a block looks like a
+          # hang rather than an error.
+          #
+          # Not yet narrowed: the rehearsal proves nothing NEEDED was missing, not that all five were used.
+          # Harden-Runner's insights page for that run lists the actual destinations if this is ever tightened.
+          #
+          # oauth2.sigstore.dev is OMITTED ON PURPOSE. With id-token: write, cosign uses the ambient Actions
+          # OIDC credential. If that detection ever fails it falls back to an interactive DEVICE FLOW against
+          # oauth2.sigstore.dev — verified locally: without the ambient token cosign prints "Non-interactive
+          # mode detected, using device flow" and waits for a browser code. In CI that can only hang or sign
+          # under the wrong identity, so leaving the host blocked makes the fallback fail closed and loudly.
+          #
+          # Still absent on purpose, unlike strape-security.yml: no api.deps.dev, api.osv.dev, api.socket.dev,
+          # pypi.org, files.pythonhosted.org, hugovk.dev, packages.ecosyste.ms, toolbox-data.anchore.io.
+
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.inputs.ref || github.ref }}
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 22
+          cache: npm
+
+      # --- the gate: identical to the PR checks, re-run on the tagged commit ---
+
+      - name: Overlay invariants
+        run: node strape/scripts/verify-overlay.mjs
+
+      - name: Review attestation
+        run: node strape/scripts/review-attest.mjs --verify
+
+      # Tag must match strape/VERSION, and the pin must be the one that was reviewed — otherwise the
+      # artifact is mislabelled or built on an upstream tag nobody signed off on.
+      - name: Version identity
+        run: node strape/scripts/version.mjs --check
+
+      - name: Install (lifecycle scripts disabled)
+        run: npm ci --ignore-scripts --no-audit --no-fund
+
+      - name: Lockfile hygiene
+        run: node strape/scripts/lockfile-audit.mjs
+
+      - name: Reviewed-dependencies gate
+        run: node strape/scripts/reviewed-deps.mjs --report
+
+      - name: Drift gates
+        run: |
+          PIN=$(cut -d' ' -f1 strape/audit/UPSTREAM_PIN)
+          node strape/scripts/capability-sweep.mjs --check "strape/audit/capability-sweep-$PIN.json"
+          node strape/scripts/sbom.mjs --check "strape/audit/sbom-$PIN.json"
+          node strape/scripts/model-catalog.mjs --check "strape/audit/model-catalog-$PIN.json"
+          node strape/scripts/high-scrutiny-check.mjs
+
+      - name: Build (offline)
+        run: npm run build:offline
+
+      # Behavioural coverage for every hunk that has a regression test, run against the BUILT artifact on the
+      # tagged commit. verify-overlay already asserts all sixteen at source level, so this is defence in
+      # depth — but the two are not interchangeable: an invariant proves the line is still there, these prove
+      # the control still does something. Hunks 12-16 were missing here until 2026-08-11, which meant the
+      # release gate was strictly weaker than the build gate it is supposed to backstop.
+      - name: Smoke tests (hunks 3, 7, 11)
+        run: |
+          node packages/coding-agent/dist/cli.js --version
+          node packages/coding-agent/dist/cli.js --help | head -1 | grep -q '^strape'
+          node strape/scripts/rebrand-test.mjs
+          node strape/scripts/compat-test.mjs
+          node strape/scripts/trust-regression-test.mjs
+
+      - name: Hunk regression tests (12-16)
+        run: |
+          node strape/scripts/agent-dir-perms-test.mjs    # hunk 12 — ~/.strape is 0700
+          node strape/scripts/redirect-guard-test.mjs     # hunk 13 — cross-origin redirects refused
+          node strape/scripts/jiti-cache-test.mjs         # hunk 14 — transpile cache out of /tmp
+          node strape/scripts/mermaid-throw-test.mjs      # hunk 15 — parser throw falls back to source
+          node strape/scripts/lock-stale-test.mjs         # hunk 16 — a slow lock holder is not robbed
+
+      # --- artifact ---
+
+      # Pack only what a user needs to run: built dist, tracked manifests, docs, and the strape overlay.
+      # Deliberately excludes node_modules — the recipient installs production deps from the integrity-pinned
+      # shrinkwrap, or receives file: tarballs via scripts/local-release.mjs.
+      - name: Pack distributable
+        id: pack
+        run: |
+          PIN=$(cut -d' ' -f1 strape/audit/UPSTREAM_PIN)
+          # Strip the tag's own "strape-" prefix: GITHUB_REF_NAME is "strape-v0.4.1" on a tag push, so a bare
+          # "strape-${GITHUB_REF_NAME}" produced strape-strape-v0.4.1-… — shipped that way in v0.4.1.
+          NAME="strape-${GITHUB_REF_NAME#strape-}-upstream-${PIN}"
+          mkdir -p "/tmp/$NAME"
+          rsync -a --prune-empty-dirs \
+            --include='packages/***' \
+            --exclude='node_modules' \
+            --exclude='**/test/**' \
+            --include='strape/***' \
+            --exclude='strape/tools/guarddog-venv/**' \
+            --exclude='strape/tools/osv-scanner' \
+            --exclude='strape/tools/syft' \
+            --exclude='strape/tools/cosign' \
+            --include='package.json' --include='package-lock.json' \
+            --include='.npmrc' --include='CLAUDE.md' --include='LICENSE' \
+            --exclude='*' \
+            ./ "/tmp/$NAME/"
+          tar -C /tmp -caf "/tmp/$NAME.tar.zst" "$NAME"
+          # Record a BARE filename, not the build machine's absolute path. `sha256sum /tmp/x` writes
+          # "<hash>  /tmp/x", so a recipient running `sha256sum -c x.sha256` next to their download gets
+          # "FAILED open or read" — the documented verification step failing for everyone but us. Shipped that
+          # way in v0.4.1; caught by actually downloading the release and following our own instructions.
+          ( cd /tmp && sha256sum "$NAME.tar.zst" | tee "$NAME.tar.zst.sha256" )
+          echo "name=$NAME" >> "$GITHUB_OUTPUT"
+
+      # The .sha256 above proves the download was not corrupted. It proves NOTHING about origin: anyone can
+      # produce a tarball and a matching hash. This step binds the artifact to the workflow, repository and
+      # commit that built it, in a public append-only log.
+      #
+      # Deliberately NOT tag-gated, unlike "Attach to release". A dispatch rehearsal therefore exercises the
+      # OIDC exchange, Fulcio, Rekor and the TUF fetch — which is the only way to turn this workflow's
+      # predicted egress list into an observed one before a tag depends on it. The cost is a Rekor entry for a
+      # rehearsal artifact; Rekor is a public append-only log, such entries are ordinary, and being unable to
+      # test the signing path would be the worse trade.
+      - name: Fetch pinned cosign
+        run: |
+          node strape/scripts/fetch-tool.mjs cosign
+          node strape/scripts/fetch-tool.mjs --verify
+
+      - name: Sign the artifact (keyless sigstore)
+        env:
+          COSIGN_YES: "true"
+        run: |
+          set -euo pipefail
+          NAME="${{ steps.pack.outputs.name }}"
+          ./strape/tools/cosign sign-blob \
+            --bundle "/tmp/$NAME.tar.zst.bundle" \
+            "/tmp/$NAME.tar.zst"
+          # Verify what we just produced, in the same job, before anyone can rely on it. A signature that is
+          # attached but unverifiable is worse than none: it looks like provenance and is not.
+          ./strape/tools/cosign verify-blob \
+            --bundle "/tmp/$NAME.tar.zst.bundle" \
+            --certificate-identity "https://github.com/${GITHUB_REPOSITORY}/.github/workflows/strape-release.yml@${GITHUB_REF}" \
+            --certificate-oidc-issuer "https://token.actions.githubusercontent.com" \
+            "/tmp/$NAME.tar.zst"
+          echo "Signature verified against this workflow's own identity."
+
+      # Tag pushes only. Without this guard a workflow_dispatch run — the only way to rehearse this workflow —
+      # would hand action-gh-release a branch ref and try to publish, so there was no way to exercise the
+      # gates, the build and the pack without risking a spurious release. Now a dispatch runs everything up to
+      # here and stops, which is what makes an egress audit of this workflow safe to perform.
+      - name: Attach to release
+        if: startsWith(github.ref, 'refs/tags/strape-v')
+        uses: softprops/action-gh-release@72f2c25fcb47643c292f7107632f7a47c1df5cd8 # v2.3.2
+        with:
+          files: |
+            /tmp/${{ steps.pack.outputs.name }}.tar.zst
+            /tmp/${{ steps.pack.outputs.name }}.tar.zst.sha256
+            /tmp/${{ steps.pack.outputs.name }}.tar.zst.bundle
+          body: |
+            Built from `${{ github.sha }}` against upstream pin in `strape/audit/UPSTREAM_PIN`.
+
+            Verified before packing: overlay invariants, **review attestation**, lockfile hygiene,
+            reviewed-dependencies gate, capability/SBOM/high-scrutiny drift, offline build, rebrand smoke
+            tests, Claude Code compatibility, trust-boundary regression.
+
+            **Verify before you unpack.** The `.sha256` only shows the download was not corrupted — it is
+            published on this same page, so whoever could swap the tarball could swap it too. The `.bundle` is
+            what proves origin:
+
+            ```sh
+            cosign verify-blob \
+              --bundle strape-${{ github.ref_name }}-upstream-<pin>.tar.zst.bundle \
+              --certificate-identity "https://github.com/${{ github.repository }}/.github/workflows/strape-release.yml@${{ github.ref }}" \
+              --certificate-oidc-issuer "https://token.actions.githubusercontent.com" \
+              strape-${{ github.ref_name }}-upstream-<pin>.tar.zst
+            ```
+
+            Both `--certificate-*` flags are required. Without them `cosign verify-blob` accepts *any*
+            signature Sigstore ever issued to anyone — it would confirm the file was signed, not that it was
+            signed by this repository's release workflow.
+
+            Install: see `strape/docs/INSTALL.md`.

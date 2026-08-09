@@ -1,0 +1,33 @@
+{
+	"$comment": "Pinned, hash-verified external binaries (rg/fd). Upstream downloads these unverified at runtime; strape does not. Hashes are per platform archive. reviewedBy/reviewedAt must be filled by a human who checked provenance.",
+	"tools": {
+		"rg": {
+			"version": "14.1.1",
+			"repo": "BurntSushi/ripgrep",
+			"platforms": {
+				"linux-x64": {
+					"asset": "ripgrep-14.1.1-x86_64-unknown-linux-musl.tar.gz",
+					"url": "https://github.com/BurntSushi/ripgrep/releases/download/14.1.1/ripgrep-14.1.1-x86_64-unknown-linux-musl.tar.gz",
+					"archiveSha256": "4cf9f2741e6c465ffdb7c26f38056a59e2a2544b51f7cc128ef28337eeae4d8e",
+					"binarySha256": "f401154e2393f9002ac77e419f9ee5521c18f4f8cd3e32293972f493ba06fce7",
+					"recordedBy": null,
+					"recordedAt": null
+				}
+			}
+		},
+		"fd": {
+			"version": "10.3.0",
+			"repo": "sharkdp/fd",
+			"platforms": {
+				"linux-x64": {
+					"asset": "fd-v10.3.0-x86_64-unknown-linux-musl.tar.gz",
+					"url": "https://github.com/sharkdp/fd/releases/download/v10.3.0/fd-v10.3.0-x86_64-unknown-linux-musl.tar.gz",
+					"archiveSha256": "2b6bfaae8c48f12050813c2ffe1884c61ea26e750d803df9c9114550a314cd14",
+					"binarySha256": "9f48273b6c780a5f4f084ef30bc67d98cbd7d10c55c4605cf3a6ee29b741af87",
+					"recordedBy": null,
+					"recordedAt": null
+				}
+			}
+		}
+	}
+}

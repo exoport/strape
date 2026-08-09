@@ -1,0 +1,308 @@
+# Setup: the steps only you can do
+
+Everything else in this repo runs already. These are the items that need a GitHub repository, an account, or a
+decision — in the order they must happen, because 1 blocks 2 and 3.
+
+Time: ~30 minutes total, most of it waiting for a CI run.
+
+---
+
+## 0. Prerequisite — push strape to a GitHub repo you own
+
+**Nothing in steps 1-3 is possible before this.** Right now this repo has no remote of its own:
+
+```console
+$ git remote -v
+local     ../pi                                (fetch/push)
+upstream  https://github.com/earendil-works/pi.git
+```
+
+`upstream` is pi's repo — you cannot add secrets or enable Dependabot there. You need your own.
+
+**This repo is public**, at `github.com/exoport/strape` — including the security review record. Upstream
+classifies this class of issue out of scope, the analysis comes from public source, and the fixes are legible in
+the diff regardless; `strape/audit/README.md` states the reasoning. Being public also makes Socket.dev and
+Harden-Runner free for this repo, which is a real saving on step 1.
+
+```sh
+# 1. Create an EMPTY public repo on GitHub — no README, no .gitignore.
+#    github.com/exoport/strape
+
+# 2. Add it and push both branches. Order matters: vendor first, so main's merge base exists.
+cd path/to/strape
+git remote add origin git@github.com:exoport/strape.git
+git push -u origin vendor
+git push -u origin main
+
+# 3. Confirm the workflows registered
+#    GitHub -> Actions. You should see: strape build gate, strape security scan, strape release.
+```
+
+The first `strape build gate` run **will fail**, at two steps, and both failures are correct:
+
+- **Review attestation** — no sign-off is recorded yet (`strape/audit/review-attestation.json` does not exist).
+- **Reviewed-dependencies gate** — 26 of 50 dependency verdicts are `escalate`, pending your decisions.
+
+That is the system working. See `strape/docs/RELEASE-FLOW.md` for how to clear them; do not "fix" CI by
+weakening either gate.
+
+Also install the GitHub CLI if you want the command-line paths below — otherwise use the web UI:
+
+```sh
+sudo apt install gh   # or: brew install gh
+gh auth login
+```
+
+---
+
+## 1. Socket.dev — the one paid step, and the highest-value one
+
+**Why this one and not another scanner.** Everything else adopted answers "does this version have an
+advisory?" or "does this tarball look malicious *right now*?". Socket answers the question a reviewed closure
+actually needs: **did an approved package's new version gain a capability it did not have before** — a network
+call, a shell exec, an install script. That version-over-version diff is what the 2025 chalk/debug maintainer
+phishing and Shai-Hulud attacks looked like from the outside.
+
+### Steps
+
+```
+1. Go to https://socket.dev and sign up (GitHub SSO is fine).
+2. Create an organisation.
+3. Settings -> API Tokens -> New token.
+      Scope: read-only is sufficient. This token only needs to look up package reports.
+      Name it "strape-ci" so it is obvious what to revoke.
+4. Copy the token (it is shown once).
+```
+
+Add it as a repository secret:
+
+```sh
+gh secret set SOCKET_API_KEY --body "<paste-token>"
+# or: GitHub -> Settings -> Secrets and variables -> Actions -> New repository secret
+#     Name: SOCKET_API_KEY
+```
+
+### Verify it took effect
+
+The step already exists in `strape-security.yml` and currently prints a skip line. After adding the secret:
+
+```sh
+gh workflow run "strape security scan"
+gh run watch
+# In the log, "Socket.dev behavioural diff" should now list components instead of
+# "SOCKET_API_KEY not set — skipping".
+```
+
+Locally, to see it before touching CI:
+
+```sh
+SOCKET_API_KEY=<token> node strape/scripts/socket-scan.mjs
+```
+
+### What to expect, and the one judgment call
+
+Socket will report informational alerts that are **true and fine** — `undici` does network access by
+definition, `glob` does filesystem access. `strape/scripts/socket-scan.mjs` therefore gates on a specific
+list (`malware`, `typosquat`, `installScripts`, `shellAccess`, `obfuscatedFile`, `networkAccess`, …), not on
+"any alert".
+
+Run it once with no flags and read what fires against your 50 packages. **Expect almost all of it to be true
+and uninteresting** — measured on 2026-08-09 the closure produced 103 alerts of the old blocking types and not
+one was a finding: `unmaintained` on four finished micro-packages, `networkAccess` on undici and openai (which
+are the network layer), `shellAccess` on cross-spawn (a spawn wrapper by definition) and `obfuscatedFile` on
+highlight.js's Cyrillic language definition, already cleared by the review.
+
+That is why the script gates on **drift**, not on presence — the same rule the rest of the stack follows. Two
+commands, in this order:
+
+```sh
+# 1. record what today's reviewed closure looks like
+SOCKET_API_KEY=<token> node strape/scripts/socket-scan.mjs --json strape/audit/socket-<pin>.json
+
+# 2. from then on, this is the gate — fails on a NEW alert type, or any alert on an unbaselined package
+SOCKET_API_KEY=<token> node strape/scripts/socket-scan.mjs --check strape/audit/socket-<pin>.json
+```
+
+**Commit the baseline before adding the secret.** With a key and no baseline the CI step errors; with neither
+it no-ops, which is the state the repo ships in.
+
+A short `ALWAYS_BLOCKING` set (`malware`, `gptMalware`, `typosquat`, `didYouMean`, `installScripts`,
+`protestware`, `obfuscatedRequire`, `gitDependency`, `httpDependency`) still fails regardless of the baseline —
+baselining those would be recording a decision nobody should get to make silently. If one of those fires on a
+package you have reviewed and accepted, record the exception in `reviewed-deps.json` notes. Do not disable the
+step, and do not baseline your way past a malware alert.
+
+**Optional:** installing the Socket GitHub App adds PR-time comments. Complementary; the CI step does not need
+it.
+
+---
+
+## 2. Dependabot malware alerts — free, one toggle
+
+`.github/dependabot.yml` is already committed. But **malware alerts are a repository setting and cannot be
+configured from that file** — this is the step people miss and then assume they are covered.
+
+### Steps
+
+```
+GitHub -> your strape repo -> Settings -> Advanced Security
+  [x] Dependency graph              (usually already on)
+  [x] Dependabot alerts
+  [x] Dependabot malware alerts     <- THIS is the one that matters
+  [x] Dependabot security updates   (optional; see the note below)
+```
+
+With `gh`:
+
+```sh
+gh api -X PATCH repos/exoport/strape --field security_and_analysis[dependabot_security_updates][status]=enabled
+# Malware alerts have no stable API field at time of writing — use the UI toggle above and confirm visually.
+```
+
+### Verify
+
+`Security -> Dependabot alerts` should render. The daily `strape security scan` is unaffected either way —
+this is an additional, independent signal from GitHub's advisory database, which now ingests OpenSSF's
+`malicious-packages` feed.
+
+### It will not be empty, and that is the interesting part
+
+Enabling alerts on this repo surfaces **9**, including one CRITICAL. Triaged 2026-08-11 with the vendored
+`osv-scanner` (the alerts API needs auth; `osv-scanner` reaches the same conclusion from committed lockfiles):
+
+| Package | Manifest | Severity | Shipped? |
+|---|---|---|---|
+| `shell-quote@1.8.3` | `packages/coding-agent/examples/extensions/sandbox` | 1 CRITICAL, 1 high | no |
+| `undici@6.26.0` | `packages/coding-agent/examples/extensions/gondolin` | 1 high, 3 moderate, 2 low | no |
+| `nanoid@3.3.16` | root dev tree | 1 high | no |
+
+**`osv-scanner` on `packages/coding-agent/npm-shrinkwrap.json` — the 56 packages strape actually ships —
+returns zero.** Nine of the ten findings live in the example extensions that hunk 2 drops from the workspaces:
+code strape neither builds nor ships. Reproduce it yourself in one command:
+
+```sh
+./strape/tools/osv-scanner scan source --lockfile=packages/coding-agent/npm-shrinkwrap.json   # expect: No issues found
+```
+
+**Decision: dismiss the example-extension alerts as `not_used`, and leave everything else alone.** A badge that
+permanently reads "1 critical" about software you do not ship is not a signal, it is a habit of ignoring the
+signal — the same failure mode as the org secret that silently redacted audit output. Dismissing with a reason
+is the only option that clears the noise *and* leaves a new, real alert visible tomorrow, and the reason is
+recorded on the alert itself, so nothing is hidden.
+
+Driven by `strape/Makefile`, so the process is repeatable after each sync rather than re-derived:
+
+```sh
+make -f strape/Makefile preflight          # gitignored? untracked? mode 0600? gh present?
+make -f strape/Makefile scope              # PROVE the token is narrow (1 positive, 2 negative probes)
+make -f strape/Makefile alerts             # what is open, and which manifest each belongs to
+make -f strape/Makefile dismiss-examples   # dry run — lists what it would dismiss
+make -f strape/Makefile dismiss-examples CONFIRM=yes
+make -f strape/Makefile verify             # what remains + a shipped-closure scan
+```
+
+**Use a fine-grained token, scoped to this repo with `Dependabot alerts: Read and write` and nothing else**
+(`exoport` is an organisation, so the token may sit in *pending approval* under Org Settings → Personal
+access tokens). Put it in `hot/`, which excludes itself via a `hot/.gitignore` containing `*`.
+
+**Do not add `hot` to the root `.gitignore`.** That file is inside the review-attestation digest
+(`review-attest.mjs` `SCOPE_FILES`) because hunk 6 lives in it, so editing it flips the digest and CI fails
+with *re-review required* — for a purely local scratch directory. A self-ignoring `hot/.gitignore` costs
+nothing, travels with the directory, and leaves the reviewed file alone. `strape/Makefile`'s preflight
+asserts the outcome with `git check-ignore` rather than caring which mechanism produced it, and additionally
+refuses to run if the file is tracked or its mode is not `0600`.
+
+`make scope` exists because a token's real permissions are worth proving rather than assuming — it checks
+that reading alerts works *and* that reading Actions secrets and webhooks is refused.
+
+The token is never printed, never in argv and never in shell history: every recipe is `@`-prefixed, the file
+is read with shell `$(cat …)` inside the recipe rather than make's parse-time `$(shell …)` — which would leak
+it into `make -n` — and it is passed as an environment variable. Verified by grepping every one of
+`make help`, `preflight`, `-n scope`, `-n alerts`, `-n dismiss-examples` and `make -p` for the value.
+
+**Never give this to CI.** A pipeline that can dismiss a Dependabot alert can silence the one that mattered;
+dismissal is a human judgement, like the review attestation.
+
+Two options that were considered and **rejected**: adding `ignore` rules to `dependabot.yml` (it governs
+*pull requests*, not alerts — it would hide the churn and leave the badge wrong), and deleting the example
+directories (they are upstream files, so removing them buys a delete/modify merge conflict on every release
+that touches them — a permanent cost to silence noise).
+
+`nanoid` is a genuine dev-tree dependency; leave that one open and let it fix itself on the next bump.
+
+**Re-run the triage after any upstream sync** — the example lockfiles are upstream's and their contents move.
+
+### Why the config is throttled so hard
+
+`dependabot.yml` sets a 3-PR limit, a 7-day cooldown, and ignores `@earendil-works/*`. That is deliberate:
+upstream pi is adopted through the sync playbook against a reviewed tag, never by a bot, and any other bump
+must pass the reviewed-deps gate anyway. Dependabot is here for **alerts**, not for churn. If PR noise still
+bothers you, set `open-pull-requests-limit: 0` — you keep the alerts and lose the bumps.
+
+---
+
+## 3. Harden-Runner: audit → block
+
+It is already in `strape-security.yml` and `strape-release.yml` with `egress-policy: audit`, which
+**observes and reports** but blocks nothing. Switching to `block` is what turns it into a control — and going
+straight there without reading the audit output will fail your builds on an endpoint you forgot.
+
+### Steps
+
+```
+1. Let the daily "strape security scan" run once with audit mode (or: gh workflow run "strape security scan").
+2. Open the run -> the Harden-Runner step -> follow the link to the StepSecurity insights page.
+3. Read "Outbound network traffic" — it lists every endpoint the job actually contacted.
+4. Add those endpoints to the workflow, then flip the policy.
+```
+
+Expected set for this repo, based on what the scripts do — **verify against your own audit output before
+trusting this list**:
+
+```yaml
+      - name: Harden runner
+        uses: step-security/harden-runner@4d991eb9b905ef189e4c376166672c3f2f230481 # v2.11.0
+        with:
+          egress-policy: block
+          allowed-endpoints: >
+            api.deps.dev:443
+            api.github.com:443
+            api.socket.dev:443
+            codeload.github.com:443
+            github.com:443
+            objects.githubusercontent.com:443
+            pypi.org:443
+            files.pythonhosted.org:443
+            registry.npmjs.org:443
+```
+
+Where each comes from: `api.deps.dev` (dep-health), `registry.npmjs.org` (npm ci, provenance attestations,
+audit signatures), `github.com`/`objects.githubusercontent.com`/`codeload.github.com` (fetching osv-scanner
+and Syft, actions checkout), `pypi.org`/`files.pythonhosted.org` (GuardDog's pip install), `api.socket.dev`
+(step 1), `api.github.com` (Actions itself).
+
+### Do it one workflow at a time
+
+Flip `strape-security.yml` first — it is the noisiest and runs daily, so it surfaces a missing endpoint
+quickly and a failure there does not block a release. Once it has been green for a few days, flip
+`strape-release.yml`. Leave `strape-build.yml` without Harden-Runner or add it in audit mode; it runs on every
+push and a false block there is maximally annoying.
+
+**If a build fails after flipping:** the Harden-Runner step output names the blocked endpoint. Add it if it is
+legitimate — and if it is *not* one you recognise, you have just caught something, which is the entire point.
+
+---
+
+## Order and expected end state
+
+| # | Step | Blocks | Cost | Outcome |
+|---|---|---|---|---|
+| 0 | Push to a private GitHub repo | everything | free | Workflows run; two gates fail correctly |
+| 1 | Socket.dev token | — | free (public) / ~$25/dev/mo | Version-over-version behavioural diffing |
+| 2 | Dependabot malware alerts | needs 0 | free | Independent known-malware signal |
+| 3 | Harden-Runner → block | needs one audit run | free | CI pipeline itself is constrained |
+
+Afterwards, the two red gates are still red — and should be, until you work through
+`strape/docs/RELEASE-FLOW.md` Phase 2: resolve the 26 dependency escalations, fill `reviewedBy`, and record
+the review attestation. That is the human review this whole apparatus exists to enforce, and it is deliberately
+the one thing no setup step can do for you.

@@ -1,0 +1,157 @@
+{
+	"tool": "socket.dev",
+	"pin": "v0.84.1",
+	"packages": {
+		"which@2.0.2": [
+			"envVars",
+			"gptAnomaly"
+		],
+		"path-key@3.1.1": [
+			"envVars",
+			"unmaintained"
+		],
+		"graceful-fs@4.2.11": [
+			"envVars",
+			"filesystemAccess",
+			"gptAnomaly"
+		],
+		"signal-exit@3.0.7": [],
+		"shebang-command@2.0.0": [
+			"unmaintained"
+		],
+		"shebang-regex@3.0.0": [],
+		"isexe@2.0.0": [
+			"envVars",
+			"filesystemAccess",
+			"gptAnomaly",
+			"urlStrings"
+		],
+		"ms@2.1.3": [],
+		"retry@0.12.0": [
+			"unmaintained",
+			"urlStrings"
+		],
+		"highlight.js@10.7.3": [
+			"obfuscatedFile",
+			"urlStrings"
+		],
+		"proper-lockfile@4.1.2": [
+			"unmaintained"
+		],
+		"http-proxy-agent@7.0.2": [
+			"networkAccess"
+		],
+		"partial-json@0.1.7": [],
+		"api@1.9.0": [],
+		"cross-spawn@7.0.6": [
+			"envVars",
+			"filesystemAccess",
+			"gptAnomaly",
+			"shellAccess"
+		],
+		"https-proxy-agent@7.0.6": [
+			"networkAccess"
+		],
+		"photon-node@0.3.4": [
+			"filesystemAccess",
+			"usesEval"
+		],
+		"ignore@7.0.5": [
+			"gptAnomaly"
+		],
+		"agent-base@7.1.4": [
+			"networkAccess"
+		],
+		"chalk@5.6.2": [],
+		"debug@4.4.3": [
+			"envVars"
+		],
+		"minipass@7.1.3": [],
+		"path-scurry@2.0.2": [
+			"filesystemAccess"
+		],
+		"glob@13.0.6": [
+			"envVars",
+			"filesystemAccess",
+			"gptAnomaly",
+			"minifiedFile",
+			"networkAccess"
+		],
+		"balanced-match@4.0.4": [],
+		"openai@6.26.0": [
+			"envVars",
+			"gptAnomaly",
+			"networkAccess",
+			"potentialVulnerability",
+			"urlStrings"
+		],
+		"diff@8.0.4": [],
+		"minimatch@10.2.5": [
+			"envVars"
+		],
+		"hosted-git-info@9.0.3": [
+			"urlStrings"
+		],
+		"jiti@2.7.0": [
+			"debugAccess",
+			"envVars",
+			"filesystemAccess",
+			"gptAnomaly",
+			"highEntropyStrings",
+			"minifiedFile"
+		],
+		"get-east-asian-width@1.6.0": [
+			"minifiedFile"
+		],
+		"semver@7.8.0": [
+			"envVars",
+			"urlStrings"
+		],
+		"yaml@2.9.0": [
+			"gptAnomaly",
+			"urlStrings"
+		],
+		"lru-cache@11.4.0": [
+			"minifiedFile",
+			"networkAccess"
+		],
+		"clipboard-darwin-universal@0.3.9": [],
+		"clipboard-linux-arm64-musl@0.3.9": [],
+		"clipboard-win32-arm64-msvc@0.3.9": [],
+		"clipboard-darwin-x64@0.3.9": [],
+		"clipboard-linux-arm64-gnu@0.3.9": [],
+		"clipboard-linux-x64-gnu@0.3.9": [],
+		"clipboard-darwin-arm64@0.3.9": [],
+		"clipboard-linux-riscv64-gnu@0.3.9": [],
+		"clipboard-linux-x64-musl@0.3.9": [],
+		"clipboard-win32-x64-msvc@0.3.9": [],
+		"clipboard@0.3.9": [
+			"dynamicRequire",
+			"envVars",
+			"filesystemAccess",
+			"gptAnomaly",
+			"shellAccess",
+			"urlStrings"
+		],
+		"marked@18.0.5": [
+			"gptAnomaly",
+			"minifiedFile",
+			"urlStrings"
+		],
+		"typebox@1.3.7": [
+			"gptAnomaly",
+			"minifiedFile"
+		],
+		"undici@8.9.0": [
+			"debugAccess",
+			"envVars",
+			"filesystemAccess",
+			"gptAnomaly",
+			"minifiedFile",
+			"networkAccess",
+			"urlStrings"
+		],
+		"brace-expansion@5.0.9": [],
+		"grok-mermaid@0.2.2": []
+	}
+}

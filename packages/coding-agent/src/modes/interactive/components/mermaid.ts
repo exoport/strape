@@ -72,7 +72,21 @@ export function createMermaidMarkdownTransformer(options: MermaidTransformerOpti
 			.lexer(markdown)
 			.map((token) => {
 				if (!isMermaid(token)) return token.raw;
-				const art = render(token.text);
+				// strape hunk 15: a parser throw must not take the transcript down with it.
+				//
+				// render() runs on MODEL-CONTROLLED text — any mermaid block the assistant emits — and this
+				// transformer sits in the markdown path for every rendered message, with no try/catch anywhere up
+				// the chain. A throw here does not lose one diagram, it breaks rendering of the message that
+				// contains it. grok-mermaid is deliberate about not throwing (60k fuzz cases threw nothing at
+				// 0.2.2) and returns null plus a warnings array instead, but that is a property of one reviewed
+				// version of a single-maintainer parser we have chosen to keep taking updates from. The fallback
+				// is the same one used for an unrenderable diagram: show the source.
+				let art: ReturnType<typeof render>;
+				try {
+					art = render(token.text);
+				} catch {
+					return token.raw;
+				}
 				if (!art || art.width > context.availableWidth) return token.raw;
 				if (!context.isStreaming && art.warnings.length > 0) {
 					const suffix = art.warnings.length > 1 ? ` (+${art.warnings.length - 1} more)` : "";

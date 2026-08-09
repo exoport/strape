@@ -1,0 +1,1805 @@
+{
+	"bomFormat": "CycloneDX",
+	"specVersion": "1.6",
+	"version": 1,
+	"metadata": {
+		"component": {
+			"type": "application",
+			"name": "strape",
+			"version": "v0.84.1",
+			"description": "strape coding agent — shipped closure of upstream pi v0.84.1"
+		},
+		"properties": [
+			{
+				"name": "strape:source",
+				"value": "packages/coding-agent/npm-shrinkwrap.json"
+			},
+			{
+				"name": "strape:upstreamPin",
+				"value": "v0.84.1"
+			},
+			{
+				"name": "strape:closure",
+				"value": "shipped"
+			}
+		]
+	},
+	"components": [
+		{
+			"type": "library",
+			"bom-ref": "pkg:npm/%40earendil-works/pi-agent-core@0.84.1",
+			"name": "@earendil-works/pi-agent-core",
+			"version": "0.84.1",
+			"purl": "pkg:npm/%40earendil-works/pi-agent-core@0.84.1",
+			"scope": "required",
+			"properties": [
+				{
+					"name": "npm:resolved",
+					"value": "https://registry.npmjs.org/@earendil-works/pi-agent-core/-/pi-agent-core-0.84.1.tgz"
+				},
+				{
+					"name": "npm:hasInstallScript",
+					"value": "false"
+				}
+			],
+			"licenses": [
+				{
+					"license": {
+						"id": "MIT"
+					}
+				}
+			]
+		},
+		{
+			"type": "library",
+			"bom-ref": "pkg:npm/%40earendil-works/pi-ai@0.84.1",
+			"name": "@earendil-works/pi-ai",
+			"version": "0.84.1",
+			"purl": "pkg:npm/%40earendil-works/pi-ai@0.84.1",
+			"scope": "required",
+			"properties": [
+				{
+					"name": "npm:resolved",
+					"value": "https://registry.npmjs.org/@earendil-works/pi-ai/-/pi-ai-0.84.1.tgz"
+				},
+				{
+					"name": "npm:hasInstallScript",
+					"value": "false"
+				}
+			],
+			"licenses": [
+				{
+					"license": {
+						"id": "MIT"
+					}
+				}
+			]
+		},
+		{
+			"type": "library",
+			"bom-ref": "pkg:npm/%40earendil-works/pi-client@0.84.1",
+			"name": "@earendil-works/pi-client",
+			"version": "0.84.1",
+			"purl": "pkg:npm/%40earendil-works/pi-client@0.84.1",
+			"scope": "required",
+			"properties": [
+				{
+					"name": "npm:resolved",
+					"value": "https://registry.npmjs.org/@earendil-works/pi-client/-/pi-client-0.84.1.tgz"
+				},
+				{
+					"name": "npm:hasInstallScript",
+					"value": "false"
+				}
+			],
+			"licenses": [
+				{
+					"license": {
+						"id": "MIT"
+					}
+				}
+			]
+		},
+		{
+			"type": "library",
+			"bom-ref": "pkg:npm/%40earendil-works/pi-protocol@0.84.1",
+			"name": "@earendil-works/pi-protocol",
+			"version": "0.84.1",
+			"purl": "pkg:npm/%40earendil-works/pi-protocol@0.84.1",
+			"scope": "required",
+			"properties": [
+				{
+					"name": "npm:resolved",
+					"value": "https://registry.npmjs.org/@earendil-works/pi-protocol/-/pi-protocol-0.84.1.tgz"
+				},
+				{
+					"name": "npm:hasInstallScript",
+					"value": "false"
+				}
+			],
+			"licenses": [
+				{
+					"license": {
+						"id": "MIT"
+					}
+				}
+			]
+		},
+		{
+			"type": "library",
+			"bom-ref": "pkg:npm/%40earendil-works/pi-telemetry@0.84.1",
+			"name": "@earendil-works/pi-telemetry",
+			"version": "0.84.1",
+			"purl": "pkg:npm/%40earendil-works/pi-telemetry@0.84.1",
+			"scope": "required",
+			"properties": [
+				{
+					"name": "npm:resolved",
+					"value": "https://registry.npmjs.org/@earendil-works/pi-telemetry/-/pi-telemetry-0.84.1.tgz"
+				},
+				{
+					"name": "npm:hasInstallScript",
+					"value": "false"
+				}
+			],
+			"licenses": [
+				{
+					"license": {
+						"id": "MIT"
+					}
+				}
+			]
+		},
+		{
+			"type": "library",
+			"bom-ref": "pkg:npm/%40earendil-works/pi-tui@0.84.1",
+			"name": "@earendil-works/pi-tui",
+			"version": "0.84.1",
+			"purl": "pkg:npm/%40earendil-works/pi-tui@0.84.1",
+			"scope": "required",
+			"properties": [
+				{
+					"name": "npm:resolved",
+					"value": "https://registry.npmjs.org/@earendil-works/pi-tui/-/pi-tui-0.84.1.tgz"
+				},
+				{
+					"name": "npm:hasInstallScript",
+					"value": "false"
+				}
+			],
+			"licenses": [
+				{
+					"license": {
+						"id": "MIT"
+					}
+				}
+			]
+		},
+		{
+			"type": "library",
+			"bom-ref": "pkg:npm/%40mariozechner/clipboard-darwin-arm64@0.3.9",
+			"name": "@mariozechner/clipboard-darwin-arm64",
+			"version": "0.3.9",
+			"purl": "pkg:npm/%40mariozechner/clipboard-darwin-arm64@0.3.9",
+			"scope": "required",
+			"properties": [
+				{
+					"name": "npm:resolved",
+					"value": "https://registry.npmjs.org/@mariozechner/clipboard-darwin-arm64/-/clipboard-darwin-arm64-0.3.9.tgz"
+				},
+				{
+					"name": "npm:hasInstallScript",
+					"value": "false"
+				},
+				{
+					"name": "npm:os",
+					"value": "darwin"
+				},
+				{
+					"name": "npm:cpu",
+					"value": "arm64"
+				}
+			],
+			"hashes": [
+				{
+					"alg": "SHA-512",
+					"content": "05f815eef084599c09c19270d37afa6cfe7eb5fd2223f00db90602c62f51367ec5ad6077cb31ae30a0ab34b465e95efad6f5d174bf3e3aa674c1de13aa5b0d39"
+				}
+			],
+			"licenses": [
+				{
+					"license": {
+						"id": "MIT"
+					}
+				}
+			]
+		},
+		{
+			"type": "library",
+			"bom-ref": "pkg:npm/%40mariozechner/clipboard-darwin-universal@0.3.9",
+			"name": "@mariozechner/clipboard-darwin-universal",
+			"version": "0.3.9",
+			"purl": "pkg:npm/%40mariozechner/clipboard-darwin-universal@0.3.9",
+			"scope": "required",
+			"properties": [
+				{
+					"name": "npm:resolved",
+					"value": "https://registry.npmjs.org/@mariozechner/clipboard-darwin-universal/-/clipboard-darwin-universal-0.3.9.tgz"
+				},
+				{
+					"name": "npm:hasInstallScript",
+					"value": "false"
+				},
+				{
+					"name": "npm:os",
+					"value": "darwin"
+				}
+			],
+			"hashes": [
+				{
+					"alg": "SHA-512",
+					"content": "046191e2203d676b2102323ae5e239c6dc9bdcb60d9435bd5f78312b10dbaad6e7444a21b2bab39e8bface92a822bb115a9ce561511d2a9852ee4b09d3f9dd49"
+				}
+			],
+			"licenses": [
+				{
+					"license": {
+						"id": "MIT"
+					}
+				}
+			]
+		},
+		{
+			"type": "library",
+			"bom-ref": "pkg:npm/%40mariozechner/clipboard-darwin-x64@0.3.9",
+			"name": "@mariozechner/clipboard-darwin-x64",
+			"version": "0.3.9",
+			"purl": "pkg:npm/%40mariozechner/clipboard-darwin-x64@0.3.9",
+			"scope": "required",
+			"properties": [
+				{
+					"name": "npm:resolved",
+					"value": "https://registry.npmjs.org/@mariozechner/clipboard-darwin-x64/-/clipboard-darwin-x64-0.3.9.tgz"
+				},
+				{
+					"name": "npm:hasInstallScript",
+					"value": "false"
+				},
+				{
+					"name": "npm:os",
+					"value": "darwin"
+				},
+				{
+					"name": "npm:cpu",
+					"value": "x64"
+				}
+			],
+			"hashes": [
+				{
+					"alg": "SHA-512",
+					"content": "e245119826d2ea7b7cb9886d996a547095b23c77e602be5d4e95c3d673b7a487daf93490f436eb18e602287f9a1055b8ed7850e15a7c653b3389efb07c5bc32a"
+				}
+			],
+			"licenses": [
+				{
+					"license": {
+						"id": "MIT"
+					}
+				}
+			]
+		},
+		{
+			"type": "library",
+			"bom-ref": "pkg:npm/%40mariozechner/clipboard-linux-arm64-gnu@0.3.9",
+			"name": "@mariozechner/clipboard-linux-arm64-gnu",
+			"version": "0.3.9",
+			"purl": "pkg:npm/%40mariozechner/clipboard-linux-arm64-gnu@0.3.9",
+			"scope": "required",
+			"properties": [
+				{
+					"name": "npm:resolved",
+					"value": "https://registry.npmjs.org/@mariozechner/clipboard-linux-arm64-gnu/-/clipboard-linux-arm64-gnu-0.3.9.tgz"
+				},
+				{
+					"name": "npm:hasInstallScript",
+					"value": "false"
+				},
+				{
+					"name": "npm:os",
+					"value": "linux"
+				},
+				{
+					"name": "npm:cpu",
+					"value": "arm64"
+				}
+			],
+			"hashes": [
+				{
+					"alg": "SHA-512",
+					"content": "839f4e91418fd830df08e20aca91de620bf6339e6efdc2af5dae5d4b115b109df85ef21031d7159a928290652ba3766079f5e219577082ebd33101a91d6cc85f"
+				}
+			],
+			"licenses": [
+				{
+					"license": {
+						"id": "MIT"
+					}
+				}
+			]
+		},
+		{
+			"type": "library",
+			"bom-ref": "pkg:npm/%40mariozechner/clipboard-linux-arm64-musl@0.3.9",
+			"name": "@mariozechner/clipboard-linux-arm64-musl",
+			"version": "0.3.9",
+			"purl": "pkg:npm/%40mariozechner/clipboard-linux-arm64-musl@0.3.9",
+			"scope": "required",
+			"properties": [
+				{
+					"name": "npm:resolved",
+					"value": "https://registry.npmjs.org/@mariozechner/clipboard-linux-arm64-musl/-/clipboard-linux-arm64-musl-0.3.9.tgz"
+				},
+				{
+					"name": "npm:hasInstallScript",
+					"value": "false"
+				},
+				{
+					"name": "npm:os",
+					"value": "linux"
+				},
+				{
+					"name": "npm:cpu",
+					"value": "arm64"
+				}
+			],
+			"hashes": [
+				{
+					"alg": "SHA-512",
+					"content": "006b897602ac989766e0fc9c87b92fdeca9ee7dd444516801d6df18cba28885ce7f09f8fc54ca87fefbb619ac1e58e6da674cef8ad7c3a0ded6a3d8da65b8245"
+				}
+			],
+			"licenses": [
+				{
+					"license": {
+						"id": "MIT"
+					}
+				}
+			]
+		},
+		{
+			"type": "library",
+			"bom-ref": "pkg:npm/%40mariozechner/clipboard-linux-riscv64-gnu@0.3.9",
+			"name": "@mariozechner/clipboard-linux-riscv64-gnu",
+			"version": "0.3.9",
+			"purl": "pkg:npm/%40mariozechner/clipboard-linux-riscv64-gnu@0.3.9",
+			"scope": "required",
+			"properties": [
+				{
+					"name": "npm:resolved",
+					"value": "https://registry.npmjs.org/@mariozechner/clipboard-linux-riscv64-gnu/-/clipboard-linux-riscv64-gnu-0.3.9.tgz"
+				},
+				{
+					"name": "npm:hasInstallScript",
+					"value": "false"
+				},
+				{
+					"name": "npm:os",
+					"value": "linux"
+				},
+				{
+					"name": "npm:cpu",
+					"value": "riscv64"
+				}
+			],
+			"hashes": [
+				{
+					"alg": "SHA-512",
+					"content": "0d7044022b8ca64edd852d5af4dccdc550058b5bda2a83eeeeb40d818f0b2032c6acade59c8a779d3d740d4ba6f8f295268269a483fe34003c2197b80cc3433f"
+				}
+			],
+			"licenses": [
+				{
+					"license": {
+						"id": "MIT"
+					}
+				}
+			]
+		},
+		{
+			"type": "library",
+			"bom-ref": "pkg:npm/%40mariozechner/clipboard-linux-x64-gnu@0.3.9",
+			"name": "@mariozechner/clipboard-linux-x64-gnu",
+			"version": "0.3.9",
+			"purl": "pkg:npm/%40mariozechner/clipboard-linux-x64-gnu@0.3.9",
+			"scope": "required",
+			"properties": [
+				{
+					"name": "npm:resolved",
+					"value": "https://registry.npmjs.org/@mariozechner/clipboard-linux-x64-gnu/-/clipboard-linux-x64-gnu-0.3.9.tgz"
+				},
+				{
+					"name": "npm:hasInstallScript",
+					"value": "false"
+				},
+				{
+					"name": "npm:os",
+					"value": "linux"
+				},
+				{
+					"name": "npm:cpu",
+					"value": "x64"
+				}
+			],
+			"hashes": [
+				{
+					"alg": "SHA-512",
+					"content": "58e46b30b77a12912510c13b25129f49a637e275b53f92db7602b960d092d67706d8baa6213b1230427c9e1da6a6fc5bdd3c6a6ce38a818ee4f5e3096255bd33"
+				}
+			],
+			"licenses": [
+				{
+					"license": {
+						"id": "MIT"
+					}
+				}
+			]
+		},
+		{
+			"type": "library",
+			"bom-ref": "pkg:npm/%40mariozechner/clipboard-linux-x64-musl@0.3.9",
+			"name": "@mariozechner/clipboard-linux-x64-musl",
+			"version": "0.3.9",
+			"purl": "pkg:npm/%40mariozechner/clipboard-linux-x64-musl@0.3.9",
+			"scope": "required",
+			"properties": [
+				{
+					"name": "npm:resolved",
+					"value": "https://registry.npmjs.org/@mariozechner/clipboard-linux-x64-musl/-/clipboard-linux-x64-musl-0.3.9.tgz"
+				},
+				{
+					"name": "npm:hasInstallScript",
+					"value": "false"
+				},
+				{
+					"name": "npm:os",
+					"value": "linux"
+				},
+				{
+					"name": "npm:cpu",
+					"value": "x64"
+				}
+			],
+			"hashes": [
+				{
+					"alg": "SHA-512",
+					"content": "fc31e7fb50eb7cbea845a3cf59768e2afa27145ae78baeba7f177ecc5aa24047ef047d2db075568eaf62a81934a03a74a9a3c0ef6948332e41a6dc4848112165"
+				}
+			],
+			"licenses": [
+				{
+					"license": {
+						"id": "MIT"
+					}
+				}
+			]
+		},
+		{
+			"type": "library",
+			"bom-ref": "pkg:npm/%40mariozechner/clipboard-win32-arm64-msvc@0.3.9",
+			"name": "@mariozechner/clipboard-win32-arm64-msvc",
+			"version": "0.3.9",
+			"purl": "pkg:npm/%40mariozechner/clipboard-win32-arm64-msvc@0.3.9",
+			"scope": "required",
+			"properties": [
+				{
+					"name": "npm:resolved",
+					"value": "https://registry.npmjs.org/@mariozechner/clipboard-win32-arm64-msvc/-/clipboard-win32-arm64-msvc-0.3.9.tgz"
+				},
+				{
+					"name": "npm:hasInstallScript",
+					"value": "false"
+				},
+				{
+					"name": "npm:os",
+					"value": "win32"
+				},
+				{
+					"name": "npm:cpu",
+					"value": "arm64"
+				}
+			],
+			"hashes": [
+				{
+					"alg": "SHA-512",
+					"content": "3b91470f712b90cc0c84dcc07eede0832d2e838cfb6ed66ea10830c319733ebc15d9bc650fa583a6a058e0d0a020202065d0ca769fa5a1410a54056df1a62785"
+				}
+			],
+			"licenses": [
+				{
+					"license": {
+						"id": "MIT"
+					}
+				}
+			]
+		},
+		{
+			"type": "library",
+			"bom-ref": "pkg:npm/%40mariozechner/clipboard-win32-x64-msvc@0.3.9",
+			"name": "@mariozechner/clipboard-win32-x64-msvc",
+			"version": "0.3.9",
+			"purl": "pkg:npm/%40mariozechner/clipboard-win32-x64-msvc@0.3.9",
+			"scope": "required",
+			"properties": [
+				{
+					"name": "npm:resolved",
+					"value": "https://registry.npmjs.org/@mariozechner/clipboard-win32-x64-msvc/-/clipboard-win32-x64-msvc-0.3.9.tgz"
+				},
+				{
+					"name": "npm:hasInstallScript",
+					"value": "false"
+				},
+				{
+					"name": "npm:os",
+					"value": "win32"
+				},
+				{
+					"name": "npm:cpu",
+					"value": "x64"
+				}
+			],
+			"hashes": [
+				{
+					"alg": "SHA-512",
+					"content": "8a1402dc4b9fa8463cd6f857060541b4ae29acbfb073adb326c4afc6b833ecad61b1db7a38e6f3eaff69dd19f5386dc6264b134ca309174bbf82e3084873e148"
+				}
+			],
+			"licenses": [
+				{
+					"license": {
+						"id": "MIT"
+					}
+				}
+			]
+		},
+		{
+			"type": "library",
+			"bom-ref": "pkg:npm/%40mariozechner/clipboard@0.3.9",
+			"name": "@mariozechner/clipboard",
+			"version": "0.3.9",
+			"purl": "pkg:npm/%40mariozechner/clipboard@0.3.9",
+			"scope": "required",
+			"properties": [
+				{
+					"name": "npm:resolved",
+					"value": "https://registry.npmjs.org/@mariozechner/clipboard/-/clipboard-0.3.9.tgz"
+				},
+				{
+					"name": "npm:hasInstallScript",
+					"value": "false"
+				}
+			],
+			"hashes": [
+				{
+					"alg": "SHA-512",
+					"content": "0019c0e7799d7e4199c0e15475936fd92d025863bf108b8f8fc56ff7198116649883fa8573b8a13baab915c423be813aee46695a411ce00843e81fe8b34e32b8"
+				}
+			],
+			"licenses": [
+				{
+					"license": {
+						"id": "MIT"
+					}
+				}
+			]
+		},
+		{
+			"type": "library",
+			"bom-ref": "pkg:npm/%40opentelemetry/api@1.9.0",
+			"name": "@opentelemetry/api",
+			"version": "1.9.0",
+			"purl": "pkg:npm/%40opentelemetry/api@1.9.0",
+			"scope": "required",
+			"properties": [
+				{
+					"name": "npm:resolved",
+					"value": "https://registry.npmjs.org/@opentelemetry/api/-/api-1.9.0.tgz"
+				},
+				{
+					"name": "npm:hasInstallScript",
+					"value": "false"
+				}
+			],
+			"hashes": [
+				{
+					"alg": "SHA-512",
+					"content": "de0880390bd9887e45f5b325322bfcf8648f31eaa0d1d6da7a8e7cff44a503db314aa6619d4b71cd7f7fd85cf2852f6c5907f94b418913400a06b16a8e979872"
+				}
+			],
+			"licenses": [
+				{
+					"license": {
+						"id": "Apache-2.0"
+					}
+				}
+			]
+		},
+		{
+			"type": "library",
+			"bom-ref": "pkg:npm/%40silvia-odwyer/photon-node@0.3.4",
+			"name": "@silvia-odwyer/photon-node",
+			"version": "0.3.4",
+			"purl": "pkg:npm/%40silvia-odwyer/photon-node@0.3.4",
+			"scope": "required",
+			"properties": [
+				{
+					"name": "npm:resolved",
+					"value": "https://registry.npmjs.org/@silvia-odwyer/photon-node/-/photon-node-0.3.4.tgz"
+				},
+				{
+					"name": "npm:hasInstallScript",
+					"value": "false"
+				}
+			],
+			"hashes": [
+				{
+					"alg": "SHA-512",
+					"content": "6e7972e01281dca0d3171ad421c8022db69e5554bc96b024ae2d69133b24a66c6ef4c75f1904f2f1bf0481c0fcdf2c03dd13ccb08ba563cc491f90306beb7d7c"
+				}
+			],
+			"licenses": [
+				{
+					"license": {
+						"id": "Apache-2.0"
+					}
+				}
+			]
+		},
+		{
+			"type": "library",
+			"bom-ref": "pkg:npm/agent-base@7.1.4",
+			"name": "agent-base",
+			"version": "7.1.4",
+			"purl": "pkg:npm/agent-base@7.1.4",
+			"scope": "required",
+			"properties": [
+				{
+					"name": "npm:resolved",
+					"value": "https://registry.npmjs.org/agent-base/-/agent-base-7.1.4.tgz"
+				},
+				{
+					"name": "npm:hasInstallScript",
+					"value": "false"
+				}
+			],
+			"hashes": [
+				{
+					"alg": "SHA-512",
+					"content": "32703e613f1fc1f24f801c779bad0c36a6a49b7d173a4c88a07d72ea1b9342f0b43f0646ee48bc35a70b05cacf6cda28f2f119cbb269ba4efe8cc3be094a2f4d"
+				}
+			],
+			"licenses": [
+				{
+					"license": {
+						"id": "MIT"
+					}
+				}
+			]
+		},
+		{
+			"type": "library",
+			"bom-ref": "pkg:npm/balanced-match@4.0.4",
+			"name": "balanced-match",
+			"version": "4.0.4",
+			"purl": "pkg:npm/balanced-match@4.0.4",
+			"scope": "required",
+			"properties": [
+				{
+					"name": "npm:resolved",
+					"value": "https://registry.npmjs.org/balanced-match/-/balanced-match-4.0.4.tgz"
+				},
+				{
+					"name": "npm:hasInstallScript",
+					"value": "false"
+				}
+			],
+			"hashes": [
+				{
+					"alg": "SHA-512",
+					"content": "04bae011c453c17da8ea01b118e08dc8cbc64a9df96287ee633c3d87520c4d198aaadb40659554ebb6dd6fd3ebdaf50703cfa3de2dad25f8cee82ebee26c864c"
+				}
+			],
+			"licenses": [
+				{
+					"license": {
+						"id": "MIT"
+					}
+				}
+			]
+		},
+		{
+			"type": "library",
+			"bom-ref": "pkg:npm/brace-expansion@5.0.9",
+			"name": "brace-expansion",
+			"version": "5.0.9",
+			"purl": "pkg:npm/brace-expansion@5.0.9",
+			"scope": "required",
+			"properties": [
+				{
+					"name": "npm:resolved",
+					"value": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-5.0.9.tgz"
+				},
+				{
+					"name": "npm:hasInstallScript",
+					"value": "false"
+				}
+			],
+			"hashes": [
+				{
+					"alg": "SHA-512",
+					"content": "49c43822ebc8105d533253fb66dfaf8c9ffff7394f6f64837315b13376e4f2ceade8619d27b28ed5d09c4e274e3c929e3d6df42c4ff6713ef00b23e1a3dfd6c6"
+				}
+			],
+			"licenses": [
+				{
+					"license": {
+						"id": "MIT"
+					}
+				}
+			]
+		},
+		{
+			"type": "library",
+			"bom-ref": "pkg:npm/chalk@5.6.2",
+			"name": "chalk",
+			"version": "5.6.2",
+			"purl": "pkg:npm/chalk@5.6.2",
+			"scope": "required",
+			"properties": [
+				{
+					"name": "npm:resolved",
+					"value": "https://registry.npmjs.org/chalk/-/chalk-5.6.2.tgz"
+				},
+				{
+					"name": "npm:hasInstallScript",
+					"value": "false"
+				}
+			],
+			"hashes": [
+				{
+					"alg": "SHA-512",
+					"content": "ecdcc12f4acde9f3145be7fb03a228e21e34a90946fb11a6b4cc5f6e71ff2bb4c0b6df094165502beea0d145ca31e549a3257912490db04ad0f29543ddb2c76c"
+				}
+			],
+			"licenses": [
+				{
+					"license": {
+						"id": "MIT"
+					}
+				}
+			]
+		},
+		{
+			"type": "library",
+			"bom-ref": "pkg:npm/cross-spawn@7.0.6",
+			"name": "cross-spawn",
+			"version": "7.0.6",
+			"purl": "pkg:npm/cross-spawn@7.0.6",
+			"scope": "required",
+			"properties": [
+				{
+					"name": "npm:resolved",
+					"value": "https://registry.npmjs.org/cross-spawn/-/cross-spawn-7.0.6.tgz"
+				},
+				{
+					"name": "npm:hasInstallScript",
+					"value": "false"
+				}
+			],
+			"hashes": [
+				{
+					"alg": "SHA-512",
+					"content": "b95d903963f69d6ceccb668ca7c69189b862f5d9731791e0879487681f4e893184c834e2249cb1d2ecb9d505ddc966ed00736e6b85c9cd429c6b73b3294777bc"
+				}
+			],
+			"licenses": [
+				{
+					"license": {
+						"id": "MIT"
+					}
+				}
+			]
+		},
+		{
+			"type": "library",
+			"bom-ref": "pkg:npm/debug@4.4.3",
+			"name": "debug",
+			"version": "4.4.3",
+			"purl": "pkg:npm/debug@4.4.3",
+			"scope": "required",
+			"properties": [
+				{
+					"name": "npm:resolved",
+					"value": "https://registry.npmjs.org/debug/-/debug-4.4.3.tgz"
+				},
+				{
+					"name": "npm:hasInstallScript",
+					"value": "false"
+				}
+			],
+			"hashes": [
+				{
+					"alg": "SHA-512",
+					"content": "446c305a7c10be455f6af295b76d8518bc3ec5849dcc04709b4aeee83853540dee994e6165cdbc57790ee2cb6062bcab4e52e9baf808f468a28e5b408cd6dca8"
+				}
+			],
+			"licenses": [
+				{
+					"license": {
+						"id": "MIT"
+					}
+				}
+			]
+		},
+		{
+			"type": "library",
+			"bom-ref": "pkg:npm/diff@8.0.4",
+			"name": "diff",
+			"version": "8.0.4",
+			"purl": "pkg:npm/diff@8.0.4",
+			"scope": "required",
+			"properties": [
+				{
+					"name": "npm:resolved",
+					"value": "https://registry.npmjs.org/diff/-/diff-8.0.4.tgz"
+				},
+				{
+					"name": "npm:hasInstallScript",
+					"value": "false"
+				}
+			],
+			"hashes": [
+				{
+					"alg": "SHA-512",
+					"content": "0cf8b41668e2494e44bd0574fbe1850ce27d012414545879903f8ecce9d8762ee7dd6a66f6159619f07f3b66e57c770c5532f95a44174a74622bd99a921adc9f"
+				}
+			],
+			"licenses": [
+				{
+					"license": {
+						"id": "BSD-3-Clause"
+					}
+				}
+			]
+		},
+		{
+			"type": "library",
+			"bom-ref": "pkg:npm/get-east-asian-width@1.6.0",
+			"name": "get-east-asian-width",
+			"version": "1.6.0",
+			"purl": "pkg:npm/get-east-asian-width@1.6.0",
+			"scope": "required",
+			"properties": [
+				{
+					"name": "npm:resolved",
+					"value": "https://registry.npmjs.org/get-east-asian-width/-/get-east-asian-width-1.6.0.tgz"
+				},
+				{
+					"name": "npm:hasInstallScript",
+					"value": "false"
+				}
+			],
+			"hashes": [
+				{
+					"alg": "SHA-512",
+					"content": "4116ef0c86f1e9892551ee91c5e4de95e311d32bf77181fa3ec3d91dc9d59fbc6fef33b504737caf45c44eef27e987b743e6a1b526ab7375a0b4d5a67a12017c"
+				}
+			],
+			"licenses": [
+				{
+					"license": {
+						"id": "MIT"
+					}
+				}
+			]
+		},
+		{
+			"type": "library",
+			"bom-ref": "pkg:npm/glob@13.0.6",
+			"name": "glob",
+			"version": "13.0.6",
+			"purl": "pkg:npm/glob@13.0.6",
+			"scope": "required",
+			"properties": [
+				{
+					"name": "npm:resolved",
+					"value": "https://registry.npmjs.org/glob/-/glob-13.0.6.tgz"
+				},
+				{
+					"name": "npm:hasInstallScript",
+					"value": "false"
+				}
+			],
+			"hashes": [
+				{
+					"alg": "SHA-512",
+					"content": "5a3972ae89669bcb83a66fe8806c976576f567e09ad81f0d6c9c2a0558346b12bd19b05ea12ef2195eaf8d79d87469ba5f9de27a112ec716f288aa7c42637857"
+				}
+			],
+			"licenses": [
+				{
+					"license": {
+						"id": "BlueOak-1.0.0"
+					}
+				}
+			]
+		},
+		{
+			"type": "library",
+			"bom-ref": "pkg:npm/graceful-fs@4.2.11",
+			"name": "graceful-fs",
+			"version": "4.2.11",
+			"purl": "pkg:npm/graceful-fs@4.2.11",
+			"scope": "required",
+			"properties": [
+				{
+					"name": "npm:resolved",
+					"value": "https://registry.npmjs.org/graceful-fs/-/graceful-fs-4.2.11.tgz"
+				},
+				{
+					"name": "npm:hasInstallScript",
+					"value": "false"
+				}
+			],
+			"hashes": [
+				{
+					"alg": "SHA-512",
+					"content": "45b279fe398570d342703579a3d7939c12c9fc7b33595d0fef76dcf857f89d2feb263f98692e881b288e2f45680585fe9755ab97793ade1fcaac7fa7849d17bd"
+				}
+			],
+			"licenses": [
+				{
+					"license": {
+						"id": "ISC"
+					}
+				}
+			]
+		},
+		{
+			"type": "library",
+			"bom-ref": "pkg:npm/grok-mermaid@0.2.2",
+			"name": "grok-mermaid",
+			"version": "0.2.2",
+			"purl": "pkg:npm/grok-mermaid@0.2.2",
+			"scope": "required",
+			"properties": [
+				{
+					"name": "npm:resolved",
+					"value": "https://registry.npmjs.org/grok-mermaid/-/grok-mermaid-0.2.2.tgz"
+				},
+				{
+					"name": "npm:hasInstallScript",
+					"value": "false"
+				}
+			],
+			"hashes": [
+				{
+					"alg": "SHA-512",
+					"content": "5dc2443f97430bc9621c1879da694b8d4d7c7cdbeed5c905b2ed10a481b7f803d9dbbd1fb23f70c69880e9c3944666d412ea0c5608db0b6f946204dd0aaaa0cc"
+				}
+			],
+			"licenses": [
+				{
+					"license": {
+						"id": "Apache-2.0"
+					}
+				}
+			]
+		},
+		{
+			"type": "library",
+			"bom-ref": "pkg:npm/highlight.js@10.7.3",
+			"name": "highlight.js",
+			"version": "10.7.3",
+			"purl": "pkg:npm/highlight.js@10.7.3",
+			"scope": "required",
+			"properties": [
+				{
+					"name": "npm:resolved",
+					"value": "https://registry.npmjs.org/highlight.js/-/highlight.js-10.7.3.tgz"
+				},
+				{
+					"name": "npm:hasInstallScript",
+					"value": "false"
+				}
+			],
+			"hashes": [
+				{
+					"alg": "SHA-512",
+					"content": "b7371415aba2b1628d1da4643785a397f640d3b8043408c597727f738f34769ae4193839110b2d81a345a817d4a82ab9e2465120472b793b00805fe6daab83ec"
+				}
+			],
+			"licenses": [
+				{
+					"license": {
+						"id": "BSD-3-Clause"
+					}
+				}
+			]
+		},
+		{
+			"type": "library",
+			"bom-ref": "pkg:npm/hosted-git-info@9.0.3",
+			"name": "hosted-git-info",
+			"version": "9.0.3",
+			"purl": "pkg:npm/hosted-git-info@9.0.3",
+			"scope": "required",
+			"properties": [
+				{
+					"name": "npm:resolved",
+					"value": "https://registry.npmjs.org/hosted-git-info/-/hosted-git-info-9.0.3.tgz"
+				},
+				{
+					"name": "npm:hasInstallScript",
+					"value": "false"
+				}
+			],
+			"hashes": [
+				{
+					"alg": "SHA-512",
+					"content": "1dcfa084ba12b7a41a61952fd1606222f98c0d9b9967ba1a0ef747f0c6df38ee253acc5d5cb12fb82e9e3e81acf47d57f6808bcaaebe35537430aa83fb2771ca"
+				}
+			],
+			"licenses": [
+				{
+					"license": {
+						"id": "ISC"
+					}
+				}
+			]
+		},
+		{
+			"type": "library",
+			"bom-ref": "pkg:npm/http-proxy-agent@7.0.2",
+			"name": "http-proxy-agent",
+			"version": "7.0.2",
+			"purl": "pkg:npm/http-proxy-agent@7.0.2",
+			"scope": "required",
+			"properties": [
+				{
+					"name": "npm:resolved",
+					"value": "https://registry.npmjs.org/http-proxy-agent/-/http-proxy-agent-7.0.2.tgz"
+				},
+				{
+					"name": "npm:hasInstallScript",
+					"value": "false"
+				}
+			],
+			"hashes": [
+				{
+					"alg": "SHA-512",
+					"content": "4f58240226180d6631dd5e419b2bbb1dc7dcbcbee652b4d688ceb239f6b73c8a6156227f8053dbbe2750faf7aa48e1dc8bf3f105c0da6de50d0b3a4e3832598a"
+				}
+			],
+			"licenses": [
+				{
+					"license": {
+						"id": "MIT"
+					}
+				}
+			]
+		},
+		{
+			"type": "library",
+			"bom-ref": "pkg:npm/https-proxy-agent@7.0.6",
+			"name": "https-proxy-agent",
+			"version": "7.0.6",
+			"purl": "pkg:npm/https-proxy-agent@7.0.6",
+			"scope": "required",
+			"properties": [
+				{
+					"name": "npm:resolved",
+					"value": "https://registry.npmjs.org/https-proxy-agent/-/https-proxy-agent-7.0.6.tgz"
+				},
+				{
+					"name": "npm:hasInstallScript",
+					"value": "false"
+				}
+			],
+			"hashes": [
+				{
+					"alg": "SHA-512",
+					"content": "bcaf4fe7f8947dd97de4023e255c94b88715b5de287efb6b3abdc736d336cb10bd6e731b11da77c74d4e8503678dbf082588b7f159531379815f071fbf2c2e4b"
+				}
+			],
+			"licenses": [
+				{
+					"license": {
+						"id": "MIT"
+					}
+				}
+			]
+		},
+		{
+			"type": "library",
+			"bom-ref": "pkg:npm/ignore@7.0.5",
+			"name": "ignore",
+			"version": "7.0.5",
+			"purl": "pkg:npm/ignore@7.0.5",
+			"scope": "required",
+			"properties": [
+				{
+					"name": "npm:resolved",
+					"value": "https://registry.npmjs.org/ignore/-/ignore-7.0.5.tgz"
+				},
+				{
+					"name": "npm:hasInstallScript",
+					"value": "false"
+				}
+			],
+			"hashes": [
+				{
+					"alg": "SHA-512",
+					"content": "1ece7dc4135f508ba730581601b197e5cabaf3ddc86d68382a7ae36d8c17dedc74ceda2b5604c303a076b317fc7a31c9e30cfc06a194318967ccd05eaf936f1a"
+				}
+			],
+			"licenses": [
+				{
+					"license": {
+						"id": "MIT"
+					}
+				}
+			]
+		},
+		{
+			"type": "library",
+			"bom-ref": "pkg:npm/isexe@2.0.0",
+			"name": "isexe",
+			"version": "2.0.0",
+			"purl": "pkg:npm/isexe@2.0.0",
+			"scope": "required",
+			"properties": [
+				{
+					"name": "npm:resolved",
+					"value": "https://registry.npmjs.org/isexe/-/isexe-2.0.0.tgz"
+				},
+				{
+					"name": "npm:hasInstallScript",
+					"value": "false"
+				}
+			],
+			"hashes": [
+				{
+					"alg": "SHA-512",
+					"content": "447c4c2e9f659ca1c61d19e0f5016144231b600715a67ebdb2648672addfdfac638155564e18f8aaa2db4cb96aed2b23f01f9f210d44b8210623694ab3241e23"
+				}
+			],
+			"licenses": [
+				{
+					"license": {
+						"id": "ISC"
+					}
+				}
+			]
+		},
+		{
+			"type": "library",
+			"bom-ref": "pkg:npm/jiti@2.7.0",
+			"name": "jiti",
+			"version": "2.7.0",
+			"purl": "pkg:npm/jiti@2.7.0",
+			"scope": "required",
+			"properties": [
+				{
+					"name": "npm:resolved",
+					"value": "https://registry.npmjs.org/jiti/-/jiti-2.7.0.tgz"
+				},
+				{
+					"name": "npm:hasInstallScript",
+					"value": "false"
+				}
+			],
+			"hashes": [
+				{
+					"alg": "SHA-512",
+					"content": "002ffb2687c9bd91abae779635a12725e38b531f89946b7bb4d6b4c198913d3e0c635c267ca8eddbee8eda9daecf6fac92597c39966624c36a7a47bb90a6cd81"
+				}
+			],
+			"licenses": [
+				{
+					"license": {
+						"id": "MIT"
+					}
+				}
+			]
+		},
+		{
+			"type": "library",
+			"bom-ref": "pkg:npm/lru-cache@11.4.0",
+			"name": "lru-cache",
+			"version": "11.4.0",
+			"purl": "pkg:npm/lru-cache@11.4.0",
+			"scope": "required",
+			"properties": [
+				{
+					"name": "npm:resolved",
+					"value": "https://registry.npmjs.org/lru-cache/-/lru-cache-11.4.0.tgz"
+				},
+				{
+					"name": "npm:hasInstallScript",
+					"value": "false"
+				}
+			],
+			"hashes": [
+				{
+					"alg": "SHA-512",
+					"content": "5be47e9052f81e057138dab66e15cf8b76c6a7319eff212154ea76df7ab0f70091b609dc275e4fddb0be7b8cd932ee02abb77e5802635c65b4b949227e171ab4"
+				}
+			],
+			"licenses": [
+				{
+					"license": {
+						"id": "BlueOak-1.0.0"
+					}
+				}
+			]
+		},
+		{
+			"type": "library",
+			"bom-ref": "pkg:npm/marked@18.0.5",
+			"name": "marked",
+			"version": "18.0.5",
+			"purl": "pkg:npm/marked@18.0.5",
+			"scope": "required",
+			"properties": [
+				{
+					"name": "npm:resolved",
+					"value": "https://registry.npmjs.org/marked/-/marked-18.0.5.tgz"
+				},
+				{
+					"name": "npm:hasInstallScript",
+					"value": "false"
+				}
+			],
+			"hashes": [
+				{
+					"alg": "SHA-512",
+					"content": "4ba19cbc02c783a2b8a21b6ee04ef1d1ad40aa1023a7a715f0a84b4b237da956a99f3264bac541c5945c214f40798b1b7ba3f584a0eeb126c43b31b2cae71eeb"
+				}
+			],
+			"licenses": [
+				{
+					"license": {
+						"id": "MIT"
+					}
+				}
+			]
+		},
+		{
+			"type": "library",
+			"bom-ref": "pkg:npm/minimatch@10.2.5",
+			"name": "minimatch",
+			"version": "10.2.5",
+			"purl": "pkg:npm/minimatch@10.2.5",
+			"scope": "required",
+			"properties": [
+				{
+					"name": "npm:resolved",
+					"value": "https://registry.npmjs.org/minimatch/-/minimatch-10.2.5.tgz"
+				},
+				{
+					"name": "npm:hasInstallScript",
+					"value": "false"
+				}
+			],
+			"hashes": [
+				{
+					"alg": "SHA-512",
+					"content": "3142e454b7ca1980c561e8cfd3b40ebab0cb2d0a5c8e4ec5c3eee35d2d91d9ccd1433479eb21d1bde5393432443af887fa111364a4a4224e5cf93db71a315432"
+				}
+			],
+			"licenses": [
+				{
+					"license": {
+						"id": "BlueOak-1.0.0"
+					}
+				}
+			]
+		},
+		{
+			"type": "library",
+			"bom-ref": "pkg:npm/minipass@7.1.3",
+			"name": "minipass",
+			"version": "7.1.3",
+			"purl": "pkg:npm/minipass@7.1.3",
+			"scope": "required",
+			"properties": [
+				{
+					"name": "npm:resolved",
+					"value": "https://registry.npmjs.org/minipass/-/minipass-7.1.3.tgz"
+				},
+				{
+					"name": "npm:hasInstallScript",
+					"value": "false"
+				}
+			],
+			"hashes": [
+				{
+					"alg": "SHA-512",
+					"content": "b44047a839c8a0cff5ad7304d738246bd83a43695ca029311cbb9cece0c9e41c5b3f977873667970682d5c092ee7ddb4d02c7b762b874ce61f4810fc9fa9a6f0"
+				}
+			],
+			"licenses": [
+				{
+					"license": {
+						"id": "BlueOak-1.0.0"
+					}
+				}
+			]
+		},
+		{
+			"type": "library",
+			"bom-ref": "pkg:npm/ms@2.1.3",
+			"name": "ms",
+			"version": "2.1.3",
+			"purl": "pkg:npm/ms@2.1.3",
+			"scope": "required",
+			"properties": [
+				{
+					"name": "npm:resolved",
+					"value": "https://registry.npmjs.org/ms/-/ms-2.1.3.tgz"
+				},
+				{
+					"name": "npm:hasInstallScript",
+					"value": "false"
+				}
+			],
+			"hashes": [
+				{
+					"alg": "SHA-512",
+					"content": "e85973b9b4cb646dc9d9afcd542025784863ceae68c601f268253dc985ef70bb2fa1568726afece715c8ebf5d73fab73ed1f7100eb479d23bfb57b45dd645394"
+				}
+			],
+			"licenses": [
+				{
+					"license": {
+						"id": "MIT"
+					}
+				}
+			]
+		},
+		{
+			"type": "library",
+			"bom-ref": "pkg:npm/openai@6.26.0",
+			"name": "openai",
+			"version": "6.26.0",
+			"purl": "pkg:npm/openai@6.26.0",
+			"scope": "required",
+			"properties": [
+				{
+					"name": "npm:resolved",
+					"value": "https://registry.npmjs.org/openai/-/openai-6.26.0.tgz"
+				},
+				{
+					"name": "npm:hasInstallScript",
+					"value": "false"
+				}
+			],
+			"hashes": [
+				{
+					"alg": "SHA-512",
+					"content": "cdddb775b5938e227ab12017eacd07ac2662e352704c0d5b415b34c0b40f676ff9a36831389039c21ef2380520c18c9b7e10d7ca1c25a5e41fecc960c7c10e08"
+				}
+			],
+			"licenses": [
+				{
+					"license": {
+						"id": "Apache-2.0"
+					}
+				}
+			]
+		},
+		{
+			"type": "library",
+			"bom-ref": "pkg:npm/partial-json@0.1.7",
+			"name": "partial-json",
+			"version": "0.1.7",
+			"purl": "pkg:npm/partial-json@0.1.7",
+			"scope": "required",
+			"properties": [
+				{
+					"name": "npm:resolved",
+					"value": "https://registry.npmjs.org/partial-json/-/partial-json-0.1.7.tgz"
+				},
+				{
+					"name": "npm:hasInstallScript",
+					"value": "false"
+				}
+			],
+			"hashes": [
+				{
+					"alg": "SHA-512",
+					"content": "363bffe7d8476a891bfe14548dc7b71ddbf5db077ad0cb4cf59e4e9669fe9de85ed100c0b11b516c93ef27467dd53bac1744ae65122f9ccf92e25e8420ff2578"
+				}
+			],
+			"licenses": [
+				{
+					"license": {
+						"id": "MIT"
+					}
+				}
+			]
+		},
+		{
+			"type": "library",
+			"bom-ref": "pkg:npm/path-key@3.1.1",
+			"name": "path-key",
+			"version": "3.1.1",
+			"purl": "pkg:npm/path-key@3.1.1",
+			"scope": "required",
+			"properties": [
+				{
+					"name": "npm:resolved",
+					"value": "https://registry.npmjs.org/path-key/-/path-key-3.1.1.tgz"
+				},
+				{
+					"name": "npm:hasInstallScript",
+					"value": "false"
+				}
+			],
+			"hashes": [
+				{
+					"alg": "SHA-512",
+					"content": "a2399e374a9dfb2d23b3312da18e3caf43deab97703049089423aee90e5fe3595f92cc17b8ab58ae18284e92e7c887079b6e1486ac7ee53aa6d889d2c0b844e9"
+				}
+			],
+			"licenses": [
+				{
+					"license": {
+						"id": "MIT"
+					}
+				}
+			]
+		},
+		{
+			"type": "library",
+			"bom-ref": "pkg:npm/path-scurry@2.0.2",
+			"name": "path-scurry",
+			"version": "2.0.2",
+			"purl": "pkg:npm/path-scurry@2.0.2",
+			"scope": "required",
+			"properties": [
+				{
+					"name": "npm:resolved",
+					"value": "https://registry.npmjs.org/path-scurry/-/path-scurry-2.0.2.tgz"
+				},
+				{
+					"name": "npm:hasInstallScript",
+					"value": "false"
+				}
+			],
+			"hashes": [
+				{
+					"alg": "SHA-512",
+					"content": "dcefe2555b0900fb0e9e9c1621e0fe77acffecf9aa029c9078f52d0a77636ad8fff48e4bca51efb79aa5b856814f7239877af57a37d1d39e9cf850aff8d9cd5e"
+				}
+			],
+			"licenses": [
+				{
+					"license": {
+						"id": "BlueOak-1.0.0"
+					}
+				}
+			]
+		},
+		{
+			"type": "library",
+			"bom-ref": "pkg:npm/proper-lockfile@4.1.2",
+			"name": "proper-lockfile",
+			"version": "4.1.2",
+			"purl": "pkg:npm/proper-lockfile@4.1.2",
+			"scope": "required",
+			"properties": [
+				{
+					"name": "npm:resolved",
+					"value": "https://registry.npmjs.org/proper-lockfile/-/proper-lockfile-4.1.2.tgz"
+				},
+				{
+					"name": "npm:hasInstallScript",
+					"value": "false"
+				}
+			],
+			"hashes": [
+				{
+					"alg": "SHA-512",
+					"content": "4e334f6e537807001631753cb3d004cf82664319c3d4d34bedb34e63f00a533c9a99cdfbf4558049485cfcad692f69e855bf9799928b2faf1c8f32ec88e00c68"
+				}
+			],
+			"licenses": [
+				{
+					"license": {
+						"id": "MIT"
+					}
+				}
+			]
+		},
+		{
+			"type": "library",
+			"bom-ref": "pkg:npm/retry@0.12.0",
+			"name": "retry",
+			"version": "0.12.0",
+			"purl": "pkg:npm/retry@0.12.0",
+			"scope": "required",
+			"properties": [
+				{
+					"name": "npm:resolved",
+					"value": "https://registry.npmjs.org/retry/-/retry-0.12.0.tgz"
+				},
+				{
+					"name": "npm:hasInstallScript",
+					"value": "false"
+				}
+			],
+			"hashes": [
+				{
+					"alg": "SHA-512",
+					"content": "f4b9224f08d487aad3e79e43b44f6b4d7f81281c8f7eb333100b67944b5d130af73647dfc228a1a9ed9b5800e0f8e4118edf6097a20276607f6450c2180b52a3"
+				}
+			],
+			"licenses": [
+				{
+					"license": {
+						"id": "MIT"
+					}
+				}
+			]
+		},
+		{
+			"type": "library",
+			"bom-ref": "pkg:npm/semver@7.8.0",
+			"name": "semver",
+			"version": "7.8.0",
+			"purl": "pkg:npm/semver@7.8.0",
+			"scope": "required",
+			"properties": [
+				{
+					"name": "npm:resolved",
+					"value": "https://registry.npmjs.org/semver/-/semver-7.8.0.tgz"
+				},
+				{
+					"name": "npm:hasInstallScript",
+					"value": "false"
+				}
+			],
+			"hashes": [
+				{
+					"alg": "SHA-512",
+					"content": "01c33b755ff9ba5e047a4a10dbd0209b9beb8bc24da91ca3dfda34aa95fabc3176199aedbad665e51c200f55e766389301f9dcb0984c238f10407dec37ced834"
+				}
+			],
+			"licenses": [
+				{
+					"license": {
+						"id": "ISC"
+					}
+				}
+			]
+		},
+		{
+			"type": "library",
+			"bom-ref": "pkg:npm/shebang-command@2.0.0",
+			"name": "shebang-command",
+			"version": "2.0.0",
+			"purl": "pkg:npm/shebang-command@2.0.0",
+			"scope": "required",
+			"properties": [
+				{
+					"name": "npm:resolved",
+					"value": "https://registry.npmjs.org/shebang-command/-/shebang-command-2.0.0.tgz"
+				},
+				{
+					"name": "npm:hasInstallScript",
+					"value": "false"
+				}
+			],
+			"hashes": [
+				{
+					"alg": "SHA-512",
+					"content": "907c6bdb366962d766acdd6a0e3aeb5ff675ad1d641bc0f1fa09292b51b87979af5ecc26704d614d6056614ce5ada630d7fc99a7a62e0d8efb62dbdb3747660c"
+				}
+			],
+			"licenses": [
+				{
+					"license": {
+						"id": "MIT"
+					}
+				}
+			]
+		},
+		{
+			"type": "library",
+			"bom-ref": "pkg:npm/shebang-regex@3.0.0",
+			"name": "shebang-regex",
+			"version": "3.0.0",
+			"purl": "pkg:npm/shebang-regex@3.0.0",
+			"scope": "required",
+			"properties": [
+				{
+					"name": "npm:resolved",
+					"value": "https://registry.npmjs.org/shebang-regex/-/shebang-regex-3.0.0.tgz"
+				},
+				{
+					"name": "npm:hasInstallScript",
+					"value": "false"
+				}
+			],
+			"hashes": [
+				{
+					"alg": "SHA-512",
+					"content": "efef9d161b5cc77df9dee05aabc0c347836ec417ad0730bb6503a19934089c711de9b4ab5dd884cb30af1b4ed9e3851874b4a1594c97b7933fca1cfc7a471bd4"
+				}
+			],
+			"licenses": [
+				{
+					"license": {
+						"id": "MIT"
+					}
+				}
+			]
+		},
+		{
+			"type": "library",
+			"bom-ref": "pkg:npm/signal-exit@3.0.7",
+			"name": "signal-exit",
+			"version": "3.0.7",
+			"purl": "pkg:npm/signal-exit@3.0.7",
+			"scope": "required",
+			"properties": [
+				{
+					"name": "npm:resolved",
+					"value": "https://registry.npmjs.org/signal-exit/-/signal-exit-3.0.7.tgz"
+				},
+				{
+					"name": "npm:hasInstallScript",
+					"value": "false"
+				}
+			],
+			"hashes": [
+				{
+					"alg": "SHA-512",
+					"content": "c270f6644fa5f923c2feea12d2f5de13d2f5fb4c2e68ca8a95fcfd00c528dfc26cc8b48159215c1d1d51ae2eb62d9735daf2ebd606f78e5ee2c10860c2901b19"
+				}
+			],
+			"licenses": [
+				{
+					"license": {
+						"id": "ISC"
+					}
+				}
+			]
+		},
+		{
+			"type": "library",
+			"bom-ref": "pkg:npm/typebox@1.3.7",
+			"name": "typebox",
+			"version": "1.3.7",
+			"purl": "pkg:npm/typebox@1.3.7",
+			"scope": "required",
+			"properties": [
+				{
+					"name": "npm:resolved",
+					"value": "https://registry.npmjs.org/typebox/-/typebox-1.3.7.tgz"
+				},
+				{
+					"name": "npm:hasInstallScript",
+					"value": "false"
+				}
+			],
+			"hashes": [
+				{
+					"alg": "SHA-512",
+					"content": "99e2ae89f737dcf71cc743ba3dd23360cab73a0f33bcfe13222fdaf81c37004319331383d3e447190be982511ee99772df067c9ea9ff8fde61f0b5192e4ffa1e"
+				}
+			],
+			"licenses": [
+				{
+					"license": {
+						"id": "MIT"
+					}
+				}
+			]
+		},
+		{
+			"type": "library",
+			"bom-ref": "pkg:npm/undici@8.9.0",
+			"name": "undici",
+			"version": "8.9.0",
+			"purl": "pkg:npm/undici@8.9.0",
+			"scope": "required",
+			"properties": [
+				{
+					"name": "npm:resolved",
+					"value": "https://registry.npmjs.org/undici/-/undici-8.9.0.tgz"
+				},
+				{
+					"name": "npm:hasInstallScript",
+					"value": "false"
+				}
+			],
+			"hashes": [
+				{
+					"alg": "SHA-512",
+					"content": "696669523ed7a06a27302971e2074345f8018ea780f85e3bdda0e644e4106ccf67e8f45f2bfbb5abf6b45f8c0c4e07077d3f07e9fa5bb7df0f16e0d4c0583660"
+				}
+			],
+			"licenses": [
+				{
+					"license": {
+						"id": "MIT"
+					}
+				}
+			]
+		},
+		{
+			"type": "library",
+			"bom-ref": "pkg:npm/which@2.0.2",
+			"name": "which",
+			"version": "2.0.2",
+			"purl": "pkg:npm/which@2.0.2",
+			"scope": "required",
+			"properties": [
+				{
+					"name": "npm:resolved",
+					"value": "https://registry.npmjs.org/which/-/which-2.0.2.tgz"
+				},
+				{
+					"name": "npm:hasInstallScript",
+					"value": "false"
+				}
+			],
+			"hashes": [
+				{
+					"alg": "SHA-512",
+					"content": "04b2374e5d535b73ef97bd25df2ab763ae22f9ac29c17aac181616924a8cb676d782b303fb28fbae15b492e103c7325a6171a3116e6881aa4a34c10a34c8e26c"
+				}
+			],
+			"licenses": [
+				{
+					"license": {
+						"id": "ISC"
+					}
+				}
+			]
+		},
+		{
+			"type": "library",
+			"bom-ref": "pkg:npm/yaml@2.9.0",
+			"name": "yaml",
+			"version": "2.9.0",
+			"purl": "pkg:npm/yaml@2.9.0",
+			"scope": "required",
+			"properties": [
+				{
+					"name": "npm:resolved",
+					"value": "https://registry.npmjs.org/yaml/-/yaml-2.9.0.tgz"
+				},
+				{
+					"name": "npm:hasInstallScript",
+					"value": "false"
+				}
+			],
+			"hashes": [
+				{
+					"alg": "SHA-512",
+					"content": "d80be1357de66fccdde99cbb20d4ed4a9975175e475ba5a7aa3d2cad696428b729625fe03083098b2b86ab629e236605c543e376507edcb735d2c78c2ed2f870"
+				}
+			],
+			"licenses": [
+				{
+					"license": {
+						"id": "ISC"
+					}
+				}
+			]
+		}
+	]
+}

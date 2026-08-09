@@ -1,0 +1,14 @@
+# Pinned tool binaries are FETCHED, never committed — strape/scripts/fetch-tool.mjs and fetch-osv.mjs
+# download them and verify the sha256 against the digest GitHub publishes for the release asset.
+#
+# The `.sha256` files ARE tracked: they are the pin, and they are what `fetch-tool.mjs --verify` checks an
+# installed binary against. Committing the binaries themselves would put ~50MB of unreviewable machine code
+# in a repo whose entire premise is that you can read what you ship.
+#
+# Deliberately HERE rather than as more lines in the root .gitignore, which already names osv-scanner, syft
+# and cosign individually. That file is inside the review-attestation digest (`review-attest.mjs`
+# SCOPE_FILES) because hunk 6 lives in it, so every new tool would cost a re-sign — a human signature spent
+# on a build artefact. A directory-local rule costs nothing and covers tools nobody has added yet.
+*
+!.gitignore
+!*.sha256

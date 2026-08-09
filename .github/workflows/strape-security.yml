@@ -1,0 +1,215 @@
+name: strape security scan
+
+# Daily, because a dependency that was clean yesterday can have an advisory today, and because a
+# high-scrutiny package can gain a new version at any time. Also runs whenever dependency metadata changes.
+
+on:
+  schedule:
+    - cron: "0 6 * * *"
+  push:
+    branches: [main]
+    paths:
+      - package-lock.json
+      - "**/package.json"
+      - packages/coding-agent/npm-shrinkwrap.json
+      - strape/audit/**
+      # The gates are part of what this workflow is. A change to a scanner, to the OSV ignore list or to this
+      # file has to re-run it, or the tooling ships unexercised — on 2026-08-08 exactly that happened, and the
+      # OSV and GuardDog fixes had to be dispatched by hand to get any CI coverage at all.
+      - strape/scripts/**
+      - strape/osv-scanner.toml
+      - .github/workflows/strape-security.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      # SHA-pinning an action proves its identity, not its runtime behaviour. This monitors and restricts
+      # what the job's steps actually do on the network — the pipeline that produces the SBOM, the shrinkwrap
+      # and the reviewed-deps verdicts is itself a supply-chain target (cf. the tj-actions compromise).
+      #
+      # Switched audit -> block on 2026-08-10 from the recorded egress of run 31444319321. Every entry below
+      # was OBSERVED, not predicted: a hand-written list drafted from what the scripts "obviously" need was
+      # wrong about six of them and would have broken osv-scanner, `npm audit signatures`, syft and GuardDog.
+      # If you add a tool here, run once in audit mode and read the endpoints before extending this list.
+      #
+      # strape-release.yml stays on audit until this has been green for several days: a false block there
+      # means "cannot cut a release", which is not something to discover mid-release. strape-build.yml has no
+      # Harden-Runner at all — it runs on every push, where a false block is maximally disruptive.
+      - name: Harden runner
+        uses: step-security/harden-runner@4d991eb9b905ef189e4c376166672c3f2f230481 # v2.11.0
+        with:
+          egress-policy: block
+          # Sorted, with the tool that needs each one. agent.api.stepsecurity.io is allowed implicitly.
+          allowed-endpoints: >
+            api.deps.dev:443
+            api.osv.dev:443
+            api.socket.dev:443
+            files.pythonhosted.org:443
+            github.com:443
+            hugovk.dev:443
+            packages.ecosyste.ms:443
+            productionresultssa2.blob.core.windows.net:443
+            pypi.org:443
+            registry.npmjs.org:443
+            release-assets.githubusercontent.com:443
+            results-receiver.actions.githubusercontent.com:443
+            toolbox-data.anchore.io:443
+            tuf-repo-cdn.sigstore.dev:443
+          # api.deps.dev          dep-health.mjs
+          # api.osv.dev           osv-scanner queries OSV at scan time — it is not an offline scanner
+          # api.socket.dev        socket-scan.mjs; absent from the audit run only because no key was set yet
+          # pypi.org + files.pythonhosted.org   GuardDog's pip install
+          # hugovk.dev            GuardDog's top-npm/PyPI package lists (third-party, unpinned — see below)
+          # packages.ecosyste.ms  GuardDog package metadata (likewise)
+          # github.com + release-assets.githubusercontent.com   checkout, osv-scanner and syft downloads
+          # registry.npmjs.org    npm ci, npm audit signatures, provenance.mjs
+          # tuf-repo-cdn.sigstore.dev   sigstore TUF root for `npm audit signatures`
+          # toolbox-data.anchore.io     syft's own data download
+          # results-receiver…, productionresultssa2…   GitHub Actions results/artifact infrastructure
+          #
+          # EXPECTED BREAKAGE, not an attack: productionresultssa2 is a NUMBERED Azure host and GitHub rotates
+          # it (…sa2 -> …sa3). A blocked *.blob.core.windows.net means rotation — add the new name. Same if
+          # GuardDog's redirect target moves to hugovk.github.io, which resolved but was never contacted.
+          #
+          # WORTH KNOWING: GuardDog fetches its typosquat reference data from hugovk.dev (a personal domain)
+          # and packages.ecosyste.ms at scan time. That is third-party data inside a security tool, over the
+          # network, and it was not part of the dependency review. Recorded in review-v0.84.1.md.
+
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Setup Node
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 22
+          cache: npm
+
+      # A real install: `npm audit signatures` cannot verify anything in --package-lock-only mode.
+      - name: Install (lifecycle scripts disabled)
+        run: npm ci --ignore-scripts --no-audit --no-fund
+
+      - name: Advisories (production closure)
+        run: npm audit --omit=dev --audit-level=moderate
+
+      - name: Registry signatures and provenance
+        run: npm audit signatures --omit=dev
+
+      - name: Lockfile hygiene
+        run: node strape/scripts/lockfile-audit.mjs
+
+      - name: SBOM drift
+        run: node strape/scripts/sbom.mjs --check strape/audit/sbom-v0.84.1.json
+
+      # OSV covers advisories npm's own feed misses. Hash-verify the scanner before trusting it.
+      # The binary is 56MB so it is fetched, not committed — but the sha256 is pinned in the script and
+      # cross-checked against GitHub's published asset digest, so an unverified scanner never runs.
+      # Scope note: `npm audit` above runs --omit=dev, this does not. Dev dependencies are in scope here
+      # because they execute on a developer's workstation with provider keys in the environment. Advisories
+      # that provably cannot reach a user are recorded with a reason and an expiry in strape/osv-scanner.toml,
+      # never silenced by narrowing the scan.
+      - name: OSV scanner (pinned + hash-verified)
+        run: |
+          node strape/scripts/fetch-osv.mjs
+          strape/tools/osv-scanner scan source --config strape/osv-scanner.toml --lockfile=package-lock.json
+          strape/tools/osv-scanner scan source --config strape/osv-scanner.toml --lockfile=packages/coding-agent/npm-shrinkwrap.json
+
+      - name: High-scrutiny version drift
+        run: node strape/scripts/high-scrutiny-check.mjs
+
+      # --- behaviour and health signals: the "no advisory exists yet" category ---
+
+      # Malicious-behaviour heuristics over the shipped tarballs. The third-party counterpart to
+      # capability-sweep.mjs, which does the same job for first-party source.
+      - name: GuardDog tarball sweep
+        run: |
+          if [ ! -x strape/tools/guarddog-venv/bin/guarddog ]; then
+            pip install --quiet --target /tmp/gd-lib guarddog 2>/dev/null || true
+            python3 -m venv strape/tools/guarddog-venv
+            strape/tools/guarddog-venv/bin/pip install --quiet guarddog
+          fi
+          node strape/scripts/guarddog-scan.mjs --check strape/audit/guarddog-v0.84.1.json
+
+      # deps.dev serves OpenSSF Scorecard, deprecation, advisory and publish-age data free and unauthenticated.
+      # Fails only on material regressions against the reviewed baseline, not on absolute scores.
+      - name: Dependency health (deps.dev + OpenSSF Scorecard)
+        run: node strape/scripts/dep-health.mjs --check strape/audit/dep-health-v0.84.1.json
+
+      # Repo/commit/builder behind each attested tarball. A change for the SAME version means a republish.
+      - name: Provenance linkage
+        run: node strape/scripts/provenance.mjs --check strape/audit/provenance-v0.84.1.json
+
+      # Independent second opinion on the hand-rolled SBOM generator.
+      - name: SBOM cross-check against Syft
+        run: |
+          node strape/scripts/fetch-tool.mjs syft
+          node strape/scripts/sbom-crosscheck.mjs
+
+      # The only tool here needing an account: no-ops until SOCKET_API_KEY exists, then enforces.
+      #
+      # Gates on DRIFT against a reviewed baseline, not on the presence of an alert. Socket reports true
+      # things about reviewed packages — undici does network access, cross-spawn does shell access — so the
+      # absolute form flagged 103 alerts on the real closure with not one finding among them. The baseline
+      # makes "undici gained shellAccess" loud and "undici does network" silent, which is what the tool is
+      # for. A short always-blocking set (malware, typosquat, installScripts, …) still fires regardless.
+      #
+      # ORDER MATTERS: commit strape/audit/socket-<pin>.json BEFORE adding the SOCKET_API_KEY secret. With a
+      # key and no baseline this step errors; with neither it no-ops.
+      - name: Socket.dev behavioural diff
+        env:
+          SOCKET_API_KEY: ${{ secrets.SOCKET_API_KEY }}
+        run: node strape/scripts/socket-scan.mjs --check strape/audit/socket-v0.84.1.json
+
+      - name: Capability drift
+        run: node strape/scripts/capability-sweep.mjs --check strape/audit/capability-sweep-v0.84.1.json
+
+      # LAST on purpose, and it stays a hard failure. This is a policy gate — "has a human cleared every
+      # shipped package?" — not detection, and it is red for as long as any verdict is outstanding. Ahead of
+      # the scanners it suppressed all eight of them, so the daily run reported nothing on precisely the days
+      # a new or bumped package appeared, which is when OSV, GuardDog and provenance have the most to say.
+      # strape-build.yml keeps this gate early, where failing fast before a 3-minute build is the point; here
+      # the job is to gather every signal first and then state the policy verdict.
+      - name: Reviewed-dependencies gate
+        run: node strape/scripts/reviewed-deps.mjs --report
+
+  # SEPARATE JOB, and deliberately NOT egress-blocked. GuardDog's package-metadata detectors are the half of
+  # the tool the artifact pass cannot reach: scanning a local path runs source-code rules only, because
+  # metadata rules need registry metadata. That gap was silent — 8 of GuardDog's rules never ran, including
+  # the two that detect a maintainer's email domain lapsing, which is the 2025 chalk/debug vector.
+  #
+  # Why its own job with egress-policy audit rather than a step in `scan`:
+  # those two email detectors do DNS and WHOIS lookups, and WHOIS is TCP/43. The `scan` job allows :443 only,
+  # so under that policy they would not error — they would silently find nothing, and a rule that cannot fire
+  # looks exactly like a rule with nothing to report. Splitting the job keeps `scan` strictly blocked while
+  # letting these eight rules actually execute. The exception is narrow, visible, and stated here rather than
+  # discovered later from an allowlist that quietly grew.
+  metadata-sweep:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Harden runner
+        uses: step-security/harden-runner@4d991eb9b905ef189e4c376166672c3f2f230481 # v2.11.0
+        with:
+          egress-policy: audit
+
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Setup Node
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 22
+
+      # No npm ci: this pass reads the shrinkwrap and talks to the registry. It never needs node_modules.
+      - name: Install GuardDog
+        run: |
+          python3 -m venv strape/tools/guarddog-venv
+          strape/tools/guarddog-venv/bin/pip install --quiet guarddog
+
+      # ~3 minutes for 50 packages. Fails on a NEW metadata finding, on a package missing from the baseline,
+      # and on lost coverage — a package that scanned cleanly at baseline and does not scan now.
+      - name: GuardDog package-metadata sweep
+        run: node strape/scripts/guarddog-metadata.mjs --check strape/audit/guarddog-metadata-v0.84.1.json

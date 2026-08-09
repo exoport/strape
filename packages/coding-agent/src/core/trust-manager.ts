@@ -142,7 +142,14 @@ function acquireTrustLockSync(path: string): () => void {
 
 	for (let attempt = 1; attempt <= maxAttempts; attempt++) {
 		try {
-			return lockfile.lockSync(trustDir, { realpath: false, lockfilePath: `${path}.lock` });
+			// strape hunk 16: proper-lockfile reclaims a lock purely on AGE (default 10s, lib/lockfile.js:52).
+			// A legitimate holder that stalls past it — slow disk, GC pause, SIGSTOP, laptop suspend — has its lock
+			// stolen while it still believes it holds one, and only the ORIGINAL holder is told (via onCompromised);
+			// the thief proceeds normally. These files are auth, trust and settings, so a double writer is a
+			// correctness problem, not a cosmetic one. 30s matches what auth-storage's async path already chose
+			// deliberately; the retry loop above still gives up after ~200ms, so this only governs when an existing
+			// lock is judged abandoned.
+			return lockfile.lockSync(trustDir, { realpath: false, lockfilePath: `${path}.lock`, stale: 30_000 });
 		} catch (error) {
 			const code =
 				typeof error === "object" && error !== null && "code" in error
