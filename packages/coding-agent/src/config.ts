@@ -1,4 +1,4 @@
-import { accessSync, constants, existsSync, readFileSync, realpathSync } from "fs";
+import { accessSync, chmodSync, constants, existsSync, mkdirSync, readFileSync, realpathSync, statSync } from "fs";
 import { homedir } from "os";
 import { basename, dirname, join, resolve, sep, win32 } from "path";
 import { fileURLToPath } from "url";
@@ -518,6 +518,52 @@ export function getAgentDir(): string {
 		return expandTildePath(envDir);
 	}
 	return join(homedir(), CONFIG_DIR_NAME, "agent");
+}
+
+/**
+ * strape (hunk 12): the agent directory must not be group- or world-accessible.
+ *
+ * Four writers can create `~/${CONFIG_DIR_NAME}` and `~/${CONFIG_DIR_NAME}/agent`, all with the ambient
+ * umask: `core/trust-manager.ts` (trust.json and its lock dir), `core/settings-manager.ts` (settings.json),
+ * `core/session-manager.ts` (session dirs, created recursively so they make the parents too), and
+ * `migrations.ts`. At umask 022 that is 0755; at umask 002 — the default on Debian/Ubuntu and inside many
+ * container images — it is **0775**, group-writable. User-scope extensions load from that directory with no
+ * trust gate, so on a umask-002 machine another local account can drop in an extension that runs on the next
+ * start. `auth.json` gets a `chmod` after being written, but nothing fixes a directory, and nothing fixes a
+ * file or directory that already exists.
+ *
+ * Called once from `main()` before anything reads or writes there, so the recursive `mkdirSync` calls above
+ * only ever create leaves *inside* an already-0700 directory — which is why they need no change themselves.
+ *
+ * Only the default location is hardened up to its parent. With `${ENV_AGENT_DIR}` pointing somewhere else,
+ * `dirname()` is a directory the user chose for their own reasons (`~/work/agent` would mean chmodding
+ * `~/work`), so we harden the agent dir alone and leave the parent to its owner.
+ */
+export function ensureAgentDirPermissions(agentDir: string = getAgentDir()): void {
+	// POSIX modes do not carry on Windows; chmod there is a no-op at best and misleading at worst.
+	if (process.platform === "win32") return;
+
+	const defaultAgentDir = join(homedir(), CONFIG_DIR_NAME, "agent");
+	const dirs = agentDir === defaultAgentDir ? [dirname(defaultAgentDir), defaultAgentDir] : [agentDir];
+
+	for (const dir of dirs) {
+		try {
+			if (!existsSync(dir)) {
+				mkdirSync(dir, { recursive: true, mode: 0o700 });
+				continue;
+			}
+			// Group/other bits, whatever they are. Repaired every start, not just at creation, because the
+			// directory usually predates this check.
+			if (statSync(dir).mode & 0o077) {
+				chmodSync(dir, 0o700);
+			}
+		} catch (error) {
+			// Never fatal: a read-only or exotic filesystem must not stop the agent from starting.
+			console.error(
+				`Warning: could not restrict permissions on ${dir}: ${error instanceof Error ? error.message : String(error)}`,
+			);
+		}
+	}
 }
 
 /** Get path to user's custom themes directory */

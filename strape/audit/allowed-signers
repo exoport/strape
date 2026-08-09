@@ -1,0 +1,15 @@
+# Keys permitted to sign strape release tags (git's SSH allowed-signers format).
+#
+# WHY THIS IS IN THE AUDIT RECORD, not ~/.ssh
+# strape/audit/ answers "who cleared this tree, and how would you check?". Who may SIGN a release is the
+# same class of question, so it belongs next to the review attestation rather than in one machine's dotfiles.
+# Committed, so `git tag -v strape-v*` verifies against a reviewed list instead of whatever the local
+# checkout happens to trust.
+#
+# Format: <principal> <key-type> <key>
+# Point git at it with:  git config gpg.ssh.allowedSignersFile strape/audit/allowed-signers
+#
+# The release ARTIFACT is still unsigned — a .sha256 published beside it proves the download was not
+# corrupted, not who produced it. Keyless sigstore signing in strape-release.yml is the backlog item that
+# closes that; this file only makes the tag verifiable.
+diegos@exo.com.ar ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDGwCka7ATCe0KmQ93u9xI/hk+VF+wsx5NAqtMFw0l4bRX7eAI5KAEkdDVzWgF4JwiPI9dIt8LLkMRU7qEDsr7Xw8OXz6mRxVVoxshfDLAZMXavab2H6X4k+0jBlgiW8YVgHZ2EGNC15fZI2tFBWM+7H0IIDHJtj3Q6MoAXvGF3s2UWO/0Fsoacc+meaIfBxnmnBkghThJX3sa/uRs0NxbxaNYjYBTDlr0gl5Z7DhfdbtdaRHew3B+TjdDncudHNXQODkvu9tXm4I1vcOpYBbJyUQiw1fDxbsbNAb3RC+ht/MmZeDD6TRXMDBpFJmrV0isMxFEHziivQ2Bp7pZz56jjfZH7CFfO6xTimNLFBM3kb8p1cxb7oZJ+pA4OGkt7aQUfl9WMRj4D3ZPP6p70Ikgc51IxJ4CMdneUGYw3zxSlexOJf3zO/7nxrjCbanq8ooaGf1oikVTRTOZCnvah8ve/q+PDU/Am8Py8ilLsjWbH8iRY6fAkhfPdCupmiGQcyZLpU4+m56MyeYOrtcvs5R3MlFgWFInV1p/np7I0kVCCrnCdgBo0+WC/kSdxELSERW3193sT2cFHapBHE5N+kFe2VTNeh7HmlRP+OWGrxRAbrhXEM2OD3AudsSWnHKUV08X6jE0LbPCMDVbFD7PxAPajDFJJnnPh5q0j5HXbKkMhDQ== id_rsa_202010: diegos@exo.com.ar

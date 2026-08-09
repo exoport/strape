@@ -1,0 +1,448 @@
+{
+	"tool": "guarddog (package metadata)",
+	"pin": "v0.84.1",
+	"packages": [
+		{
+			"name": "@mariozechner/clipboard-darwin-arm64",
+			"version": "0.3.9",
+			"id": "@mariozechner/clipboard-darwin-arm64@0.3.9",
+			"status": "scanned",
+			"findings": [],
+			"detail": []
+		},
+		{
+			"name": "@mariozechner/clipboard-darwin-universal",
+			"version": "0.3.9",
+			"id": "@mariozechner/clipboard-darwin-universal@0.3.9",
+			"status": "scanned",
+			"findings": [],
+			"detail": []
+		},
+		{
+			"name": "@mariozechner/clipboard-darwin-x64",
+			"version": "0.3.9",
+			"id": "@mariozechner/clipboard-darwin-x64@0.3.9",
+			"status": "scanned",
+			"findings": [],
+			"detail": []
+		},
+		{
+			"name": "@mariozechner/clipboard-linux-arm64-gnu",
+			"version": "0.3.9",
+			"id": "@mariozechner/clipboard-linux-arm64-gnu@0.3.9",
+			"status": "scanned",
+			"findings": [
+				"bundled_binary"
+			],
+			"detail": [
+				{
+					"rule": "bundled_binary",
+					"evidence": "\"Binary file/s detected in package:\\n38ce36bb76a741d23d3bcedafd4f84965ed9b7e12aef30f80cfb2b07035df0cf: clipboard.linux-arm64-gnu.node (elf)\""
+				}
+			]
+		},
+		{
+			"name": "@mariozechner/clipboard-linux-arm64-musl",
+			"version": "0.3.9",
+			"id": "@mariozechner/clipboard-linux-arm64-musl@0.3.9",
+			"status": "scanned",
+			"findings": [],
+			"detail": []
+		},
+		{
+			"name": "@mariozechner/clipboard-linux-riscv64-gnu",
+			"version": "0.3.9",
+			"id": "@mariozechner/clipboard-linux-riscv64-gnu@0.3.9",
+			"status": "scanned",
+			"findings": [
+				"bundled_binary"
+			],
+			"detail": [
+				{
+					"rule": "bundled_binary",
+					"evidence": "\"Binary file/s detected in package:\\nd84704254c53754279d400141df456f5ce12854fe647e948126e16870ca344af: clipboard.linux-riscv64-gnu.node (elf)\""
+				}
+			]
+		},
+		{
+			"name": "@mariozechner/clipboard-linux-x64-gnu",
+			"version": "0.3.9",
+			"id": "@mariozechner/clipboard-linux-x64-gnu@0.3.9",
+			"status": "scanned",
+			"findings": [
+				"bundled_binary"
+			],
+			"detail": [
+				{
+					"rule": "bundled_binary",
+					"evidence": "\"Binary file/s detected in package:\\n7e139dc91388dec1b482c0a833fcb4ddf6ba17a55ed9dd5e236b20026fa164dd: clipboard.linux-x64-gnu.node (elf)\""
+				}
+			]
+		},
+		{
+			"name": "@mariozechner/clipboard-linux-x64-musl",
+			"version": "0.3.9",
+			"id": "@mariozechner/clipboard-linux-x64-musl@0.3.9",
+			"status": "scanned",
+			"findings": [],
+			"detail": []
+		},
+		{
+			"name": "@mariozechner/clipboard-win32-arm64-msvc",
+			"version": "0.3.9",
+			"id": "@mariozechner/clipboard-win32-arm64-msvc@0.3.9",
+			"status": "scanned",
+			"findings": [
+				"bundled_binary"
+			],
+			"detail": [
+				{
+					"rule": "bundled_binary",
+					"evidence": "\"Binary file/s detected in package:\\nb27285c2563fbdbd9f981b5b84dd77d8ae9bd593647d4f933148b3ca67308989: clipboard.win32-arm64-msvc.node (exe)\""
+				}
+			]
+		},
+		{
+			"name": "@mariozechner/clipboard-win32-x64-msvc",
+			"version": "0.3.9",
+			"id": "@mariozechner/clipboard-win32-x64-msvc@0.3.9",
+			"status": "scanned",
+			"findings": [
+				"bundled_binary"
+			],
+			"detail": [
+				{
+					"rule": "bundled_binary",
+					"evidence": "\"Binary file/s detected in package:\\n2b75a71676a9054323a223c7853570fa44bf73a701d6c3160219ec0971052fd5: clipboard.win32-x64-msvc.node (exe)\""
+				}
+			]
+		},
+		{
+			"name": "@mariozechner/clipboard",
+			"version": "0.3.9",
+			"id": "@mariozechner/clipboard@0.3.9",
+			"status": "scanned",
+			"findings": [],
+			"detail": []
+		},
+		{
+			"name": "@opentelemetry/api",
+			"version": "1.9.0",
+			"id": "@opentelemetry/api@1.9.0",
+			"status": "scanned",
+			"findings": [],
+			"detail": []
+		},
+		{
+			"name": "@silvia-odwyer/photon-node",
+			"version": "0.3.4",
+			"id": "@silvia-odwyer/photon-node@0.3.4",
+			"status": "scanned",
+			"findings": [],
+			"detail": []
+		},
+		{
+			"name": "agent-base",
+			"version": "7.1.4",
+			"id": "agent-base@7.1.4",
+			"status": "scanned",
+			"findings": [],
+			"detail": []
+		},
+		{
+			"name": "balanced-match",
+			"version": "4.0.4",
+			"id": "balanced-match@4.0.4",
+			"status": "scanned",
+			"findings": [],
+			"detail": []
+		},
+		{
+			"name": "brace-expansion",
+			"version": "5.0.9",
+			"id": "brace-expansion@5.0.9",
+			"status": "scanned",
+			"findings": [],
+			"detail": []
+		},
+		{
+			"name": "chalk",
+			"version": "5.6.2",
+			"id": "chalk@5.6.2",
+			"status": "scanned",
+			"findings": [],
+			"detail": []
+		},
+		{
+			"name": "cross-spawn",
+			"version": "7.0.6",
+			"id": "cross-spawn@7.0.6",
+			"status": "scanned",
+			"findings": [],
+			"detail": []
+		},
+		{
+			"name": "debug",
+			"version": "4.4.3",
+			"id": "debug@4.4.3",
+			"status": "scanned",
+			"findings": [],
+			"detail": []
+		},
+		{
+			"name": "diff",
+			"version": "8.0.4",
+			"id": "diff@8.0.4",
+			"status": "scanned",
+			"findings": [],
+			"detail": []
+		},
+		{
+			"name": "get-east-asian-width",
+			"version": "1.6.0",
+			"id": "get-east-asian-width@1.6.0",
+			"status": "scanned",
+			"findings": [],
+			"detail": []
+		},
+		{
+			"name": "glob",
+			"version": "13.0.6",
+			"id": "glob@13.0.6",
+			"status": "scanned",
+			"findings": [],
+			"detail": []
+		},
+		{
+			"name": "graceful-fs",
+			"version": "4.2.11",
+			"id": "graceful-fs@4.2.11",
+			"status": "scanned",
+			"findings": [],
+			"detail": []
+		},
+		{
+			"name": "grok-mermaid",
+			"version": "0.2.2",
+			"id": "grok-mermaid@0.2.2",
+			"status": "scanned",
+			"findings": [],
+			"detail": []
+		},
+		{
+			"name": "highlight.js",
+			"version": "10.7.3",
+			"id": "highlight.js@10.7.3",
+			"status": "scanned",
+			"findings": [],
+			"detail": []
+		},
+		{
+			"name": "hosted-git-info",
+			"version": "9.0.3",
+			"id": "hosted-git-info@9.0.3",
+			"status": "scanned",
+			"findings": [],
+			"detail": []
+		},
+		{
+			"name": "http-proxy-agent",
+			"version": "7.0.2",
+			"id": "http-proxy-agent@7.0.2",
+			"status": "scanned",
+			"findings": [],
+			"detail": []
+		},
+		{
+			"name": "https-proxy-agent",
+			"version": "7.0.6",
+			"id": "https-proxy-agent@7.0.6",
+			"status": "scanned",
+			"findings": [],
+			"detail": []
+		},
+		{
+			"name": "ignore",
+			"version": "7.0.5",
+			"id": "ignore@7.0.5",
+			"status": "scanned",
+			"findings": [],
+			"detail": []
+		},
+		{
+			"name": "isexe",
+			"version": "2.0.0",
+			"id": "isexe@2.0.0",
+			"status": "scanned",
+			"findings": [],
+			"detail": []
+		},
+		{
+			"name": "jiti",
+			"version": "2.7.0",
+			"id": "jiti@2.7.0",
+			"status": "scanned",
+			"findings": [],
+			"detail": []
+		},
+		{
+			"name": "lru-cache",
+			"version": "11.4.0",
+			"id": "lru-cache@11.4.0",
+			"status": "scanned",
+			"findings": [],
+			"detail": []
+		},
+		{
+			"name": "marked",
+			"version": "18.0.5",
+			"id": "marked@18.0.5",
+			"status": "scanned",
+			"findings": [],
+			"detail": []
+		},
+		{
+			"name": "minimatch",
+			"version": "10.2.5",
+			"id": "minimatch@10.2.5",
+			"status": "scanned",
+			"findings": [],
+			"detail": []
+		},
+		{
+			"name": "minipass",
+			"version": "7.1.3",
+			"id": "minipass@7.1.3",
+			"status": "scanned",
+			"findings": [],
+			"detail": []
+		},
+		{
+			"name": "ms",
+			"version": "2.1.3",
+			"id": "ms@2.1.3",
+			"status": "scanned",
+			"findings": [],
+			"detail": []
+		},
+		{
+			"name": "openai",
+			"version": "6.26.0",
+			"id": "openai@6.26.0",
+			"status": "scanned",
+			"findings": [],
+			"detail": []
+		},
+		{
+			"name": "partial-json",
+			"version": "0.1.7",
+			"id": "partial-json@0.1.7",
+			"status": "scanned",
+			"findings": [],
+			"detail": []
+		},
+		{
+			"name": "path-key",
+			"version": "3.1.1",
+			"id": "path-key@3.1.1",
+			"status": "scanned",
+			"findings": [],
+			"detail": []
+		},
+		{
+			"name": "path-scurry",
+			"version": "2.0.2",
+			"id": "path-scurry@2.0.2",
+			"status": "scanned",
+			"findings": [],
+			"detail": []
+		},
+		{
+			"name": "proper-lockfile",
+			"version": "4.1.2",
+			"id": "proper-lockfile@4.1.2",
+			"status": "scanned",
+			"findings": [],
+			"detail": []
+		},
+		{
+			"name": "retry",
+			"version": "0.12.0",
+			"id": "retry@0.12.0",
+			"status": "scanned",
+			"findings": [
+				"metadata_mismatch"
+			],
+			"detail": [
+				{
+					"rule": "metadata_mismatch",
+					"evidence": "\"Difference between manifest and package.json found: \\nscripts: \\n  test: Manifest(\\\"istanbul cover ./node_modules/tape/bin/tape ./test/integration/*.js\\\"), package.json(\\\"./node_modules/.bin/istanbul cover ./node_modules/tape/bin/tape ./test/integration/*.js\\\") \\n\""
+				}
+			]
+		},
+		{
+			"name": "semver",
+			"version": "7.8.0",
+			"id": "semver@7.8.0",
+			"status": "scanned",
+			"findings": [],
+			"detail": []
+		},
+		{
+			"name": "shebang-command",
+			"version": "2.0.0",
+			"id": "shebang-command@2.0.0",
+			"status": "scanned",
+			"findings": [],
+			"detail": []
+		},
+		{
+			"name": "shebang-regex",
+			"version": "3.0.0",
+			"id": "shebang-regex@3.0.0",
+			"status": "scanned",
+			"findings": [],
+			"detail": []
+		},
+		{
+			"name": "signal-exit",
+			"version": "3.0.7",
+			"id": "signal-exit@3.0.7",
+			"status": "scanned",
+			"findings": [],
+			"detail": []
+		},
+		{
+			"name": "typebox",
+			"version": "1.3.7",
+			"id": "typebox@1.3.7",
+			"status": "scanned",
+			"findings": [],
+			"detail": []
+		},
+		{
+			"name": "undici",
+			"version": "8.9.0",
+			"id": "undici@8.9.0",
+			"status": "scanned",
+			"findings": [],
+			"detail": []
+		},
+		{
+			"name": "which",
+			"version": "2.0.2",
+			"id": "which@2.0.2",
+			"status": "scanned",
+			"findings": [],
+			"detail": []
+		},
+		{
+			"name": "yaml",
+			"version": "2.9.0",
+			"id": "yaml@2.9.0",
+			"status": "scanned",
+			"findings": [],
+			"detail": []
+		}
+	]
+}

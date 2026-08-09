@@ -443,6 +443,17 @@ async function loadExtensionModule(extensionPath: string, cacheToken?: Extension
 
 	const jiti = createJiti(import.meta.url, {
 		moduleCache: false,
+		// strape hunk 14: keep the transpile cache out of /tmp.
+		//
+		// jiti's fsCache defaults to ON and to os.tmpdir()/jiti. It writes TRANSPILED EXTENSION CODE there with
+		// umask-derived permissions (observed 775 dirs / 664 files under a world-writable /tmp) and later
+		// re-executes it via vm.runInThisContext on a bare content-hash marker match. Any local principal who
+		// can pre-create or write into that directory can therefore plant code strape will run with the
+		// developer's provider keys. Requires a hostile local user, but the fix is one line.
+		//
+		// getAgentDir() is the tree hunk 12 creates and repairs as 0700 before anything reads or writes there,
+		// so the cache inherits that protection from its parent rather than needing its own mode dance.
+		fsCache: path.join(getAgentDir(), "cache", "jiti"),
 		// Bun uses modules embedded in the executable. Source TypeScript reuses the
 		// host-resolved modules and root tsconfig paths. Built Node uses dist aliases.
 		...(isBunBinary

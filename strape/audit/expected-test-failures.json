@@ -1,0 +1,281 @@
+{
+	"$comment": "Tests that fail BY DESIGN because strape changes upstream behaviour. Any deviation from this exact set fails CI: a new failure is a regression, and an expected failure that starts passing means upstream changed the test and this entry needs re-examining. Never add an entry without a reason.",
+	"$environmentSensitive": {
+		"test/config.test.ts > detectInstallMethod > detects pnpm from Windows .pnpm install paths": {
+			"classifiedOn": "2026-08-09",
+			"previouslyRecordedAs": "hunk 1 (probable)",
+			"rootCause": "The test reaches getSelfUpdateCommandForMethod, whose pnpm branch SPAWNS a real package manager: packages/coding-agent/src/config.ts:126 calls readCommandOutput(\"pnpm\", [\"root\", \"-g\"]). Its runtime therefore depends on the host toolchain, not on anything strape changed.",
+			"observed": "On the recording machine pnpm is a Volta shim (~/.volta/bin/pnpm) and ./test.sh isolates HOME (test.sh:43), so Volta finds no tool image under the fake HOME and tries to provision one over the network — the test exceeds its 30s timeout. Reproduced 3/3 in the full suite, including on an otherwise idle machine, while passing 15/15 across three isolated runs of config.test.ts and passing on a GitHub runner.",
+			"whyExcluded": "Both outcomes are correct for their host. Asserting either one guarantees a permanently red gate on the other side, and a gate that is always red somewhere is one people stop reading. It is excluded in both directions and reported instead."
+		},
+		"test/openai-completions-tool-choice.test.ts > openai-completions tool_choice > sends max_tokens for OpenCode completions models": {
+			"classifiedOn": "2026-08-09",
+			"rootCause": "Decided by live third-party data, not by strape or by the adopted upstream tag. The test asserts compat.maxTokensField === \"max_tokens\" for opencode/opencode-go models. Upstream .gitignore:11 excludes packages/ai/src/providers/data/, so upstream generates the model catalog from models.dev at every build; hunk 6 vendors it so strape can build offline. models.dev changed those models API shape after v0.84.1 was tagged, so the assertion no longer holds — for upstream too, not just for strape.",
+			"observed": "Fails identically on every host and in CI as of 2026-08-09. The same drift produces a tsgo error at openai-completions-tool-choice.test.ts:1410. Full analysis in review-v0.84.1.md.",
+			"whyExcluded": "It will start passing again the moment models.dev or upstream realigns, with no strape change. Asserting either outcome makes the gate wrong on one side of that event. Excluded in both directions and reported instead. Re-check at the next sync: if it has realigned, delete this entry."
+		}
+	},
+	"pin": "v0.84.1",
+	"tests": {
+		"test/first-time-setup.test.ts > shouldRunFirstTimeSetup > returns true when experimental, default agent dir, and no settings.json": {
+			"reason": "Asserts shouldRunFirstTimeSetup() is true with experimental features on, the default agent dir and no settings.json (test:37). It returns false at the first guard: isOfficialDistribution({PACKAGE_NAME, APP_NAME, CONFIG_DIR_NAME}) is false for any fork (cli/startup-ui.ts:36-42, 115-124), and hunk 1 sets piConfig.name/configDir to strape/.strape. Documented as a deliberate side effect in strape/docs/HUNKS.md hunk 1: the first-run wizard is disabled and strape/scripts/claude-compat.mjs seeds settings instead. The three sibling tests asserting false all pass, which is what confirms the guard rather than the wiring is responsible.",
+			"hunk": 1
+		},
+		"test/package-command-paths.test.ts > package commands > allows explicit self-update checks when automatic version checks are disabled": {
+			"reason": "Asserts the stubbed fetch is called exactly once during `update --self` (test:487). Hunk 10 returns shouldRun:false at package-manager-cli.ts:492-505 BEFORE getLatestPiRelease, so pi.dev is never contacted — observed 'expected \"vi.fn()\" to be called once, but got 0 times'. That the version check never happens is the hunk, not a side effect of it.",
+			"hunk": "10"
+		},
+		"test/package-command-paths.test.ts > package commands > allows local package install to initialize fresh project settings": {
+			"reason": "The test reads join(projectDir, \".pi\", \"settings.json\") directly (test:351-352); hunk 1 sets piConfig.configDir to .strape, so `install -l` writes .strape/settings.json and the test's own readFileSync throws. Observed as ENOENT on .../project/.pi/settings.json at test:352 — a missing file in the pre-rebrand location, NOT a missing binary or a failed install: the settings were written one directory over. Intended rebrand.",
+			"hunk": 1
+		},
+		"test/package-command-paths.test.ts > package commands > approves project trust for list with --approve": {
+			"reason": "Seeds project packages into .pi/settings.json (test:189) and asserts stdout contains \"Project packages:\". Hunk 1 makes the project config dir .strape, so there are no project packages to list — observed 'expected \\'No packages installed.\\' to contain \\'Project packages:\\''. --approve grants trust correctly; there is simply nothing at the path it trusts. Intended rebrand.",
+			"hunk": 1
+		},
+		"test/package-command-paths.test.ts > package commands > blocks local package changes when project is untrusted": {
+			"reason": "Writes .pi/settings.json so the project counts as trust-requiring (test:334), then asserts the install is refused with \"Project is not trusted. Use --approve to modify local package config.\" and exitCode 1. Under hunk 1 the config dir is .strape, so hasTrustRequiringProjectResources(cwd) is false (core/project-trust.ts:50-52), the project is implicitly trusted and the command proceeds — observed 'expected \\'Error: Path does not exist: <tmp>\\' to contain \\'Project is not trusted…\\''. The trust boundary is intact; the test's marker file is in the pre-rebrand location. Note the FIRST-load path here is upstream's; the reload half of that boundary is hunk 11 and is pinned by trust-regression-test.mjs.",
+			"hunk": 1
+		},
+		"test/package-command-paths.test.ts > package commands > fails self-update when renamed npm package installation fails": {
+			"reason": "Same feature as the entry above (the renamed-package self-update path), asserting its failure branch. Unreachable once hunk 10 refuses self-update before the version check.",
+			"hunk": "10"
+		},
+		"test/package-command-paths.test.ts > package commands > installs the active package name from the update check during self-update": {
+			"reason": "Stubs fetch to return {packageName:\"@new-scope/pi\"} and asserts the CLI uninstalls itself and installs THAT name globally. Upstream intends this as a scope-rename migration path (the project really did move @mariozechner -> @earendil-works), which is reasonable for a first-party distribution. For a vendor fork it is a remote-controlled install outside the reviewed closure, so hunk 10 refuses self-update entirely and the test can no longer pass.",
+			"hunk": "10"
+		},
+		"test/package-command-paths.test.ts > package commands > prints a pnpm metadata hint when self-update fails": {
+			"reason": "Asserts process.exitCode is 1 after a pnpm self-update exits 23 (test:707). Hunk 10 refuses at package-manager-cli.ts:492-505 before any package manager is spawned, so nothing fails and the exit code stays undefined — observed 'expected undefined to be 1'. Same feature as the other hunk-10 entries, asserting its pnpm error branch.",
+			"hunk": "10"
+		},
+		"test/package-command-paths.test.ts > package commands > retries a transient self-update version check": {
+			"reason": "Asserts getLatestPiRelease is retried during `update --self`. Hunk 10 returns shouldRun:false before that fetch happens, so no request is made to retry.",
+			"hunk": "10"
+		},
+		"test/package-command-paths.test.ts > package commands > shows a friendly error for missing install source": {
+			"reason": "Asserts stderr contains \"Usage: pi install <source> [-l]\" (test:468), rendered from ${APP_NAME} by getPackageCommandUsage (package-manager-cli.ts:79-89) — upstream's own template, unchanged by strape. Observed 'expected \\'Missing install source.\\\\nUsage: strap…\\' to contain \\'Usage: pi install <source> [-l]\\''. Hunk 1 via APP_NAME, not hunk 3.",
+			"hunk": 1
+		},
+		"test/package-command-paths.test.ts > package commands > shows a friendly error for unknown install options": {
+			"reason": "Asserts stderr contains 'Use \"pi --help\" or \"pi install <source> [-l] [--approve|--no-approve]\".' (test:453). Emitted at package-manager-cli.ts:723, byte-identical to vendor v0.84.1:694 and already interpolating ${APP_NAME}; hunk 1 changes APP_NAME to strape. NOT hunk 3 — strape did not touch this string.",
+			"hunk": 1
+		},
+		"test/package-command-paths.test.ts > package commands > shows install subcommand help": {
+			"reason": "Asserts stdout contains the literal \"pi install <source> [-l]\" (test:368). That line is rendered from ${APP_NAME} by getPackageCommandUsage (package-manager-cli.ts:79-89), which is byte-identical to vendor v0.84.1 — it changes only because hunk 1 sets piConfig.name to strape. Observed 'expected \\'Usage:\\\\n  strape install <source> [-l…\\' to contain \\'pi install <source> [-l]\\''. NOT hunk 3: hunk 3 covers bare literals strape edited, and strape edited nothing here.",
+			"hunk": 1
+		},
+		"test/package-command-paths.test.ts > package commands > uses default project trust for list": {
+			"reason": "Sets defaultProjectTrust:\"always\" globally and seeds project packages into .pi/settings.json (test:206-208), then asserts stdout contains \"Project packages:\". Hunk 1 renames the project config dir to .strape, so the seeded packages are never read — observed 'expected \\'No packages installed.\\' to contain \\'Project packages:\\''. Intended rebrand.",
+			"hunk": 1
+		},
+		"test/package-command-paths.test.ts > package commands > uses project_trust extensions for package commands": {
+			"reason": "Registers an extension that answers the project_trust event with {trusted:\"yes\"} and asserts the project packages from .pi/settings.json are then listed (test:224-243). Hunk 1 makes the project config dir .strape, so the extension's grant applies to a project with no packages — observed 'expected \\'No packages installed.\\' to contain \\'Project packages:\\''. The extension hook itself is unaffected. Intended rebrand.",
+			"hunk": 1
+		},
+		"test/package-command-paths.test.ts > package commands > uses remembered project trust for list": {
+			"reason": "Persists trust for the project via ProjectTrustStore.set(projectDir, true) and asserts the packages in .pi/settings.json are listed (test:150-162). Hunk 1 renames the project config dir to .strape, so the remembered trust decision is honoured but resolves to a directory with no settings — observed 'expected \\'No packages installed.\\' to contain \\'Project packages:\\''. Intended rebrand.",
+			"hunk": 1
+		},
+		"test/package-command-paths.test.ts > package commands > uses saved project trust during update": {
+			"reason": "Writes packages + npmCommand into .pi/settings.json (test:296-299), persists trust, and asserts the fake npm actually ran via existsSync(recordPath) (test:306). Hunk 1 makes the project config dir .strape, so those project settings are never loaded, no update is dispatched and no record file is written — observed 'expected false to be true'. Intended rebrand.",
+			"hunk": 1
+		},
+		"test/package-command-paths.test.ts > package commands > uses the current package name when the update check omits packageName": {
+			"reason": "Asserts console.error is never called and that a self-update installs `${PACKAGE_NAME}@<newer patch>` globally (test:611-618). Hunk 10 refuses first and prints its three-line explanation (package-manager-cli.ts:493-501) — observed 'expected \"error\" to not be called at all, but actually been called 3 times'. Even this benign branch (same package name, newer version) is refused, because it still replaces a build pinned to a reviewed tag with upstream's latest npm publish.",
+			"hunk": "10"
+		},
+		"test/package-command-paths.test.ts > package commands > uses the update check version for forced self updates even when current": {
+			"reason": "Asserts console.error is never called and that --force reinstalls `${PACKAGE_NAME}@${VERSION}` globally (test:563-572). Hunk 10's guard prints its three-line refusal (package-manager-cli.ts:493-501) and returns shouldRun:false — observed 'expected \"error\" to not be called at all, but actually been called 3 times', i.e. exactly those three lines. --force does not bypass the guard, which is deliberate: --force is about version comparison, not about authorisation to install.",
+			"hunk": "10"
+		},
+		"test/package-manager.test.ts > DefaultPackageManager > auto-discovered skill metadata > should use the project .pi dir as baseDir for project .pi skills": {
+			"reason": "Test hardcodes the .pi config directory; hunk 1 renames it to .strape via piConfig, so the harness looks elsewhere. Intended rebrand.",
+			"hunk": 1
+		},
+		"test/package-manager.test.ts > DefaultPackageManager > ignore files > should not apply parent .gitignore to .pi auto-discovery": {
+			"reason": "Test hardcodes the .pi config directory; hunk 1 renames it to .strape via piConfig, so the harness looks elsewhere. Intended rebrand.",
+			"hunk": 1
+		},
+		"test/package-manager.test.ts > DefaultPackageManager > npmCommand > should install git package dependencies with --omit=dev": {
+			"reason": "Asserts the exact npm/bun/git install argv; hunk 9 appends --ignore-scripts so the argv no longer matches. The behaviour change is intended: runtime extension/skill installs must not run lifecycle scripts.",
+			"hunk": 9
+		},
+		"test/package-manager.test.ts > DefaultPackageManager > npmCommand > should install user npm packages into the pi-managed npm root": {
+			"reason": "Asserts the exact npm/bun/git install argv; hunk 9 appends --ignore-scripts so the argv no longer matches. The behaviour change is intended: runtime extension/skill installs must not run lifecycle scripts.",
+			"hunk": 9
+		},
+		"test/package-manager.test.ts > DefaultPackageManager > npmCommand > should reconcile an existing git checkout to a pinned ref during install": {
+			"reason": "Asserts the exact npm/bun/git install argv; hunk 9 appends --ignore-scripts so the argv no longer matches. The behaviour change is intended: runtime extension/skill installs must not run lifecycle scripts.",
+			"hunk": 9
+		},
+		"test/package-manager.test.ts > DefaultPackageManager > npmCommand > should repair deleted git package dependencies when cleaning fails": {
+			"reason": "Asserts the exact npm/bun/git install argv; hunk 9 appends --ignore-scripts so the argv no longer matches. The behaviour change is intended: runtime extension/skill installs must not run lifecycle scripts.",
+			"hunk": 9
+		},
+		"test/package-manager.test.ts > DefaultPackageManager > npmCommand > should repair missing git package dependencies when the checkout is already current": {
+			"reason": "Asserts the exact npm/bun/git install argv; hunk 9 appends --ignore-scripts so the argv no longer matches. The behaviour change is intended: runtime extension/skill installs must not run lifecycle scripts.",
+			"hunk": 9
+		},
+		"test/package-manager.test.ts > DefaultPackageManager > npmCommand > should update git package dependencies with --omit=dev": {
+			"reason": "Pre-creates the git checkout at join(tempDir, \".pi\", \"git\", …) (test:902) and asserts the dependency install runs as npm install --omit=dev with cwd set to it (test:923). Hunk 1 puts the PROJECT checkout under .strape/git/…, so the pre-created tree is invisible and the manager clones from scratch instead — observed 1st runCommand call is git clone https://github.com/user/repo …/.strape/git/github.com/user/repo. Hunk 9 also touches this path (getGitDependencyInstallArgs appends --ignore-scripts, core/package-manager.ts:1746-1751) but is never reached, so hunk 1 is the proximate cause. Contrast the sibling 'should install git package dependencies with --omit=dev', which uses agentDir and is the genuine hunk-9 case.",
+			"hunk": 1
+		},
+		"test/package-manager.test.ts > DefaultPackageManager > npmCommand > should use bun --cwd for npm package installs": {
+			"reason": "Asserts the exact npm/bun/git install argv; hunk 9 appends --ignore-scripts so the argv no longer matches. The behaviour change is intended: runtime extension/skill installs must not run lifecycle scripts.",
+			"hunk": 9
+		},
+		"test/package-manager.test.ts > DefaultPackageManager > npmCommand > should use npmCommand argv for npm installs": {
+			"reason": "Asserts the exact npm/bun/git install argv; hunk 9 appends --ignore-scripts so the argv no longer matches. The behaviour change is intended: runtime extension/skill installs must not run lifecycle scripts.",
+			"hunk": 9
+		},
+		"test/package-manager.test.ts > DefaultPackageManager > npmCommand > should use plain install for git package dependencies when npmCommand is configured": {
+			"reason": "Asserts the exact npm/bun/git install argv; hunk 9 appends --ignore-scripts so the argv no longer matches. The behaviour change is intended: runtime extension/skill installs must not run lifecycle scripts.",
+			"hunk": 9
+		},
+		"test/package-manager.test.ts > DefaultPackageManager > npmCommand > should use plain install through npmCommand argv when updating git package dependencies": {
+			"reason": "Same shape as the entry above with a configured npmCommand: pre-creates join(tempDir, \".pi\", \"git\", …) (test:993) and asserts the install runs through `mise exec node@20 -- pnpm install`. Hunk 1 moves the project checkout to .strape/git/…, so the manager clones instead — observed 1st runCommand call is git clone … /.strape/git/github.com/user/repo, not the mise argv. Hunk 9's --ignore-scripts on the configured-command branch is never reached.",
+			"hunk": 1
+		},
+		"test/package-manager.test.ts > DefaultPackageManager > offline mode and network timeouts > should batch npm updates per scope and run git updates in parallel while skipping pinned npm and current packages": {
+			"reason": "Installs three user packages under agentDir and two project packages under join(tempDir, \".pi\", \"npm\", \"node_modules\") (test:2288-2289), then asserts npm view runs 5 times — 3 user + 2 project. Hunk 1 makes the project npm root .strape/npm, so the two project packages are not discovered — observed 'expected \"runCommandCapture\" to be called 5 times, but got 3 times' at test:2373, i.e. exactly the user half. Intended rebrand.",
+			"hunk": 1
+		},
+		"test/package-manager.test.ts > DefaultPackageManager > offline mode and network timeouts > should migrate legacy user npm installs into the managed npm root during update": {
+			"reason": "Asserts the exact npm/bun/git install argv; hunk 9 appends --ignore-scripts so the argv no longer matches. The behaviour change is intended: runtime extension/skill installs must not run lifecycle scripts.",
+			"hunk": 9
+		},
+		"test/package-manager.test.ts > DefaultPackageManager > offline mode and network timeouts > should not run npm view during resolve for installed unpinned packages": {
+			"reason": "Installs a project package under join(tempDir, \".pi\", \"npm\", \"node_modules\", \"example\") and asserts its extension is discovered (test:2461) AND that npm view is not run while PI_OFFLINE=1 (test:2462). It fails at 2461, the discovery assertion: hunk 1 makes the project npm root .strape/npm so the extension is never found. The offline assertion is not reached and PI_OFFLINE is NOT implicated — worth stating because PI_OFFLINE is a split state (fails open at utils/tools-manager.ts:14 and core/package-manager.ts:42) and is an easy wrong answer here.",
+			"hunk": 1
+		},
+		"test/package-manager.test.ts > DefaultPackageManager > offline mode and network timeouts > should report updates for installed unpinned npm packages": {
+			"reason": "Installs example@1.0.0 under join(tempDir, \".pi\", \"npm\", \"node_modules\") and asserts checkForAvailableUpdates reports it with scope \"project\" (test:2497). Hunk 1 makes the project npm root .strape/npm, so nothing is installed as far as the manager is concerned — observed [] instead of the one-element array. Intended rebrand.",
+			"hunk": 1
+		},
+		"test/package-manager.test.ts > DefaultPackageManager > offline mode and network timeouts > should skip project npm update when installed version matches latest": {
+			"reason": "Installs example@1.3.1 under join(tempDir, \".pi\", \"npm\", \"node_modules\") and asserts `update(\"npm:example\")` runs npm view before deciding to skip (test:2239). Hunk 1 moves the project npm root to .strape/npm, so the package is not registered and update resolves nothing — observed 'Number of calls: 0'. Intended rebrand.",
+			"hunk": 1
+		},
+		"test/package-manager.test.ts > DefaultPackageManager > offline mode and network timeouts > should update npm range packages using the configured spec": {
+			"reason": "Installs example@1.0.0 under join(tempDir, \".pi\", \"npm\", \"node_modules\") and asserts npm view runs for the configured range (test:2214) and then that npm installs into join(tempDir, \".pi\", \"npm\"). Hunk 1 makes the project npm root .strape/npm, so update finds nothing — observed 'Number of calls: 0' at 2214. The later argv assertion would also fail under hunk 9 (--ignore-scripts) and on the --prefix path, but neither is reached.",
+			"hunk": 1
+		},
+		"test/package-manager.test.ts > DefaultPackageManager > resolve > should auto-discover project prompts with overrides": {
+			"reason": "Writes a prompt to join(tempDir, \".pi\", \"prompts\", \"is.md\") and asserts resolve() returns it disabled by the \"!prompts/is.md\" override (test:262). Hunk 1 auto-discovers project prompts from .strape/prompts, so the prompt is never seen — observed 'expected false to be true'. Intended rebrand.",
+			"hunk": 1
+		},
+		"test/package-manager.test.ts > DefaultPackageManager > resolve > should resolve project paths relative to .pi": {
+			"reason": "Test hardcodes the .pi config directory; hunk 1 renames it to .strape via piConfig, so the harness looks elsewhere. Intended rebrand.",
+			"hunk": 1
+		},
+		"test/package-manager.test.ts > DefaultPackageManager > resolve > should resolve symlinked user and project resources once": {
+			"reason": "Symlinks one shared directory into BOTH the agent dir and join(tempDir, \".pi\", …) for extensions/skills/prompts/themes, asserts each resolves exactly once, and asserts the survivor is scoped \"project\" because project auto-discovery outranks user (test:240-242). Under hunk 1 the project side is .strape, so only the user symlinks resolve: the counts still pass (1 each) and only the scope differs — observed 'expected \\'user\\' to be \\'project\\''. That the symlinked directories resolve at all confirms hunk 8 is NOT implicated: hunk 8 refuses symlinked CONTEXT FILES in core/resource-loader.ts, not resource directories.",
+			"hunk": 1
+		},
+		"test/resource-loader.test.ts > DefaultResourceLoader > reload > should discover APPEND_SYSTEM.md": {
+			"reason": "Writes join(cwd, \".pi\", \"APPEND_SYSTEM.md\") and asserts getAppendSystemPrompt() contains its text (test:472). Hunk 1 discovers it from .strape/APPEND_SYSTEM.md instead — observed 'expected [] to include \\'Additional instructions.\\''. Intended rebrand.",
+			"hunk": 1
+		},
+		"test/resource-loader.test.ts > DefaultResourceLoader > reload > should discover SYSTEM.md from cwd/.pi": {
+			"reason": "Test hardcodes the .pi config directory; hunk 1 renames it to .strape via piConfig, so the harness looks elsewhere. Intended rebrand.",
+			"hunk": 1
+		},
+		"test/resource-loader.test.ts > DefaultResourceLoader > reload > should keep both extensions loaded when command names collide": {
+			"reason": "Writes an extension into the agent dir and another into join(cwd, \".pi\", \"extensions\") that register the same /deploy command, and asserts BOTH load and are disambiguated as deploy:1 / deploy:2 (test:276). Hunk 1 makes the project config dir .strape, so only the user extension loads — observed 'expected […] to have a length of 2 but got 1'. The collision-handling code is never exercised, not broken. Intended rebrand.",
+			"hunk": 1
+		},
+		"test/resource-loader.test.ts > DefaultResourceLoader > reload > should load symlinked user and project extensions once": {
+			"reason": "Symlinks one shared extensions directory into both the agent dir and join(cwd, \".pi\", \"extensions\") and asserts the single surviving entry is the PROJECT alias, because mergePaths processes project before user (test:188). Hunk 1 makes the project config dir .strape, so only the user symlink resolves — observed Expected …/project/.pi/extensions/shared.ts, Received …/agent/extensions/shared.ts. The dedupe-to-one behaviour still holds. NOT hunk 8: hunk 8 refuses symlinked context files (CLAUDE.md and friends), not symlinked resource directories, and this symlink resolved.",
+			"hunk": 1
+		},
+		"test/resource-loader.test.ts > DefaultResourceLoader > reload > should load user extensions before trust and reuse them after trust resolves": {
+			"reason": "Asserts that after reload({resolveProjectTrust}) both the user extension and join(cwd, \".pi\", \"extensions\", \"project.ts\") are loaded, and that the user one loaded exactly once (test:231-235). Hunk 1 makes the project config dir .strape, so the project extension does not exist — observed the received array is missing only the …/project/.pi/extensions/project.ts element. NOT hunk 11: this is a first load with an explicit resolveProjectTrust callback, which is exactly the case hunk 11's guard stands aside for (core/resource-loader.ts shouldRevokeImplicitProjectTrust); the pre-trust assertion inside the callback still passes.",
+			"hunk": 1
+		},
+		"test/resource-loader.test.ts > DefaultResourceLoader > reload > should prefer project resources over user on name collisions": {
+			"reason": "Writes colliding prompt/skill/theme pairs into the agent dir and into join(cwd, \".pi\", …) (test:103-146) and asserts the PROJECT copy wins. Hunk 1 makes the project config dir .strape, so only the user copy exists and it wins by default — observed Expected …/project/.pi/prompts/commit.md, Received …/agent/prompts/commit.md at test:152. Precedence itself is unchanged; there is no project candidate to prefer. Intended rebrand.",
+			"hunk": 1
+		},
+		"test/resource-loader.test.ts > DefaultResourceLoader > system prompt sources > exposes discovered APPEND_SYSTEM.md as an append system prompt source": {
+			"reason": "Writes join(cwd, \".pi\", \"APPEND_SYSTEM.md\") and asserts getAppendSystemPrompt() and getAppendSystemPromptSources() both report it (test:529-530). Hunk 1 looks in .strape/APPEND_SYSTEM.md — observed 'expected [] to deeply equal [ \\'Project append prompt.\\' ]'. Intended rebrand.",
+			"hunk": 1
+		},
+		"test/resource-loader.test.ts > DefaultResourceLoader > system prompt sources > exposes discovered project SYSTEM.md as the system prompt source": {
+			"reason": "Writes join(cwd, \".pi\", \"SYSTEM.md\") and asserts it becomes the system prompt and its source path (test:486-487). Hunk 1 looks in .strape/SYSTEM.md — observed 'expected undefined to be \\'Project system prompt.\\''. Intended rebrand.",
+			"hunk": 1
+		},
+		"test/settings-manager-bug.test.ts > SettingsManager - External Edit Preservation > should let in-memory project changes override external changes for the same project field": {
+			"reason": "Same setup as the entry above, asserting that for a field changed in BOTH places the in-memory value wins (test:145). Hunk 1 makes the project config dir .strape, so the manager never merges the external .pi file — observed 'expected [ \\'./external-extension.ts\\' ] to deeply equal [ \\'./in-memory-extension.ts\\' ]'. Intended rebrand.",
+			"hunk": 1
+		},
+		"test/settings-manager-bug.test.ts > SettingsManager - External Edit Preservation > should preserve external project settings changes when updating unrelated project field": {
+			"reason": "Externally edits join(projectDir, \".pi\", \"settings.json\") behind the manager's back, updates an unrelated field, and asserts the external edit survives the write (test:123). Hunk 1 makes the project config dir .strape, so the manager reads and writes a different file and the externally edited one is untouched — observed 'expected [ \\'./old-extension.ts\\' ] to deeply equal [ \\'./updated-extension.ts\\' ]'. Intended rebrand.",
+			"hunk": 1
+		},
+		"test/settings-manager.test.ts > SettingsManager > error tracking > should collect and clear load errors via drainErrors": {
+			"reason": "Writes invalid JSON to BOTH the global settings and join(projectDir, \".pi\", \"settings.json\") and asserts drainErrors() returns two entries, one per scope (test:229-230). Hunk 1 makes the project config dir .strape, so only the global file is loaded and only its parse error is collected — observed 'expected [ { scope: \\'global\\' … } ] to have a length of 2 but got 1'. Error collection works; there is one fewer file to fail on. Intended rebrand.",
+			"hunk": 1
+		},
+		"test/settings-manager.test.ts > SettingsManager > getSessionDir > should return project sessionDir, overriding global": {
+			"reason": "Sets sessionDir in the global settings and in join(projectDir, \".pi\", \"settings.json\") and asserts the project value wins (test:537). Hunk 1 makes the project config dir .strape, so the project file is never read and the global value stands — observed 'expected \\'/global/sessions\\' to be \\'./sessions\\''. NOT hunk 7, despite sessionDir being exactly hunk 7's subject: hunk 7 changed how main.ts CONSTRUCTS the startup SettingsManager, while this test calls SettingsManager.create(projectDir, agentDir) directly, where projectTrusted still defaults to true (core/settings-manager.ts:332, unchanged from vendor — the only divergence in that file is hunk 16's lock stale value). The manager here is trusted; the file is simply elsewhere.",
+			"hunk": 1
+		},
+		"test/settings-manager.test.ts > SettingsManager > httpIdleTimeoutMs > should use merged global and project settings": {
+			"reason": "Sets httpIdleTimeoutMs 300000 globally and 0 in join(projectDir, \".pi\", \"settings.json\"), asserting the merged value is the project's 0 (test:346). Hunk 1 makes the project config dir .strape, so only the global value is merged — observed 'expected 300000 to be +0'. Merge precedence is unchanged. Intended rebrand.",
+			"hunk": 1
+		},
+		"test/settings-manager.test.ts > SettingsManager > project settings directory creation > should create .pi folder when writing project settings": {
+			"reason": "Test hardcodes the .pi config directory; hunk 1 renames it to .strape via piConfig, so the harness looks elsewhere. Intended rebrand.",
+			"hunk": 1
+		},
+		"test/settings-manager.test.ts > SettingsManager > project trust > should reload project settings after trust changes to true": {
+			"reason": "Creates the manager with projectTrusted:false, calls setProjectTrusted(true), and asserts the theme from join(projectDir, \".pi\", \"settings.json\") is picked up on the reload (test:255). Hunk 1 makes the project config dir .strape, so the reload finds no project settings and the global theme stands — observed 'expected \\'global\\' to be \\'project\\''. isProjectTrusted() is true at test:254, so the trust transition itself works; only the file location differs. Intended rebrand.",
+			"hunk": 1
+		},
+		"test/stdout-cleanliness.test.ts > stdout cleanliness in non-interactive modes > keeps stdout empty for --mode json --help while routing trusted startup chatter to stderr": {
+			"reason": "Seeds packages + a fake npmCommand into join(projectDir, \".pi\", \"settings.json\") (test:32,47) and asserts stderr carries that install's chatter (\"changed 1 package in 471ms\") while stdout stays empty. Hunk 1 makes the project config dir .strape, so no project package is installed and no chatter is produced — observed stderr contains only the help output, 'expected \\'strape - AI coding assistant with rea…\\' to contain \\'changed 1 package in 471ms\\''. The stdout-cleanliness property under test still holds: stdout is empty. NOT hunk 3, despite \"strape\" appearing in the observed string — that is just the help banner the assertion happened to capture, and triage-expectations.mjs mis-suggests hunk 3 here for exactly that reason.",
+			"hunk": 1
+		},
+		"test/stdout-cleanliness.test.ts > stdout cleanliness in non-interactive modes > keeps stdout empty for -p --help while routing trusted startup chatter to stderr": {
+			"reason": "Identical to the --mode json entry above, for -p --help --approve (test:113-122). Hunk 1 makes the project config dir .strape, so the .pi-seeded package never installs and its chatter never reaches stderr. stdout is still empty, so the assertion the test is named for still passes. Intended rebrand.",
+			"hunk": 1
+		},
+		"test/suite/regressions/2781-skill-collision-precedence.test.ts > issue #2781 skill collision precedence: user skills should override package skills > project auto-discovered skill should override package skill with same name": {
+			"reason": "Writes a project skill to join(cwd, \".pi\", \"skills\", \"web-fetch\") and asserts it outranks the package-provided skill of the same name (test:87). Hunk 1 auto-discovers project skills from .strape/skills, so the package skill survives — observed Expected …/project/.pi/skills/web-fetch/SKILL.md, Received …/fake-package-web-fetch/skills/web-fetch/SKILL.md. The precedence fix for issue #2781 is unaffected; there is no project candidate. Intended rebrand.",
+			"hunk": 1
+		},
+		"test/suite/regressions/2781-skill-collision-precedence.test.ts > issue #2781 skill collision precedence: user skills should override package skills > project skill should override user skill which should override package skill": {
+			"reason": "Three-way precedence check asserting the project skill under join(cwd, \".pi\", \"skills\") beats the user skill, which beats the package skill (test:103). Hunk 1 makes the project config dir .strape, so the user skill wins — observed Received …/agent/skills/web-fetch/SKILL.md. The user-over-package half of the ordering still holds, which is the part issue #2781 was about. Intended rebrand.",
+			"hunk": 1
+		},
+		"test/suite/regressions/2791-fswatch-error-crash.test.ts > issue #2791 fs.watch error event crashes process > process should survive an error event on the theme FSWatcher": {
+			"reason": "Spawns a child that sets PI_CODING_AGENT_DIR (test:54,93), calls setTheme(\"custom-test\", true), then looks for the FSWatcher among active handles in order to emit a synthetic error on it. Hunk 1 renames the env var to STRAPE_CODING_AGENT_DIR (config.ts:495), so getCustomThemesDir() does not contain custom-test.json; theme.ts:919-921 only starts a watcher when the theme file exists, so no watcher is created and the child exits 2 at its own guard (test:62-65) — observed 'Child crashed (exit 2). stderr: no FSWatcher found among active handles'. The #2791 error handler itself is never exercised: this is the harness failing to set up, not the regression returning. Intended rebrand, but re-check this one at each sync — it is the one entry in the set whose failure mode LOOKS like a crash.",
+			"hunk": 1
+		},
+		"test/system-prompt.test.ts > buildSystemPrompt > default tools > instructs models to resolve pi docs and examples under absolute base paths": {
+			"reason": "Asserts the literal \"- When reading pi docs or examples, ...\". Hunk 3 rebrands that line (and three others in the same block) because the system prompt is what the model is told it is, and the block otherwise introduced itself as \"strape documentation\" and then said \"pi\" four times. Cost of the fix, accepted deliberately.",
+			"hunk": "3"
+		},
+		"test/theme-export.test.ts > getThemeExportColors > resolves export variable references using the same syntax as colors": {
+			"reason": "Sets process.env.PI_CODING_AGENT_DIR (test:24-26) and writes a custom theme into that directory's themes/ folder, then asserts getThemeExportColors resolves its export vars (test:65). Hunk 1 derives the agent-dir env var name from APP_NAME — ENV_AGENT_DIR is `${APP_NAME.toUpperCase()}_CODING_AGENT_DIR`, i.e. STRAPE_CODING_AGENT_DIR (config.ts:495) — so PI_CODING_AGENT_DIR is ignored, getCustomThemesDir() points at the real ~/.strape/agent/themes, and the theme is never found. Observed 'expected {} to deeply equal { pageBg: \\'#112233\\', … }'. A second, distinct face of hunk 1: the env var name, not the config dir.",
+			"hunk": 1
+		},
+		"test/theme-export.test.ts > getThemeExportColors > resolves recursive vars and converts 256-color export values to hex": {
+			"reason": "Same mechanism as the entry above: the custom theme is written under process.env.PI_CODING_AGENT_DIR, which hunk 1 renames to STRAPE_CODING_AGENT_DIR (config.ts:495), so getCustomThemesDir() never sees it — observed 'expected {} to deeply equal { pageBg: \\'#abcdef\\', … }' at test:98. Intended rebrand.",
+			"hunk": 1
+		},
+		"test/theme-picker.test.ts > theme picker > uses custom theme content names instead of file names": {
+			"reason": "Stubs PI_CODING_AGENT_DIR (test:23) and writes themes/foo.json whose content name is \"bar\", asserting getAvailableThemes() lists \"bar\" and not \"foo\" (test:46). Hunk 1 renames the env var to STRAPE_CODING_AGENT_DIR (config.ts:495), so getCustomThemesDir() resolves elsewhere and only the built-ins are listed — observed 'expected [ \\'dark\\', \\'light\\' ] to include \\'bar\\''. Intended rebrand.",
+			"hunk": 1
+		},
+		"test/trust-manager.test.ts > ProjectTrustStore > detects trust-requiring project resources": {
+			"reason": "Asserts hasTrustRequiringProjectResources() flips to true once join(tempDir, \".pi\", \"settings.json\") exists (test:49). Hunk 1 makes the config dir .strape, so that file is not a trust-requiring resource — observed 'expected false to be true'. The detector is intact and keys off CONFIG_DIR_NAME; the test's marker is in the pre-rebrand location. Its sibling assertion for .agents/skills, which hunk 1 does not rename, passes.",
+			"hunk": 1
+		},
+		"test/credential-print.test.ts > credential print commands > reports unknown auth options like package commands": {
+			"reason": "Hunk 3. Upstream v0.84.1 moved the auth CLI into the new cli/auth-command.ts and re-hardcoded \"pi auth\"; strape rebrands it to ${APP_NAME}. This test asserts the literal 'Use \"pi --help\" or \"pi auth check --provider <provider> [--json] [--credentials] [--no-refresh]\".', so it pins the string the rebrand deliberately changes. Same class as the system-prompt.test.ts entry: the cost of hunk 3 is upstream tests that assert the old name.",
+			"hunk": "3"
+		}
+	}
+}

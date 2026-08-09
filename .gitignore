@@ -8,7 +8,6 @@ dist/
 packages/*/dist/
 packages/*/dist-chrome/
 packages/*/dist-firefox/
-packages/ai/src/providers/data/
 packages/ai/src/providers/.model-generation-*/
 *.cpuprofile
 
@@ -19,10 +18,15 @@ packages/ai/src/providers/.model-generation-*/
 .vscode/
 .zed/
 .idea/
-.claude/
+.claude/*
+# strape (hunk 6): the review-process skills are tracked deliverables, not editor state.
+# Note `.claude/*` above, not `.claude/` — git does not descend into an excluded DIRECTORY, so a negation
+# inside one never applies and new skill files would be silently ignored.
+!.claude/skills/
 *.swp
 *.swo
 *~
+_output/
 
 # Package specific
 .npm/
@@ -42,3 +46,7 @@ plans/
 .pi/hf-sessions/
 .pi/hf-sessions-backup/
 collect.sh
+strape/tools/osv-scanner
+strape/tools/guarddog-venv/
+strape/tools/syft
+strape/tools/cosign
