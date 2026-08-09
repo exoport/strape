@@ -1,0 +1,779 @@
+{
+	"$comment": "THE DEPENDENCY BUILD GATE. Every external package in the shipped closure (packages/coding-agent/npm-shrinkwrap.json) must appear here with a matching integrity hash and verdict \"allow\", or strape does not build (strape/scripts/reviewed-deps.mjs). Verdicts, tiers, capabilities and notes below were produced by an AGENT dependency review of the INSTALLED TARBALLS under node_modules (not upstream GitHub repos), recorded in strape/audit/dep-review-v0.84.0.md. An agent review is EVIDENCE, NOT SIGN-OFF: reviewedBy and reviewedAt are deliberately null on every entry and must be filled in by a human who has read the report and resolved each \"escalate\". Verdict \"escalate\" means a reviewer raised a concern, an adversarial second pass contradicted the first, or the artifact could not be read (native binaries, minified entry points) — those entries intentionally keep the gate failing until a human decides. Do not flip an escalate to allow without recording the reasoning in dep-review-v0.84.0.md. Tiers: A = high-consequence or capability-bearing (read in depth, 4 also got an adversarial second pass), B = small single-purpose utilities read in full, C = too large or not source-readable to review exhaustively (openai SDK, WASM, prebuilt native binaries) — the C boundary is stated plainly in the report.",
+	"pin": "v0.84.1",
+	"packages": {
+		"@mariozechner/clipboard-darwin-arm64@0.3.9": {
+			"verdict": "allow",
+			"decision": "DECISION 2026-08-08 — ACCEPT. One policy call applied to all 13 Tier C artifacts. The assurance actually available for a prebuilt binary is: the exact version pinned by sha512, zero lifecycle scripts (verified directly, not inferred), publisher provenance, and a narrow reviewed call site. Reviewing stripped machine code from node_modules is not achievable, and per-platform reproducible builds of clipboard-rs are disproportionate to the threat this fork models. Recorded as accepted risk in SECURITY-BACKLOG.md Part 3. CONDITIONS: any version bump is a high-scrutiny event — re-verify integrity and provenance rather than re-trusting the maintainer. The NAPI_RS_NATIVE_LIBRARY_PATH override is out of scope: it presumes an attacker who already controls the developer's dotfiles, who has easier paths.",
+			"integrity": "sha512-BfgV7vCEWZwJwZJw03r6bP5+tf0iI/ANuQYCxi9RNn7FrWB3yzGuMKCrNLRl6V761vXRdL8+OqZ0wd4TqlsNOQ==",
+			"resolved": "https://registry.npmjs.org/@mariozechner/clipboard-darwin-arm64/-/clipboard-darwin-arm64-0.3.9.tgz",
+			"hasInstallScript": false,
+			"tier": "C",
+			"reviewedBy": "Diego Szychowski",
+			"reviewedAt": "2026-08-09",
+			"capabilities": [
+				"prebuilt native .node napi binary (stripped, compiled Rust) — clipboard read/write for one platform/arch/libc triple",
+				"no JS logic of its own; loaded by @mariozechner/clipboard's index.js when the host triple matches",
+				"binary contents not reviewable from node_modules"
+			],
+			"notes": "ESCALATE (Tier C: prebuilt native binary, verified by integrity hash only). Platform sidecar of @mariozechner/clipboard@0.3.9, published as an optionalDependency and selected at require time by the parent's NAPI-RS loader (index.js:63-524). Verified: package.json has ZERO lifecycle scripts (no preinstall/install/postinstall/prepare; only dev-only napi build/test/prepublishOnly), and the exact version is pinned by the sha512 in this entry. NOT verified and NOT verifiable from node_modules: the contents of the prebuilt .node binary, which is stripped compiled Rust. Only the linux-x64-gnu sidecar actually materialized with a binary on the review host (npm prunes by os/cpu/libc); its strings were inspected and matched the claimed clipboard-rs/x11rb/napi crate stack with no hardcoded network host. Every other sidecar — including linux-x64-musl, whose tarball is present as metadata only because its libc does not match this host — was audited at package.json/integrity level ONLY. A human must accept that all platform binaries shipped to other architectures are trusted on integrity pinning plus publisher provenance, not on inspection; the only way to raise that assurance is a reproducible build of clipboard-rs from the pinned upstream commit and a byte diff per platform."
+		},
+		"@mariozechner/clipboard-darwin-universal@0.3.9": {
+			"verdict": "allow",
+			"decision": "DECISION 2026-08-08 — ACCEPT. One policy call applied to all 13 Tier C artifacts. The assurance actually available for a prebuilt binary is: the exact version pinned by sha512, zero lifecycle scripts (verified directly, not inferred), publisher provenance, and a narrow reviewed call site. Reviewing stripped machine code from node_modules is not achievable, and per-platform reproducible builds of clipboard-rs are disproportionate to the threat this fork models. Recorded as accepted risk in SECURITY-BACKLOG.md Part 3. CONDITIONS: any version bump is a high-scrutiny event — re-verify integrity and provenance rather than re-trusting the maintainer. The NAPI_RS_NATIVE_LIBRARY_PATH override is out of scope: it presumes an attacker who already controls the developer's dotfiles, who has easier paths.",
+			"integrity": "sha512-BGGR4iA9Z2shAjI65eI5xtyb3LYNlDW9X3gxKxDbqtbnREohsrqznov6zpKoIrsRWpzlYVEdKphS7ksJ0/ndSQ==",
+			"resolved": "https://registry.npmjs.org/@mariozechner/clipboard-darwin-universal/-/clipboard-darwin-universal-0.3.9.tgz",
+			"hasInstallScript": false,
+			"tier": "C",
+			"reviewedBy": "Diego Szychowski",
+			"reviewedAt": "2026-08-09",
+			"capabilities": [
+				"prebuilt native .node napi binary (stripped, compiled Rust) — clipboard read/write for one platform/arch/libc triple",
+				"no JS logic of its own; loaded by @mariozechner/clipboard's index.js when the host triple matches",
+				"binary contents not reviewable from node_modules"
+			],
+			"notes": "ESCALATE (Tier C: prebuilt native binary, verified by integrity hash only). Platform sidecar of @mariozechner/clipboard@0.3.9, published as an optionalDependency and selected at require time by the parent's NAPI-RS loader (index.js:63-524). Verified: package.json has ZERO lifecycle scripts (no preinstall/install/postinstall/prepare; only dev-only napi build/test/prepublishOnly), and the exact version is pinned by the sha512 in this entry. NOT verified and NOT verifiable from node_modules: the contents of the prebuilt .node binary, which is stripped compiled Rust. Only the linux-x64-gnu sidecar actually materialized with a binary on the review host (npm prunes by os/cpu/libc); its strings were inspected and matched the claimed clipboard-rs/x11rb/napi crate stack with no hardcoded network host. Every other sidecar — including linux-x64-musl, whose tarball is present as metadata only because its libc does not match this host — was audited at package.json/integrity level ONLY. A human must accept that all platform binaries shipped to other architectures are trusted on integrity pinning plus publisher provenance, not on inspection; the only way to raise that assurance is a reproducible build of clipboard-rs from the pinned upstream commit and a byte diff per platform."
+		},
+		"@mariozechner/clipboard-darwin-x64@0.3.9": {
+			"verdict": "allow",
+			"decision": "DECISION 2026-08-08 — ACCEPT. One policy call applied to all 13 Tier C artifacts. The assurance actually available for a prebuilt binary is: the exact version pinned by sha512, zero lifecycle scripts (verified directly, not inferred), publisher provenance, and a narrow reviewed call site. Reviewing stripped machine code from node_modules is not achievable, and per-platform reproducible builds of clipboard-rs are disproportionate to the threat this fork models. Recorded as accepted risk in SECURITY-BACKLOG.md Part 3. CONDITIONS: any version bump is a high-scrutiny event — re-verify integrity and provenance rather than re-trusting the maintainer. The NAPI_RS_NATIVE_LIBRARY_PATH override is out of scope: it presumes an attacker who already controls the developer's dotfiles, who has easier paths.",
+			"integrity": "sha512-4kURmCbS6nt8uYhtmWpUcJWyPHfmAr5dTpXD1nO3pIfa+TSQ9DbrGOYCKH+aEFW47XhQ4Vp8ZTszie+wfFvDKg==",
+			"resolved": "https://registry.npmjs.org/@mariozechner/clipboard-darwin-x64/-/clipboard-darwin-x64-0.3.9.tgz",
+			"hasInstallScript": false,
+			"tier": "C",
+			"reviewedBy": "Diego Szychowski",
+			"reviewedAt": "2026-08-09",
+			"capabilities": [
+				"prebuilt native .node napi binary (stripped, compiled Rust) — clipboard read/write for one platform/arch/libc triple",
+				"no JS logic of its own; loaded by @mariozechner/clipboard's index.js when the host triple matches",
+				"binary contents not reviewable from node_modules"
+			],
+			"notes": "ESCALATE (Tier C: prebuilt native binary, verified by integrity hash only). Platform sidecar of @mariozechner/clipboard@0.3.9, published as an optionalDependency and selected at require time by the parent's NAPI-RS loader (index.js:63-524). Verified: package.json has ZERO lifecycle scripts (no preinstall/install/postinstall/prepare; only dev-only napi build/test/prepublishOnly), and the exact version is pinned by the sha512 in this entry. NOT verified and NOT verifiable from node_modules: the contents of the prebuilt .node binary, which is stripped compiled Rust. Only the linux-x64-gnu sidecar actually materialized with a binary on the review host (npm prunes by os/cpu/libc); its strings were inspected and matched the claimed clipboard-rs/x11rb/napi crate stack with no hardcoded network host. Every other sidecar — including linux-x64-musl, whose tarball is present as metadata only because its libc does not match this host — was audited at package.json/integrity level ONLY. A human must accept that all platform binaries shipped to other architectures are trusted on integrity pinning plus publisher provenance, not on inspection; the only way to raise that assurance is a reproducible build of clipboard-rs from the pinned upstream commit and a byte diff per platform."
+		},
+		"@mariozechner/clipboard-linux-arm64-gnu@0.3.9": {
+			"verdict": "allow",
+			"decision": "DECISION 2026-08-08 — ACCEPT. One policy call applied to all 13 Tier C artifacts. The assurance actually available for a prebuilt binary is: the exact version pinned by sha512, zero lifecycle scripts (verified directly, not inferred), publisher provenance, and a narrow reviewed call site. Reviewing stripped machine code from node_modules is not achievable, and per-platform reproducible builds of clipboard-rs are disproportionate to the threat this fork models. Recorded as accepted risk in SECURITY-BACKLOG.md Part 3. CONDITIONS: any version bump is a high-scrutiny event — re-verify integrity and provenance rather than re-trusting the maintainer. The NAPI_RS_NATIVE_LIBRARY_PATH override is out of scope: it presumes an attacker who already controls the developer's dotfiles, who has easier paths.",
+			"integrity": "sha512-g59OkUGP2DDfCOIKypHeYgv2M55u/cKvXa5dSxFbEJ34XvIQMdcVmpKCkGUro3ZgefXiGVdwguvTMQGpHWzIXw==",
+			"resolved": "https://registry.npmjs.org/@mariozechner/clipboard-linux-arm64-gnu/-/clipboard-linux-arm64-gnu-0.3.9.tgz",
+			"hasInstallScript": false,
+			"tier": "C",
+			"reviewedBy": "Diego Szychowski",
+			"reviewedAt": "2026-08-09",
+			"capabilities": [
+				"prebuilt native .node napi binary (stripped, compiled Rust) — clipboard read/write for one platform/arch/libc triple",
+				"no JS logic of its own; loaded by @mariozechner/clipboard's index.js when the host triple matches",
+				"binary contents not reviewable from node_modules"
+			],
+			"notes": "ESCALATE (Tier C: prebuilt native binary, verified by integrity hash only). Platform sidecar of @mariozechner/clipboard@0.3.9, published as an optionalDependency and selected at require time by the parent's NAPI-RS loader (index.js:63-524). Verified: package.json has ZERO lifecycle scripts (no preinstall/install/postinstall/prepare; only dev-only napi build/test/prepublishOnly), and the exact version is pinned by the sha512 in this entry. NOT verified and NOT verifiable from node_modules: the contents of the prebuilt .node binary, which is stripped compiled Rust. Only the linux-x64-gnu sidecar actually materialized with a binary on the review host (npm prunes by os/cpu/libc); its strings were inspected and matched the claimed clipboard-rs/x11rb/napi crate stack with no hardcoded network host. Every other sidecar — including linux-x64-musl, whose tarball is present as metadata only because its libc does not match this host — was audited at package.json/integrity level ONLY. A human must accept that all platform binaries shipped to other architectures are trusted on integrity pinning plus publisher provenance, not on inspection; the only way to raise that assurance is a reproducible build of clipboard-rs from the pinned upstream commit and a byte diff per platform."
+		},
+		"@mariozechner/clipboard-linux-arm64-musl@0.3.9": {
+			"verdict": "allow",
+			"decision": "DECISION 2026-08-08 — ACCEPT. One policy call applied to all 13 Tier C artifacts. The assurance actually available for a prebuilt binary is: the exact version pinned by sha512, zero lifecycle scripts (verified directly, not inferred), publisher provenance, and a narrow reviewed call site. Reviewing stripped machine code from node_modules is not achievable, and per-platform reproducible builds of clipboard-rs are disproportionate to the threat this fork models. Recorded as accepted risk in SECURITY-BACKLOG.md Part 3. CONDITIONS: any version bump is a high-scrutiny event — re-verify integrity and provenance rather than re-trusting the maintainer. The NAPI_RS_NATIVE_LIBRARY_PATH override is out of scope: it presumes an attacker who already controls the developer's dotfiles, who has easier paths.",
+			"integrity": "sha512-AGuJdgKsmJdm4Pych7kv3sqe591ERRaAHW3xjLooiFzn8J+PxUyof++7YZrB5Y5tpnTO+K18Og3taj2NpluCRQ==",
+			"resolved": "https://registry.npmjs.org/@mariozechner/clipboard-linux-arm64-musl/-/clipboard-linux-arm64-musl-0.3.9.tgz",
+			"hasInstallScript": false,
+			"tier": "C",
+			"reviewedBy": "Diego Szychowski",
+			"reviewedAt": "2026-08-09",
+			"capabilities": [
+				"prebuilt native .node napi binary (stripped, compiled Rust) — clipboard read/write for one platform/arch/libc triple",
+				"no JS logic of its own; loaded by @mariozechner/clipboard's index.js when the host triple matches",
+				"binary contents not reviewable from node_modules"
+			],
+			"notes": "ESCALATE (Tier C: prebuilt native binary, verified by integrity hash only). Platform sidecar of @mariozechner/clipboard@0.3.9, published as an optionalDependency and selected at require time by the parent's NAPI-RS loader (index.js:63-524). Verified: package.json has ZERO lifecycle scripts (no preinstall/install/postinstall/prepare; only dev-only napi build/test/prepublishOnly), and the exact version is pinned by the sha512 in this entry. NOT verified and NOT verifiable from node_modules: the contents of the prebuilt .node binary, which is stripped compiled Rust. Only the linux-x64-gnu sidecar actually materialized with a binary on the review host (npm prunes by os/cpu/libc); its strings were inspected and matched the claimed clipboard-rs/x11rb/napi crate stack with no hardcoded network host. Every other sidecar — including linux-x64-musl, whose tarball is present as metadata only because its libc does not match this host — was audited at package.json/integrity level ONLY. A human must accept that all platform binaries shipped to other architectures are trusted on integrity pinning plus publisher provenance, not on inspection; the only way to raise that assurance is a reproducible build of clipboard-rs from the pinned upstream commit and a byte diff per platform."
+		},
+		"@mariozechner/clipboard-linux-riscv64-gnu@0.3.9": {
+			"verdict": "allow",
+			"decision": "DECISION 2026-08-08 — ACCEPT. One policy call applied to all 13 Tier C artifacts. The assurance actually available for a prebuilt binary is: the exact version pinned by sha512, zero lifecycle scripts (verified directly, not inferred), publisher provenance, and a narrow reviewed call site. Reviewing stripped machine code from node_modules is not achievable, and per-platform reproducible builds of clipboard-rs are disproportionate to the threat this fork models. Recorded as accepted risk in SECURITY-BACKLOG.md Part 3. CONDITIONS: any version bump is a high-scrutiny event — re-verify integrity and provenance rather than re-trusting the maintainer. The NAPI_RS_NATIVE_LIBRARY_PATH override is out of scope: it presumes an attacker who already controls the developer's dotfiles, who has easier paths.",
+			"integrity": "sha512-DXBEAiuMpk7dhS1a9NzNxVAFi1vaKoPu7rQNgY8LIDLGrK3lnIp3nT10DUum+PKVJoJppIP+NAA8IZe4DMNDPw==",
+			"resolved": "https://registry.npmjs.org/@mariozechner/clipboard-linux-riscv64-gnu/-/clipboard-linux-riscv64-gnu-0.3.9.tgz",
+			"hasInstallScript": false,
+			"tier": "C",
+			"reviewedBy": "Diego Szychowski",
+			"reviewedAt": "2026-08-09",
+			"capabilities": [
+				"prebuilt native .node napi binary (stripped, compiled Rust) — clipboard read/write for one platform/arch/libc triple",
+				"no JS logic of its own; loaded by @mariozechner/clipboard's index.js when the host triple matches",
+				"binary contents not reviewable from node_modules"
+			],
+			"notes": "ESCALATE (Tier C: prebuilt native binary, verified by integrity hash only). Platform sidecar of @mariozechner/clipboard@0.3.9, published as an optionalDependency and selected at require time by the parent's NAPI-RS loader (index.js:63-524). Verified: package.json has ZERO lifecycle scripts (no preinstall/install/postinstall/prepare; only dev-only napi build/test/prepublishOnly), and the exact version is pinned by the sha512 in this entry. NOT verified and NOT verifiable from node_modules: the contents of the prebuilt .node binary, which is stripped compiled Rust. Only the linux-x64-gnu sidecar actually materialized with a binary on the review host (npm prunes by os/cpu/libc); its strings were inspected and matched the claimed clipboard-rs/x11rb/napi crate stack with no hardcoded network host. Every other sidecar — including linux-x64-musl, whose tarball is present as metadata only because its libc does not match this host — was audited at package.json/integrity level ONLY. A human must accept that all platform binaries shipped to other architectures are trusted on integrity pinning plus publisher provenance, not on inspection; the only way to raise that assurance is a reproducible build of clipboard-rs from the pinned upstream commit and a byte diff per platform."
+		},
+		"@mariozechner/clipboard-linux-x64-gnu@0.3.9": {
+			"verdict": "allow",
+			"decision": "DECISION 2026-08-08 — ACCEPT. One policy call applied to all 13 Tier C artifacts. The assurance actually available for a prebuilt binary is: the exact version pinned by sha512, zero lifecycle scripts (verified directly, not inferred), publisher provenance, and a narrow reviewed call site. Reviewing stripped machine code from node_modules is not achievable, and per-platform reproducible builds of clipboard-rs are disproportionate to the threat this fork models. Recorded as accepted risk in SECURITY-BACKLOG.md Part 3. CONDITIONS: any version bump is a high-scrutiny event — re-verify integrity and provenance rather than re-trusting the maintainer. The NAPI_RS_NATIVE_LIBRARY_PATH override is out of scope: it presumes an attacker who already controls the developer's dotfiles, who has easier paths.",
+			"integrity": "sha512-WORrMLd6EpElEME7JRKfSaY34nW1P5LbdgK5YNCS1ncG2LqmITsSMEJ8nh2mpvxb3TxqbOOKgY7k9eMJYlW9Mw==",
+			"resolved": "https://registry.npmjs.org/@mariozechner/clipboard-linux-x64-gnu/-/clipboard-linux-x64-gnu-0.3.9.tgz",
+			"hasInstallScript": false,
+			"tier": "C",
+			"reviewedBy": "Diego Szychowski",
+			"reviewedAt": "2026-08-09",
+			"capabilities": [
+				"prebuilt native .node napi binary (stripped, compiled Rust) — clipboard read/write for one platform/arch/libc triple",
+				"no JS logic of its own; loaded by @mariozechner/clipboard's index.js when the host triple matches",
+				"binary contents not reviewable from node_modules"
+			],
+			"notes": "ESCALATE (Tier C: prebuilt native binary, verified by integrity hash only). Platform sidecar of @mariozechner/clipboard@0.3.9, published as an optionalDependency and selected at require time by the parent's NAPI-RS loader (index.js:63-524). Verified: package.json has ZERO lifecycle scripts (no preinstall/install/postinstall/prepare; only dev-only napi build/test/prepublishOnly), and the exact version is pinned by the sha512 in this entry. NOT verified and NOT verifiable from node_modules: the contents of the prebuilt .node binary, which is stripped compiled Rust. Only the linux-x64-gnu sidecar actually materialized with a binary on the review host (npm prunes by os/cpu/libc); its strings were inspected and matched the claimed clipboard-rs/x11rb/napi crate stack with no hardcoded network host. Every other sidecar — including linux-x64-musl, whose tarball is present as metadata only because its libc does not match this host — was audited at package.json/integrity level ONLY. A human must accept that all platform binaries shipped to other architectures are trusted on integrity pinning plus publisher provenance, not on inspection; the only way to raise that assurance is a reproducible build of clipboard-rs from the pinned upstream commit and a byte diff per platform."
+		},
+		"@mariozechner/clipboard-linux-x64-musl@0.3.9": {
+			"verdict": "allow",
+			"decision": "DECISION 2026-08-08 — ACCEPT. One policy call applied to all 13 Tier C artifacts. The assurance actually available for a prebuilt binary is: the exact version pinned by sha512, zero lifecycle scripts (verified directly, not inferred), publisher provenance, and a narrow reviewed call site. Reviewing stripped machine code from node_modules is not achievable, and per-platform reproducible builds of clipboard-rs are disproportionate to the threat this fork models. Recorded as accepted risk in SECURITY-BACKLOG.md Part 3. CONDITIONS: any version bump is a high-scrutiny event — re-verify integrity and provenance rather than re-trusting the maintainer. The NAPI_RS_NATIVE_LIBRARY_PATH override is out of scope: it presumes an attacker who already controls the developer's dotfiles, who has easier paths.",
+			"integrity": "sha512-/DHn+1DrfL6oRaPPWXaOKvonFFrni666fxd+zFqiQEfvBH0tsHVWjq9iqBk0oDp0qaPA72lIMy5BptxISBEhZQ==",
+			"resolved": "https://registry.npmjs.org/@mariozechner/clipboard-linux-x64-musl/-/clipboard-linux-x64-musl-0.3.9.tgz",
+			"hasInstallScript": false,
+			"tier": "C",
+			"reviewedBy": "Diego Szychowski",
+			"reviewedAt": "2026-08-09",
+			"capabilities": [
+				"prebuilt native .node napi binary (stripped, compiled Rust) — clipboard read/write for one platform/arch/libc triple",
+				"no JS logic of its own; loaded by @mariozechner/clipboard's index.js when the host triple matches",
+				"binary contents not reviewable from node_modules"
+			],
+			"notes": "ESCALATE (Tier C: prebuilt native binary, verified by integrity hash only). Platform sidecar of @mariozechner/clipboard@0.3.9, published as an optionalDependency and selected at require time by the parent's NAPI-RS loader (index.js:63-524). Verified: package.json has ZERO lifecycle scripts (no preinstall/install/postinstall/prepare; only dev-only napi build/test/prepublishOnly), and the exact version is pinned by the sha512 in this entry. NOT verified and NOT verifiable from node_modules: the contents of the prebuilt .node binary, which is stripped compiled Rust. Only the linux-x64-gnu sidecar actually materialized with a binary on the review host (npm prunes by os/cpu/libc); its strings were inspected and matched the claimed clipboard-rs/x11rb/napi crate stack with no hardcoded network host. Every other sidecar — including linux-x64-musl, whose tarball is present as metadata only because its libc does not match this host — was audited at package.json/integrity level ONLY. A human must accept that all platform binaries shipped to other architectures are trusted on integrity pinning plus publisher provenance, not on inspection; the only way to raise that assurance is a reproducible build of clipboard-rs from the pinned upstream commit and a byte diff per platform."
+		},
+		"@mariozechner/clipboard-win32-arm64-msvc@0.3.9": {
+			"verdict": "allow",
+			"decision": "DECISION 2026-08-08 — ACCEPT. One policy call applied to all 13 Tier C artifacts. The assurance actually available for a prebuilt binary is: the exact version pinned by sha512, zero lifecycle scripts (verified directly, not inferred), publisher provenance, and a narrow reviewed call site. Reviewing stripped machine code from node_modules is not achievable, and per-platform reproducible builds of clipboard-rs are disproportionate to the threat this fork models. Recorded as accepted risk in SECURITY-BACKLOG.md Part 3. CONDITIONS: any version bump is a high-scrutiny event — re-verify integrity and provenance rather than re-trusting the maintainer. The NAPI_RS_NATIVE_LIBRARY_PATH override is out of scope: it presumes an attacker who already controls the developer's dotfiles, who has easier paths.",
+			"integrity": "sha512-O5FHD3ErkMwMhNzAfu3ggy0ug4z7btZuoQgwwxlzPrwV2bxlD6WDpqBY4NCgICAgZdDKdp+loUEKVAVt8aYnhQ==",
+			"resolved": "https://registry.npmjs.org/@mariozechner/clipboard-win32-arm64-msvc/-/clipboard-win32-arm64-msvc-0.3.9.tgz",
+			"hasInstallScript": false,
+			"tier": "C",
+			"reviewedBy": "Diego Szychowski",
+			"reviewedAt": "2026-08-09",
+			"capabilities": [
+				"prebuilt native .node napi binary (stripped, compiled Rust) — clipboard read/write for one platform/arch/libc triple",
+				"no JS logic of its own; loaded by @mariozechner/clipboard's index.js when the host triple matches",
+				"binary contents not reviewable from node_modules"
+			],
+			"notes": "ESCALATE (Tier C: prebuilt native binary, verified by integrity hash only). Platform sidecar of @mariozechner/clipboard@0.3.9, published as an optionalDependency and selected at require time by the parent's NAPI-RS loader (index.js:63-524). Verified: package.json has ZERO lifecycle scripts (no preinstall/install/postinstall/prepare; only dev-only napi build/test/prepublishOnly), and the exact version is pinned by the sha512 in this entry. NOT verified and NOT verifiable from node_modules: the contents of the prebuilt .node binary, which is stripped compiled Rust. Only the linux-x64-gnu sidecar actually materialized with a binary on the review host (npm prunes by os/cpu/libc); its strings were inspected and matched the claimed clipboard-rs/x11rb/napi crate stack with no hardcoded network host. Every other sidecar — including linux-x64-musl, whose tarball is present as metadata only because its libc does not match this host — was audited at package.json/integrity level ONLY. A human must accept that all platform binaries shipped to other architectures are trusted on integrity pinning plus publisher provenance, not on inspection; the only way to raise that assurance is a reproducible build of clipboard-rs from the pinned upstream commit and a byte diff per platform."
+		},
+		"@mariozechner/clipboard-win32-x64-msvc@0.3.9": {
+			"verdict": "allow",
+			"decision": "DECISION 2026-08-08 — ACCEPT. One policy call applied to all 13 Tier C artifacts. The assurance actually available for a prebuilt binary is: the exact version pinned by sha512, zero lifecycle scripts (verified directly, not inferred), publisher provenance, and a narrow reviewed call site. Reviewing stripped machine code from node_modules is not achievable, and per-platform reproducible builds of clipboard-rs are disproportionate to the threat this fork models. Recorded as accepted risk in SECURITY-BACKLOG.md Part 3. CONDITIONS: any version bump is a high-scrutiny event — re-verify integrity and provenance rather than re-trusting the maintainer. The NAPI_RS_NATIVE_LIBRARY_PATH override is out of scope: it presumes an attacker who already controls the developer's dotfiles, who has easier paths.",
+			"integrity": "sha512-ihQC3EufqEY81vhXBgVBtK4prL+wc62zJsSvxrgz7K1hsdt6OObz6v9p3Rn1OG3GJksTTKMJF0u/guMISHPhSA==",
+			"resolved": "https://registry.npmjs.org/@mariozechner/clipboard-win32-x64-msvc/-/clipboard-win32-x64-msvc-0.3.9.tgz",
+			"hasInstallScript": false,
+			"tier": "C",
+			"reviewedBy": "Diego Szychowski",
+			"reviewedAt": "2026-08-09",
+			"capabilities": [
+				"prebuilt native .node napi binary (stripped, compiled Rust) — clipboard read/write for one platform/arch/libc triple",
+				"no JS logic of its own; loaded by @mariozechner/clipboard's index.js when the host triple matches",
+				"binary contents not reviewable from node_modules"
+			],
+			"notes": "ESCALATE (Tier C: prebuilt native binary, verified by integrity hash only). Platform sidecar of @mariozechner/clipboard@0.3.9, published as an optionalDependency and selected at require time by the parent's NAPI-RS loader (index.js:63-524). Verified: package.json has ZERO lifecycle scripts (no preinstall/install/postinstall/prepare; only dev-only napi build/test/prepublishOnly), and the exact version is pinned by the sha512 in this entry. NOT verified and NOT verifiable from node_modules: the contents of the prebuilt .node binary, which is stripped compiled Rust. Only the linux-x64-gnu sidecar actually materialized with a binary on the review host (npm prunes by os/cpu/libc); its strings were inspected and matched the claimed clipboard-rs/x11rb/napi crate stack with no hardcoded network host. Every other sidecar — including linux-x64-musl, whose tarball is present as metadata only because its libc does not match this host — was audited at package.json/integrity level ONLY. A human must accept that all platform binaries shipped to other architectures are trusted on integrity pinning plus publisher provenance, not on inspection; the only way to raise that assurance is a reproducible build of clipboard-rs from the pinned upstream commit and a byte diff per platform."
+		},
+		"@mariozechner/clipboard@0.3.9": {
+			"verdict": "allow",
+			"decision": "DECISION 2026-08-08 — ACCEPT. One policy call applied to all 13 Tier C artifacts. The assurance actually available for a prebuilt binary is: the exact version pinned by sha512, zero lifecycle scripts (verified directly, not inferred), publisher provenance, and a narrow reviewed call site. Reviewing stripped machine code from node_modules is not achievable, and per-platform reproducible builds of clipboard-rs are disproportionate to the threat this fork models. Recorded as accepted risk in SECURITY-BACKLOG.md Part 3. CONDITIONS: any version bump is a high-scrutiny event — re-verify integrity and provenance rather than re-trusting the maintainer. The NAPI_RS_NATIVE_LIBRARY_PATH override is out of scope: it presumes an attacker who already controls the developer's dotfiles, who has easier paths. Parent package specifically: the loader (index.js) is readable auto-generated NAPI-RS code that selects one binary by platform and requires it by literal path, and strape calls only 4 of 17 exports from utils/clipboard-native.ts:14-23. The unused surface (watch, RTF, HTML, clear) is noted but not a reason to reject a package whose whole purpose is clipboard access.",
+			"integrity": "sha512-ABnA53mdfkGZwOFUdZNv2S0CWGO/EIuPj8Vv9xmBFmSYg/qFc7ihO6q5FcQjvoE67kZpWkEc4AhD6B/os04yuA==",
+			"resolved": "https://registry.npmjs.org/@mariozechner/clipboard/-/clipboard-0.3.9.tgz",
+			"hasInstallScript": false,
+			"tier": "C",
+			"reviewedBy": "Diego Szychowski",
+			"reviewedAt": "2026-08-09",
+			"capabilities": [
+				"native-addon load: requires a per-platform prebuilt .node napi binary selected by process.platform/arch/libc (index.js:63-524)",
+				"clipboard read: getText/getHtml/getRtf/getImageBase64/getImageBinary",
+				"clipboard write: setText/setHtml/setRtf/setImageBase64/setImageBinary/clear; plus a native watch export (unused by strape)",
+				"child_process.execSync in the JS loader shim, musl-libc detection fallback only (index.js:56)",
+				"fs.readFileSync in the loader (/usr/bin/ldd + musl detection, index.js:6,28)",
+				"process.env reads: NAPI_RS_NATIVE_LIBRARY_PATH, NAPI_RS_FORCE_WASI, NAPI_RS_ENFORCE_VERSION_CHECK",
+				"native binary links libloading (dlopen-equivalent), x11rb (X11 socket IPC), tokio, and image/png/jpeg/base64 codecs"
+			],
+			"notes": "ESCALATE (Tier C: a stripped native ELF binary reads and writes the user's clipboard — this needs an explicit human accept). Zero lifecycle scripts on the main package AND all 10 optionalDependency sidecars (only dev-only napi build/test/prepublishOnly). index.js (25986 bytes) is plain readable auto-generated NAPI-RS loader code that deterministically selects ONE binary by platform/arch/musl detection and requires it by literal path — no untrusted string concatenation, no network. MIT, repository field (github.com/badlogic/clipboard, a fork of CrossCopy/clipboard over ChurchTao/clipboard-rs), and the documented API matches index.js's exports exactly. The live binary (clipboard.linux-x64-gnu.node, 1,378,264 bytes) is a stripped ELF64 shared object — opaque; `strings` shows only NAPI glue, Rust panic/std strings, X11/XFixes protocol names and Cargo provenance paths (napi-3.9.0, tokio-1.49.0, x11rb-0.13.2, image-0.25.5, rustix-1.1.3, base64-0.22.1, libloading-0.9.0), with NO hardcoded network host or URL of any kind. WHAT A HUMAN MUST DO: (1) accept that the machine code cannot be reviewed from node_modules — this verdict rests on integrity pinning, provenance strings matching the claimed Rust crate stack, zero install-time execution, and a narrow gated call site; for maximum assurance, reproducibly build clipboard-rs from the pinned upstream commit and diff. (2) independently re-verify the sha512 hashes here against the live npm registry — the review made NO outbound network call to do so. (3) note the loader honours NAPI_RS_NATIVE_LIBRARY_PATH from the environment (index.js:64-69) to override which .node gets required: generic NAPI-RS scaffolding, not remotely exploitable, but an attacker who already controls the developer's dotfiles can redirect clipboard loading to an arbitrary local binary. (4) weigh the value: strape calls only 4 of 17 exports (getText, setText, hasImage, getImageBinary) from packages/coding-agent/src/utils/clipboard-native.ts:14-23, gated on no TERMUX_VERSION and (non-Linux or DISPLAY/WAYLAND_DISPLAY set); watch(), RTF, HTML and clear() are unused surface on a package that by definition reads everything the user copies."
+		},
+		"@opentelemetry/api@1.9.0": {
+			"verdict": "allow",
+			"integrity": "sha512-3giAOQvZiH5F9bMlMiv8+GSPMeqg0dbaeo58/0SlA9sxSqZhnUtxzX9/2FzyhS9sWQf5S0GJE0AKBrFqjpeYcg==",
+			"resolved": "https://registry.npmjs.org/@opentelemetry/api/-/api-1.9.0.tgz",
+			"hasInstallScript": false,
+			"tier": "B",
+			"reviewedBy": "Diego Szychowski",
+			"reviewedAt": "2026-08-09",
+			"capabilities": [
+				"none observable — no-op tracer/meter/propagator/diag interfaces plus a global symbol registry; no child_process, eval, fs writes, network, or process.env reads"
+			],
+			"notes": "Clean and effectively inert. Official OpenTelemetry API surface: build/src/index.js re-exports Proxy* classes backed by Noop* implementations unless a separate SDK registers a global provider — and no @opentelemetry SDK or exporter is installed in this closure, so every call is a silent no-op. No hardcoded exporter endpoint exists in this package (those live in exporter packages, absent here). The only globalThis use is the standard versioned symbol registry (build/src/internal/global-utils.js) that prevents duplicate-API conflicts. Declared by packages/ai/package.json:64 but with no direct import in packages/ai/src — pulled in for the AI SDK's optional experimental_telemetry hooks. Watch item for a future bump, not an escalation: if an OTel SDK/exporter ever enters the closure, this stops being inert and needs a fresh review."
+		},
+		"@silvia-odwyer/photon-node@0.3.4": {
+			"verdict": "allow",
+			"decision": "DECISION 2026-08-08 — ACCEPT, and KEEP the dependency. Image attachment is a real capability for a coding agent (pasted screenshots of failures and UI), so the feature is not dropped to shed the blob. This remains the shipped closure's ONLY WASM artifact: it stays registered in strape/audit/high-scrutiny.json, and any version bump requires re-diffing the wasm bytes rather than re-trusting a single maintainer. The higher-assurance alternative — dropping image support entirely, which would remove the last unreadable artifact from the closure — was considered and rejected on utility grounds. It remains available if that calculus changes.",
+			"integrity": "sha512-bnly4BKB3KDTFxrUIcgCLbaeVVS8lrAkri1pEzskpmxu9MdfGQTy8b8EgcD83ywD3RPMsIulY8xJH5Awa+t9fA==",
+			"resolved": "https://registry.npmjs.org/@silvia-odwyer/photon-node/-/photon-node-0.3.4.tgz",
+			"hasInstallScript": false,
+			"tier": "C",
+			"reviewedBy": "Diego Szychowski",
+			"reviewedAt": "2026-08-09",
+			"capabilities": [
+				"reads its own bundled photon_rs_bg.wasm from disk at require time (fs.readFileSync of __dirname, photon_rs.js:4512-4513) and instantiates it with new WebAssembly.Module/Instance (:4515-4516) — no network fetch of code",
+				"1.88MB WASM binary: opaque compiled Rust (83% of package bytes)",
+				"~194 exported image-processing functions operating on Uint8Array views into wasm linear memory",
+				"one `new Function(getStringFromWasm0(...))` wasm-bindgen browser shim (photon_rs.js:4431, photon_rs_bg.js:4216) — standard js_sys::Function::new_no_args glue, not on any exported image function's path",
+				"no fs writes, child_process, net/http/https/dns, process.env reads, or dynamic require beyond the two static requires('path'|'fs') used to load its own wasm"
+			],
+			"notes": "ESCALATE (Tier C: an unreadable 1.88MB WASM blob is in the shipped closure — a human must accept it or drop the feature). package.json has NO scripts key at all, so the install-time surface is provably zero; files/main/types match the shipped tree exactly (verified with find); Apache-2.0 with a repository field pointing at the real photon-rs project. The JS glue (photon_rs.js + photon_rs_bg.js, 137KB/124KB) is auto-generated, unminified, rustdoc-commented wasm-bindgen output and was read/grepped in full — no network, exec or env capability. `file` confirms the .wasm is a genuine WASM binary, not a disguised script, and a strings pass found no URLs beyond an Apache-2.0 header and an Adobe XMP namespace (consistent with the bundled Roboto font used by photon's text/watermark feature), no shell/exec strings, no unexpected hosts. The wasm-bindgen import table is fully enumerated in the JS and exposes no fs/net-capable import. WHAT CANNOT BE VERIFIED: the wasm machine code itself — a logic bomb gated on rare input bytes would be invisible to this method. DECISION FOR A HUMAN: strape calls only ~6 of ~194 exports (PhotonImage ctor/new_from_byteslice/__destroy_into_raw, resize with SamplingFilter.Lanczos3, fliph, flipv) from packages/coding-agent/src/utils/photon.ts, image-resize-core.ts, image-convert.ts, clipboard-image.ts and exif-orientation.ts. If image-attachment support is not core to an OpenAI/xAI-only mission, dropping this removes the ONLY WASM blob from the dependency closure — the escalation path strape/audit/high-scrutiny.json already names. If kept: single maintainer with no second publisher, and any version bump must be treated as high-scrutiny (re-diff the wasm bytes, do not re-trust the maintainer)."
+		},
+		"agent-base@7.1.4": {
+			"verdict": "allow",
+			"integrity": "sha512-MnA+YT8fwfJPgBx3m60MNqakm30XOkyIoH1y6huTQvC0PwZG7ki8NacLBcrPbNoo8vEZy7Jpuk7+jMO+CUovTQ==",
+			"resolved": "https://registry.npmjs.org/agent-base/-/agent-base-7.1.4.tgz",
+			"hasInstallScript": false,
+			"tier": "B",
+			"reviewedBy": "Diego Szychowski",
+			"reviewedAt": "2026-08-09",
+			"capabilities": [
+				"subclasses http.Agent and does socket-pool bookkeeping (dist/index.js, 178 lines)",
+				"dist/helpers.js:53-64 req() wraps http.request/https.request against a URL the CALLER supplies; makes no outbound connection of its own",
+				"no child_process, exec, eval/new Function, fs, or process.env reads; no hardcoded hosts"
+			],
+			"notes": "Clean. Turns a connect() function into an http.Agent subclass — the base class for http-proxy-agent/https-proxy-agent. Both shipped files read in full; scripts are build/test/lint/pack only, no lifecycle hooks, no bin. Live only through the proxy agents, i.e. only when the user configures HTTP(S)_PROXY for outbound LLM calls."
+		},
+		"balanced-match@4.0.4": {
+			"verdict": "allow",
+			"integrity": "sha512-BLrgEcRTwX2o6gGxGOCNyMvGSp35YofuYzw9h1IMTRmKqttAZZVU67bdb9Pr2vUHA8+j3i2tJfjO6C6+4myGTA==",
+			"resolved": "https://registry.npmjs.org/balanced-match/-/balanced-match-4.0.4.tgz",
+			"hasInstallScript": false,
+			"tier": "B",
+			"reviewedBy": "Diego Szychowski",
+			"reviewedAt": "2026-08-09",
+			"capabilities": [
+				"balanced delimiter substring matching — pure indexOf/slice, no I/O"
+			],
+			"notes": "Clean. 59-line dist/commonjs/index.js read in full implementing balanced()/range(); MIT + repository field, no lifecycle scripts. Called from brace-expansion's parseCommaParts()/expand_()."
+		},
+		"brace-expansion@5.0.9": {
+			"verdict": "allow",
+			"integrity": "sha512-ScQ4IuvIEF1TMlP7Zt+vjJ//9zlPb2SDcxWxM3bk8s6t6GGdJ7KO1dCcTidOPJKePW30LE/2cT7wCyPho9/Wxg==",
+			"resolved": "https://registry.npmjs.org/brace-expansion/-/brace-expansion-5.0.9.tgz",
+			"hasInstallScript": false,
+			"tier": "B",
+			"reviewedBy": "Diego Szychowski",
+			"reviewedAt": "2026-08-09",
+			"capabilities": [
+				"bash-style brace expansion (string generation) only; no fs/network/exec/eval"
+			],
+			"notes": "Clean. dist/commonjs/index.js read in full (289 lines): string splitting/combination plus explicit, well-commented DoS hardening (EXPANSION_MAX=100_000 results, EXPANSION_MAX_LENGTH=4_000_000 chars, lines 21-32, referencing CVE-2026-14257) and an iterative rewrite of the expansion loop to bound stack depth. MIT + repository field, no lifecycle scripts, only dep is balanced-match. Reached only via minimatch's braceExpand()."
+		},
+		"chalk@5.6.2": {
+			"verdict": "allow",
+			"integrity": "sha512-7NzBL0rN6fMUW+f7A6Io4h40qQlG+xGmtMxfbnH/K7TAtt8JQWVQK+6g0UXKMeVJoyV5EkkNsErQ8pVD3bLHbA==",
+			"resolved": "https://registry.npmjs.org/chalk/-/chalk-5.6.2.tgz",
+			"hasInstallScript": false,
+			"tier": "B",
+			"reviewedBy": "Diego Szychowski",
+			"reviewedAt": "2026-08-09",
+			"capabilities": [
+				"reads FORCE_COLOR/TERM/COLORTERM/TERM_PROGRAM/CI/TF_BUILD/AGENT_NAME plus process.platform, os.release(), tty.isatty() purely to detect color support",
+				"no fs, network, child_process, eval, or dynamic require"
+			],
+			"notes": "Clean. Pure ESM ANSI string styling (source/index.js) with vendored ansi-styles (pure color math) and supports-color (env/tty reads only, never written or transmitted). No lifecycle scripts. Entire package is reachable via normal colored-output use in strape's CLI."
+		},
+		"cross-spawn@7.0.6": {
+			"verdict": "allow",
+			"decision": "DECISION 2026-08-08 — ALLOW. The escalation was a request to confirm a caller-side property, and it is confirmed: the win32 gate is intact at packages/coding-agent/src/utils/child-process.ts:25 and :33-35 — both spawnProcess and spawnProcessSync branch on process.platform === 'win32' — so escape.js, resolveCommand.js, readShebang.js and enoent.js stay dead on Linux and macOS. The package itself was clean on both passes: npm pack byte-identical to node_modules, and the post-CVE-2024-21538 escaping fuzzed linear at 200k chars. STANDING ITEM: child-process.ts is upstream's file, so re-verify that exact gate on every sync — if a merge widens it, the whole Windows surface goes live on POSIX with no change to this package.",
+			"integrity": "sha512-uV2QOWP2nWzsy2aMp8aRibhi9dlzF5Hgh5SHaB9OiTGEyDTiJJyx0uy51QXdyWbtAHNua4XJzUKca3OzKUd3vA==",
+			"resolved": "https://registry.npmjs.org/cross-spawn/-/cross-spawn-7.0.6.tgz",
+			"hasInstallScript": false,
+			"tier": "A",
+			"reviewedBy": "Diego Szychowski",
+			"reviewedAt": "2026-08-09",
+			"capabilities": [
+				"child_process.spawn / spawnSync — the package's entire purpose (index.js:12,26)",
+				"fs read only, 150 bytes, to sniff a shebang (lib/util/readShebang.js:14-16); no fs writes anywhere",
+				"process.env reads: PATH-ish key via path-key, COMSPEC to pick the Windows shell (lib/parse.js:58); PATHEXT via the which dep",
+				"process.chdir into options.cwd, restored in a finally (lib/util/resolveCommand.js:18,35) — Windows path only, global process side effect",
+				"instance-level monkey patch of the spawned ChildProcess's .emit (lib/enoent.js:20-35); no prototype mutation",
+				"Windows cmd.exe argv construction + metachar escaping (lib/util/escape.js) — the injection-sensitive surface",
+				"NOT present in any of the 6 shipped files: eval/new Function, node:vm, net/http/https/tls/dns/fetch, dynamic require, .node loads, WASM, telemetry"
+			],
+			"notes": "ESCALATE (informational — package is clean on both passes; escalation is to record two follow-ups, not to block on a defect). 311 readable lines, no lifecycle scripts, MIT + repository field, no bin entry. Provenance verified twice independently: a fresh `npm pack` sha512 matches this integrity field exactly and `diff -r` against node_modules is empty. The post-CVE-2024-21538 escaping is genuinely fixed, not just version-bumped: escapeArgument uses the backtracking-free /(?=(\\\\+?)?)\\1\"/g form and was fuzzed with 50k- and 200k-char backslash/quote adversarial inputs at strictly linear time (1.8-15ms). FOLLOW-UPS FOR A HUMAN: (1) the conclusion that all of escape.js/resolveCommand.js/readShebang.js/enoent.js is dead on Linux/macOS is a property of STRAPE's call site, not of the package — packages/coding-agent/src/utils/child-process.ts:25,34 gates crossSpawn behind `process.platform === 'win32'`. That file is upstream pi's and reachable by future merges; if a merge drops or widens the gate, the whole Windows surface goes live on POSIX with zero change to this package. Re-check that specific call site on every upstream sync. (2) which@2.0.2, a synchronously-invoked runtime dep on the Windows path, ships a 'prepublish' script in its own package.json — inert under --ignore-scripts, but it belongs in which's entry, and it shows cross-spawn's clean scripts list does not cover its dep tree. Windows-path behaviour notes, all upstream-known and non-exploitable: COMSPEC-derived shell binary; transient process-global cwd mutation (no event-loop window, which.sync is synchronous); exit code 1 converted to a spurious ENOENT when the command file did not resolve, which can mask a real exit status; original.args aliases args so the shebang unshift also mutates the recorded original (cosmetic, affects error.spawnargs only)."
+		},
+		"debug@4.4.3": {
+			"verdict": "allow",
+			"integrity": "sha512-RGwwWnwQvkVfavKVt22FGLw+xYSdzARwm0ru6DhTVA3umU5hZc28V3kO4stgYryrTlLpuvgI9GiijltAjNbcqA==",
+			"resolved": "https://registry.npmjs.org/debug/-/debug-4.4.3.tgz",
+			"hasInstallScript": false,
+			"tier": "B",
+			"reviewedBy": "Diego Szychowski",
+			"reviewedAt": "2026-08-09",
+			"capabilities": [
+				"reads every process.env key matching /^debug_/i to build inspectOpts (src/node.js:124-149)",
+				"reads/writes process.env.DEBUG via save()/load(), only when a caller invokes debug.enable/disable (src/node.js:203-222)",
+				"optional try/catch require('supports-color') — fixed module name, silently skipped if absent (src/node.js:32)",
+				"writes to process.stderr (src/node.js:194)"
+			],
+			"notes": "Clean. Namespaced logger; common.js is pure enable/match/format logic with no I/O beyond stderr, node.js is the env/tty/color glue. Only dependency is ms. src/browser.js is dead code for a Node CLI (loaded only in an Electron renderer). No lifecycle scripts. Reached transitively via agent-base and the proxy agents."
+		},
+		"diff@8.0.4": {
+			"verdict": "allow",
+			"integrity": "sha512-DPi0FmjiSU5EvQV0++GFDOJ9ASQUVFh5kD+OzOnYdi7n3Wpm9hWWGfB/O2blfHcMVTL5WkQXSnRiK9makhrcnw==",
+			"resolved": "https://registry.npmjs.org/diff/-/diff-8.0.4.tgz",
+			"hasInstallScript": false,
+			"tier": "B",
+			"reviewedBy": "Diego Szychowski",
+			"reviewedAt": "2026-08-09",
+			"capabilities": [
+				"text/line/word/JSON/CSS diffing and unified-patch parse/apply, all in-memory string operations",
+				"no fs/network/exec/eval in libcjs (the entry point)"
+			],
+			"notes": "Clean. Standard jsdiff (main -> libcjs/index.js), no lifecycle scripts. The __proto__ grep hits (e.g. libcjs/diff/array.js:5) are TypeScript's stock __extends inheritance helper, not pollution code. applyPatches() takes caller-supplied loadFile/patched callbacks and never touches fs itself. dist/ browser bundles and libesm/ are inert for a CJS Node resolve. Live from packages/agent/src/harness/tools/edit-diff.ts and packages/coding-agent/src/modes/interactive/components/diff.ts."
+		},
+		"get-east-asian-width@1.6.0": {
+			"verdict": "allow",
+			"integrity": "sha512-QRbvDIbx6YklUe6RxeTeleMR0yv3cYH6PsPZHcnVn7xv7zO1BHN8r0XETu8n6Ye3Q+ahtSarc3WgtNWmehIBfA==",
+			"resolved": "https://registry.npmjs.org/get-east-asian-width/-/get-east-asian-width-1.6.0.tgz",
+			"hasInstallScript": false,
+			"tier": "B",
+			"reviewedBy": "Diego Szychowski",
+			"reviewedAt": "2026-08-09",
+			"capabilities": [
+				"Unicode code-point classification via a static lookup table — pure computation, no I/O of any kind"
+			],
+			"notes": "Clean. 30-line index.js validating a code point and returning a width category via lookup tables. The only scripts entry is 'prepublish', which npm runs for the package's own publish, never on a consumer install — shipped install-time closure stays at zero. Live from packages/tui/src/utils.ts:1 for terminal column math; eastAsianWidthType and the private helpers are unused."
+		},
+		"glob@13.0.6": {
+			"verdict": "allow",
+			"decision": "DECISION 2026-08-08 — ALLOW. Both caller-side questions closed by inspection. (1) No call site sets follow:true — the only `follow:` occurrences anywhere in packages/ are `follow: \"end\"` on a TUI ScrollView (interactive-mode.ts:853, tui-alt-screen.ts:148), which is unrelated to glob. The crafted-symlink traversal is therefore not reachable. (2) The absolute-pattern root escape cannot be driven by model input: glob has EXACTLY ONE call site in the tree, package-manager.ts:2306 (globSync with cwd: root), and no file, find or grep tool uses glob at all — so the scenario the review posited does not exist here. STANDING ITEM: re-open both questions if any future tool adopts glob, particularly one that forwards model-supplied patterns.",
+			"integrity": "sha512-Wjlyrolmm8uDpm/ogGyXZXb1Z+Ca2B8NbJwqBVg0axK9GbBeoS7yGV6vjXnYdGm6X53iehEuxxbyiKp8QmN4Vw==",
+			"resolved": "https://registry.npmjs.org/glob/-/glob-13.0.6.tgz",
+			"hasInstallScript": false,
+			"tier": "A",
+			"reviewedBy": "Diego Szychowski",
+			"reviewedAt": "2026-08-09",
+			"capabilities": [
+				"filesystem read traversal via path-scurry (lstat/readdir/realpath) — dist/commonjs/walker.js:88-140",
+				"symlink handling: opts.follow defaults false, so symlinked dirs are not traversed (dist/commonjs/glob.js:73; walker.js:96-104)",
+				"absolute glob patterns bypass cwd and match from filesystem root by design (dist/commonjs/pattern.js:68-199)",
+				"no child_process, eval/new Function, node:vm, or native .node loads anywhere in dist (both minified and unminified builds grepped)"
+			],
+			"notes": "ESCALATE (caller-side integration risk a human must close; glob itself is clean). Filesystem-only matcher, no network, no exec. package.json:63 has scripts.prepare='tshy && bash scripts/build.sh' but it is doubly inert: npm never runs a registry dep's prepare, and files:['dist'] means src/, scripts/build.sh and tshy are not even in the tarball — no preinstall/install/postinstall exist. The `main` entry is dist/commonjs/index.min.js, a legitimate esbuild bundle (visible require-wrapper pattern, minimatch inlined) functionally equal to the readable dist/commonjs/index.js, not hand-obfuscated. TWO THINGS TO VERIFY IN STRAPE'S OWN CODE: (1) absolute-pattern root escape is real and by design (pattern.js:68-199) — a leading '/' or drive/UNC root is consumed and matching starts at filesystem root, ignoring cwd. If any strape find/grep tool forwards a user- or MODEL-supplied glob pattern without rejecting absolute patterns and '..', or without pinning root/cwd and checking results stay under it, the agent can read anything the process can read. (2) confirm no strape call site sets follow:true, which would let a crafted in-repo symlink walk traversal outside the workspace. Both are wrapper-side controls, not fixable in glob."
+		},
+		"graceful-fs@4.2.11": {
+			"verdict": "allow",
+			"integrity": "sha512-RbJ5/jmFcNNCcDV5o9eTnBLJ/HszWV0P73bc+Ff4nS/rJj+YaS6IGyiOL0VoBYX+l1Wrl3k63h/KrH+nhJ0XvQ==",
+			"resolved": "https://registry.npmjs.org/graceful-fs/-/graceful-fs-4.2.11.tgz",
+			"hasInstallScript": false,
+			"tier": "B",
+			"reviewedBy": "Diego Szychowski",
+			"reviewedAt": "2026-08-09",
+			"capabilities": [
+				"fs writes: wraps readFile/writeFile/appendFile/copyFile/open/createReadStream/createWriteStream with an EMFILE/ENFILE retry queue (graceful-fs.js:107-190)",
+				"global mutation: monkey-patches fs.close/closeSync and publishes a shared queue on fs/global via Symbol.for('graceful-fs.queue') (graceful-fs.js:52-93); polyfills.js:8-24 patches process.cwd/process.chdir to cache cwd"
+			],
+			"notes": "Clean. Drop-in fs wrapper adding EMFILE/ENFILE retry queueing plus legacy-Node chown/chmod/stat/lchmod fixups; every mutation serves that stated purpose. No child_process, no eval, no network, no lifecycle scripts. Note for reviewers: this package legitimately patches process.cwd/chdir and fs.close process-wide, so it is high-privilege by design — reached here via proper-lockfile and make-dir."
+		},
+		"grok-mermaid@0.2.2": {
+			"verdict": "allow",
+			"decision": "DECISION 2026-08-08 — ALLOW the current pin, together with a decision to REMOVE the dependency. The code is clean and was verified thoroughly: zero deps, zero lifecycle scripts, no network/fs/exec/eval, dist/ differing from src/ only by sourceMappingURL comments across all 10 module pairs, deliberate C0/C1 control stripping to prevent ANSI injection, and a valid sigstore/SLSA provenance bundle for this exact tarball. The residual risk is thin trust rather than code: a single maintainer, ~1.2k downloads/month, and a point release published roughly 2 days before review, so the exact pin plus integrity hash is doing all of the protective work and there is essentially no community-scrutiny window. DECISION: vendor it into strape/vendor/ (~1400 lines of dependency-free string math), which removes both the update-time review burden and the registry-mutation risk, and fix the confirmed prototype-read bug on ingest — labels.ts:75 does NAMED_ENTITIES[body] on attacker-controlled text so inherited Object.prototype keys resolve (read-only, cosmetic; fix with Object.hasOwn or Object.create(null)). Precedent exists: strape already vendors marked.min.js for the HTML export path. Until that lands the pin is accepted. BACKLOG: mermaid.ts:75 calls render() with no try/catch anywhere up the chain.",
+			"integrity": "sha512-XcJEP5dDC8liHBh52mlLjU18fNvu1ckFsu0QpIG3+APZ270fsj9wxpiA6cOURmbUEuoMVgjbC2+UYgTdCqqgzA==",
+			"resolved": "https://registry.npmjs.org/grok-mermaid/-/grok-mermaid-0.2.2.tgz",
+			"hasInstallScript": false,
+			"tier": "A",
+			"reviewedBy": "Diego Szychowski",
+			"reviewedAt": "2026-08-09",
+			"capabilities": [
+				"pure synchronous string/array computation — no capability-class hit anywhere in dist/ or src/",
+				"platform APIs: Intl.Segmenter (grapheme segmentation), Math/Array/String/Number only",
+				"emits SGR escape sequences via the optional toAnsi() helper from theme-supplied numeric codes (dead code in strape)",
+				"prototype-chain READ (not write) on an object-literal lookup table (src/labels.ts:75)",
+				"no dependencies key at all in package.json; zero node builtin imports, zero host globals"
+			],
+			"notes": "ESCALATE (thin trust + one confirmed bug; code itself is clean). Zero deps, zero lifecycle scripts, zero network/fs/exec/eval, unminified tsc output, and a token-level diff of ALL 10 module pairs shows dist/ differs from src/ only by sourceMappingURL comments. Security posture is deliberate: strips C0/C1 controls at every public entry (src/labels.ts:39-42) to prevent ANSI injection into scrollback, refuses to decode HTML entities into control chars, and enforces MAX_NODES=128/MAX_EDGES=512/MAX_CANVAS_CELLS=2^21. `npm audit signatures --include-attestations` was actually run: a valid sigstore/SLSA v1 provenance bundle exists for this exact tarball. HUMAN MUST WEIGH: this is a 2026-07-28 package published 0.2.2 on 2026-08-04 (~2 days before review) with a single maintainer, ~1.2k downloads/month, and a README stating '100% of the code written by Opus 5'. Provenance proves CI built it from a matching tag; it does not prove the tag is benign, and there is essentially zero community-scrutiny window on this point release — the exact pin + integrity hash here is doing all the protective work. Decide whether to (a) accept the pin, (b) vendor it (~1400 lines of dependency-free string math into strape/vendor/, removes update-time review burden and registry-mutation risk), or (c) drop mermaid rendering. Confirmed bug to fix upstream or on ingest (cosmetic, not exploitable): src/labels.ts:75 / dist/labels.js:64 does `NAMED_ENTITIES[body]` on attacker-controlled text, so inherited Object.prototype keys resolve — reproduced by running the shipped dist: `flowchart LR\\n A[\"&valueOf;\"] --> B` renders a box containing 'function valueOf() { [native code] }'. Prototype READ only; nothing is written, no control-char escape, no crash. Fix: Object.hasOwn guard or Object.create(null). Audited every other lookup table in the package — this is an isolated instance, not a pattern. Also: packages/coding-agent/src/modes/interactive/components/mermaid.ts:75 calls render() with no try/catch anywhere up the chain; 60k fuzz cases threw nothing, but a defensive try/catch would keep a future parser regression from breaking TUI rendering."
+		},
+		"highlight.js@10.7.3": {
+			"verdict": "allow",
+			"integrity": "sha512-tzcUFauisWKNHaRkN4Wjl/ZA07gENAjFl3J/c480dprkGTg5EQstgaNFqBfUqCq54kZRIEcreTsAgF/m2quD7A==",
+			"resolved": "https://registry.npmjs.org/highlight.js/-/highlight.js-10.7.3.tgz",
+			"hasInstallScript": false,
+			"tier": "B",
+			"reviewedBy": "Diego Szychowski",
+			"reviewedAt": "2026-08-09",
+			"capabilities": [
+				"syntax tokenization only — pure regex-based lexer plus 191 grammar data modules; no exec/eval/network/fs"
+			],
+			"notes": "Clean, with three false positives explicitly cleared: (1) every eval/exec grep hit in lib/core.js is RegExp.prototype.exec, and the literal '// v = eval(...)' in lib/languages/julia.js is highlighting SAMPLE TEXT inside a comment; (2) the DOM code (document.createElement/querySelectorAll/window.addEventListener at lib/core.js:1309,2260,2283,2293-2294) is the deprecated browser auto-highlight plugin, guarded by typeof window !== 'undefined' and unreachable under Node; (3) the 'base64' string hits are SQL/1C builtin keyword lists, not embedded blobs. No lifecycle scripts, no runtime dependencies, no bin entry. strape calls only hljs.highlight()/highlightAuto() from packages/coding-agent/src/utils/syntax-highlight.ts:136,140 — the pure lexer path. Version note for a future bump, not an escalation: 10.7.3 is an old major; if it is ever bumped, re-review rather than trusting the line."
+		},
+		"hosted-git-info@9.0.3": {
+			"verdict": "allow",
+			"integrity": "sha512-Hc+ghLoSt6QaYZUv0WBiIvmMDZuZZ7oaDvdH8MbfOO4lOsxdXLEvuC6ePoGs9H1X9oCLyq6+NVN0MKqD+ydxyg==",
+			"resolved": "https://registry.npmjs.org/hosted-git-info/-/hosted-git-info-9.0.3.tgz",
+			"hasInstallScript": false,
+			"tier": "A",
+			"reviewedBy": "Diego Szychowski",
+			"reviewedAt": "2026-08-09",
+			"capabilities": [
+				"parses git-hosted repository URLs (github/bitbucket/gitlab/gist/sourcehut) out of package.json repository fields",
+				"WHATWG URL (node:url) parsing; indexOf/split-based shorthand detection, not regex host matching",
+				"bounded in-memory LRU cache (max 1000) via lru-cache",
+				"no network calls, child_process, eval/vm, fs writes, process.env reads, dynamic require, native/WASM loads, or prototype mutation"
+			],
+			"notes": "Clean. Four files / 659 lines total (lib/index.js, from-url.js, parse-url.js, hosts.js), scripts are test/lint/snap only, ISC license + repository/homepage/bugs fields, single runtime dep lru-cache@^11. This is the post-ReDoS rewrite: parsing uses indexOf/lastIndexOf/split, and the only remaining regexes are linear character-class quantifiers (hosts.js:8-11) plus two trivial fixed patterns (index.js:22-23) — no catastrophic-backtracking shape. The many https://github.com / codeload / raw.githubusercontent / gitlab api / git.sr.ht strings are TEMPLATES the package fills in and returns as strings; it never fetches them. Minor hygiene note (not a finding): files lists a bin/ dir that does not exist in the installed tree, so it is a no-op."
+		},
+		"http-proxy-agent@7.0.2": {
+			"verdict": "allow",
+			"decision": "DECISION 2026-08-08 — ALLOW. Both questions closed by inspection. (1) rejectUnauthorized appears NOWHERE in packages/ai/src, so no call site weakens TLS verification for an https: proxy; default Node TLS holds. (2) The sole consumer is the AWS Bedrock provider (bedrock-converse-stream.ts), which strape declares out of scope and blocks at the module layer — @aws-sdk/client-bedrock-runtime is listed in strape/runtime/deny-modules.mjs:16, so the proxy-capable code is unreachable in a shipped run. NON-BLOCKING FOLLOW-UP: whether a package reachable only through a blocked provider belongs in the shipped closure at all is a closure-slimming question, not a security blocker.",
+			"integrity": "sha512-T1gkAiYYDWYx3V5Bmyu7HcfcvL7mUrTWiM6yOfa3PIphViJ/gFPbvidQ+veqSOHci/PxBcDabeUNCzpOODJZig==",
+			"resolved": "https://registry.npmjs.org/http-proxy-agent/-/http-proxy-agent-7.0.2.tgz",
+			"hasInstallScript": false,
+			"tier": "A",
+			"reviewedBy": "Diego Szychowski",
+			"reviewedAt": "2026-08-09",
+			"capabilities": [
+				"net.connect / tls.connect to a caller-supplied proxy host:port (dist/index.js:120-127); no hardcoded host anywhere",
+				"builds a Basic Proxy-Authorization header from the constructor-supplied proxy URL's userinfo (dist/index.js:82-85)",
+				"mutates the outgoing http.ClientRequest (req.path, req._header, req.outputData) into absolute-URI proxy form (dist/index.js:60-97)",
+				"no child_process, eval, fs writes, process.env reads, or dynamic require"
+			],
+			"notes": "ESCALATE (architectural reachability question, not a package defect). 147 lines of unminified tsc output from TooTallNate/proxy-agents; no lifecycle scripts, MIT + repository field, files:['dist'] matches the shipped tree, deps are only agent-base@7.1.4 and debug@4. Zero hardcoded endpoints; the only destination is the proxy the caller passes in. HUMAN MUST CONFIRM TWO THINGS: (1) the sole in-repo call site is packages/ai/src/api/bedrock-converse-stream.ts:27,204 (new HttpProxyAgent(proxyUrl)) — the AWS Bedrock provider, which strape declares out of scope and blocks via strape/runtime/deny-modules.mjs. Verify that guard actually prevents this proxy-capable code from being reached in a shipped strape run; if Bedrock is truly dead, consider whether this package should be in the shipped closure at all. (2) TLS trust for an https: proxy is entirely delegated to caller-supplied opts (dist/index.js:54-58,120-122 spread connectOpts into tls.connect). The package never weakens verification itself, so default Node TLS holds — but confirm bedrock-converse-stream.ts does not pass rejectUnauthorized:false."
+		},
+		"https-proxy-agent@7.0.6": {
+			"verdict": "allow",
+			"integrity": "sha512-vK9P5/iUfdl95AI+JVyUuIcVtd4ofvtrOr3HNtM2yxC9bnMbEdp3x01OhQNnjb8IJYi38VlTE3mBXwcfvywuSw==",
+			"resolved": "https://registry.npmjs.org/https-proxy-agent/-/https-proxy-agent-7.0.6.tgz",
+			"hasInstallScript": false,
+			"tier": "A",
+			"reviewedBy": "Diego Szychowski",
+			"reviewedAt": "2026-08-09",
+			"capabilities": [
+				"net.connect / tls.connect to a constructor-supplied proxy host (never hardcoded)",
+				"issues an HTTP CONNECT tunnel and injects Proxy-Authorization Basic from the proxy URL userinfo (dist/index.js ~104-107)",
+				"TLS upgrade via tls.connect with SNI set from the destination host for non-IP hosts (setServernameFromNonIpHost)",
+				"on non-200 CONNECT, destroys the real socket and substitutes a non-writable fake socket so buffered bytes cannot leak Authorization to a hostile proxy (hackerone.com/reports/541502)",
+				"no child_process, eval/vm, fs writes, dynamic require, or direct process.env reads"
+			],
+			"notes": "Clean. Two logic files only (dist/index.js, dist/parse-proxy-response.js), unminified, TooTallNate/proxy-agents, MIT + repository field, files:['dist'], no preinstall/install/postinstall/prepare. No proxy endpoint is hardcoded — the target comes entirely from the caller. TLS uses plain tls.connect with defaults: rejectUnauthorized untouched, no checkServerIdentity override, SNI correctly derived from the destination hostname, so no certificate-validation bypass. Live only when strape's outbound traffic is routed through a proxy; absent proxy config connect() never runs. Deps: agent-base@7.1.4 + debug@4, both reviewed here."
+		},
+		"ignore@7.0.5": {
+			"verdict": "allow",
+			"integrity": "sha512-Hs59xBNfUIunMFgWAbGX5cq6893IbWg4KnrjbYwX3tx0ztorVgTDA6B2sxf8ejHJ4wz8BqGUMYlnzNBer5NvGg==",
+			"resolved": "https://registry.npmjs.org/ignore/-/ignore-7.0.5.tgz",
+			"hasInstallScript": false,
+			"tier": "B",
+			"reviewedBy": "Diego Szychowski",
+			"reviewedAt": "2026-08-09",
+			"capabilities": [
+				"gitignore-pattern-to-regex compiler and path filter, pure string/regex logic",
+				"only exotic construct is a Symbol.for('node-ignore') internal key (index.js:33-38)"
+			],
+			"notes": "Clean. Single 784-line index.js read in full; no dynamic requires, no process/fs/network calls in index.js or legacy.js. No lifecycle scripts. Live at packages/coding-agent/src/core/skills.ts:2 to honour .gitignore/.ignore/.fdignore while scanning skill dirs; legacy.js (Babel ES5 build) is unused."
+		},
+		"isexe@2.0.0": {
+			"verdict": "allow",
+			"integrity": "sha512-RHxMLp9lnKHGHRng9QFhRCMbYAcVpn69smSGcq3f36xjgVVWThj4qqLbTLlq7Ssj8B+fIQ1EuCEGI2lKsyQeIw==",
+			"resolved": "https://registry.npmjs.org/isexe/-/isexe-2.0.0.tgz",
+			"hasInstallScript": false,
+			"tier": "B",
+			"reviewedBy": "Diego Szychowski",
+			"reviewedAt": "2026-08-09",
+			"capabilities": [
+				"fs reads only — fs.stat/statSync (mode.js:7-13, windows.js:34-37)"
+			],
+			"notes": "Clean. Minimal executability check: stats a path and compares POSIX mode bits against uid/gid, or matches a PATHEXT suffix on Windows. No writes, no exec, no eval, no network, no lifecycle scripts. Reached via which."
+		},
+		"jiti@2.7.0": {
+			"verdict": "allow",
+			"decision": "DECISION 2026-08-08 — ALLOW the package; both call-site items recorded as backlog, neither blocking. (1) The adversarial pass was right that transformOptions.babel is overridable (only `plugins` is genuinely protected), but the exposure is nil today: transformOptions appears ZERO times across every package, so a hostile repo cannot hijack the compiler via babel.config.js. That is a property of strape's call site, not a package invariant — BACKLOG: add a test/lint asserting no call site threads repo-controlled data into transformOptions.babel, and re-check on every bump. (2) Confirmed that loader.ts:444-445 passes only {moduleCache:false}, so fsCache defaults true and transpiled extension code is written to /tmp/jiti and later re-executed via vm.runInThisContext. BACKLOG: point fsCache at a path under ~/.strape, which hunk 12 already guarantees is 0700 — reusing a control strape has already built and tested. Requires a hostile local user, hence backlog rather than blocker.",
+			"integrity": "sha512-AC/7JofJvZGrrneWNaEnJeOLUx+JlGt7tNa0wZiRPT4MY1wmfKjt2+6O2p2uz2+skll8OZZmJMNqeke7kKbNgQ==",
+			"resolved": "https://registry.npmjs.org/jiti/-/jiti-2.7.0.tgz",
+			"hasInstallScript": false,
+			"tier": "A",
+			"reviewedBy": "Diego Szychowski",
+			"reviewedAt": "2026-08-09",
+			"capabilities": [
+				"code execution: vm.runInThisContext() on transpiled source in the MAIN realm, no sandbox (dist/jiti.cjs) — this is how strape executes user extension .ts files",
+				"dynamic require/import: createRequire()/nativeRequire plus nativeImport honouring node:, file: and data: specifiers",
+				"fs writes: transpile cache (writeFileSync + mkdirSync recursive, resolves to /tmp/jiti in practice) and an ESM-eval temp-file fallback; plus a write+delete case-sensitivity probe in process.cwd() from bundled get-tsconfig",
+				"process.env reads: JITI_* option overrides and TMPDIR; bundled std-env probes CI/agent vars for debug colouring only",
+				"node:crypto md5 as cache key; base64 data: URL construction for the async ESM-eval fallback",
+				"bundled @babel/core transform pipeline (1.5MB minified) + acorn + get-tsconfig + std-env",
+				"NOT present: child_process/exec/spawn, net/dns/http/https/fetch, eval()/new Function, WASM, native .node loads, require.extensions or Module.prototype patching"
+			],
+			"notes": "ESCALATE (adversarial pass contradicted the first pass). Provenance is solid: no lifecycle scripts (only publisher-side prepack), no runtime dependencies, no network primitive anywhere in either dist bundle, MIT + repository field, and a fresh `npm pack` of 2.7.0 is byte-identical to node_modules/jiti with a sha512 matching this integrity field. Two items a human must resolve: (1) CONTRADICTION — the first pass called jiti's babel-config lockout 'explicitly shut off'; the adversarial pass showed dist/babel.cjs's transform() spreads a caller-supplied `...r.babel` AFTER the safe defaults and BEFORE plugins (char ~1519120), so babelrc/configFile/cwd/compact/retainLines/filename are all overridable via the public JitiOptions.transformOptions.babel field. Only `plugins` is actually protected. Grep confirms strape sets transformOptions nowhere today, so a hostile repo cannot currently hijack the compiler via babel.config.js — but this is a mutable default contingent on strape's call site, not a package invariant. Add a test/lint asserting no call site threads repo-controlled data into transformOptions.babel, and re-check on every jiti bump. (2) Disk cache of executable code is ON by default: strape passes only {moduleCache:false} at packages/coding-agent/src/core/extensions/loader.ts:444, so fsCache defaults true and transpiled extension code lands in /tmp/jiti (confirmed empirically) with umask-derived perms (observed 775 dir / 664 files under world-writable /tmp), and is later re-executed via vm.runInThisContext on a bare content-hash marker match. A local principal who can pre-create or write into /tmp/jiti can plant code strape will execute with the developer's API keys. Requires a hostile local user, but the fix is one line: pass an explicit fsCache path under the user's own cache dir, or fsCache:false. Also note: 1.7MB of minified bundle means no byte-level human review of the embedded babel/acorn is possible (re-run the tarball diff + capability greps on every bump instead of reading a changelog); dist embeds a stale version constant '2.6.1' (benign — bundles genuinely differ from 2.6.1, upstream bumps after build), so do not trust the runtime version string for provenance; package.json's files array lists a root register.cjs that does not exist in the tarball."
+		},
+		"lru-cache@11.4.0": {
+			"verdict": "allow",
+			"decision": "DECISION 2026-08-08 — ALLOW, accepting the substitution explicitly, which is what the escalation asked for. The published entry is dist/commonjs/index.min.js (minified); the audit was performed against the unminified dist/commonjs/index.js and confirmed to match. STANDING ITEM: on every bump, re-diff the minified entry against the unminified source — a minified-only entry point is exactly where a tampered build would hide, so reading only the readable file is not sufficient.",
+			"integrity": "sha512-W+R+kFL4HgVxONq2bhXPi3bGpzGe/yEhVOp233qw9wCRtgncJ15P3bC+e4zZMu4Cq7d+WAJjXGW0uUkifhcatA==",
+			"resolved": "https://registry.npmjs.org/lru-cache/-/lru-cache-11.4.0.tgz",
+			"hasInstallScript": false,
+			"tier": "B",
+			"reviewedBy": "Diego Szychowski",
+			"reviewedAt": "2026-08-09",
+			"capabilities": [
+				"pure in-memory LRU cache class; no fs/net/child_process/eval. The 'fetch' identifiers are the library's own cache-refresh callback API (cache.fetch()/fetchMethod), NOT network I/O"
+			],
+			"notes": "ESCALATE (informational — the reviewed artifact is not the shipped entry point). No lifecycle scripts, no capability-class hits, and diagnostics-channel.js/perf.js are inert stubs ({hasSubscribers:false}, Date/performance.now). The escalation: the published entry is dist/commonjs/index.min.js (esbuild/tshy minified), so the audit was performed against the unminified dist/commonjs/index.js (1715 lines) and confirmed to match — a human should accept that substitution explicitly, since minified-only entry points are exactly where a future tampered build would hide. On every bump, re-diff the minified entry against the unminified source rather than reading only the readable file. Reached transitively via path-scurry and hosted-git-info."
+		},
+		"marked@18.0.5": {
+			"verdict": "allow",
+			"decision": "DECISION 2026-08-08 — ALLOW, and the architectural invariant is now verified rather than asserted. node_modules/marked has exactly THREE importers, all in packages/tui: components/markdown.ts:1 plus two type re-exports (index.ts:3, dist/index.d.ts:1). There is no coding-agent consumer. The HTML export path does not use it at all — core/export-html/index.ts:148 reads the vendored vendor/marked.min.js, with its own scheme allowlist and escapeHtml. marked's raw-HTML passthrough and absence of javascript:-scheme blocking are therefore inert: terminal rendering, no DOM. STANDING ITEM: re-verify on every upstream sync that no path feeds node_modules/marked output into a DOM or an exported HTML document, and that the vendored copy remains the export path.",
+			"integrity": "sha512-S6GcvALHg6K4ohtu4E7x0a1AqhAjp6cV8KhLSyN9qVapnzJkusVBxZRcIU9AeYsbe6P1hKDusSbEOzGyyuce6w==",
+			"resolved": "https://registry.npmjs.org/marked/-/marked-18.0.5.tgz",
+			"hasInstallScript": false,
+			"tier": "A",
+			"reviewedBy": "Diego Szychowski",
+			"reviewedAt": "2026-08-09",
+			"capabilities": [
+				"pure markdown-to-HTML/token parser; no I/O in the library path",
+				"bin/marked.js CLI (unused by strape) can require() a user-specified config file (bin/main.js:181) and spawn('man', ...) for --man (bin/main.js:27,40)",
+				"by design: html() renderer returns raw HTML unchanged and the URL cleaner only encodeURI()s — no javascript:/data: scheme filtering"
+			],
+			"notes": "ESCALATE (no defect in the package; the escalation is a standing architectural invariant a human must keep). Esbuild-bundled but unminified ESM/UMD, no preinstall/install/postinstall/prepare, no network/fs-write/eval in the library path; the only spawn() and dynamic require() live in bin/main.js, which nothing in strape references. The package has ZERO built-in XSS protection — raw HTML passthrough and no javascript:-scheme blocking — which is marked's long-documented behaviour since `sanitize` was removed upstream, not a defect in this build. That is only acceptable because of two facts that must not silently change: (1) the live consumer, packages/tui/src/components/markdown.ts:612-616, treats the 'html' token as INERT PLAIN TEXT for terminal rendering (there is no DOM in that path); (2) strape's HTML export does NOT use node_modules/marked at all — it ships its own vendor/marked.min.js plus sanitizeMarkdownUrl() scheme allowlist (http/https/mailto/tel/ftp) and escapeHtml() (export-html/template.js:616-626,1587-1594). Human action: record this as an invariant and re-verify on every upstream sync that no code path feeds node_modules/marked output into a DOM or an exported HTML document, and that the vendored copy remains the export path."
+		},
+		"minimatch@10.2.5": {
+			"verdict": "allow",
+			"integrity": "sha512-MULkVLfKGYDFYejP07QOurDLLQpcjk7Fw+7jXS2R2czRQzR56yHRveU5NDJEOviH+hETZKSkIk5c+T23GjFUMg==",
+			"resolved": "https://registry.npmjs.org/minimatch/-/minimatch-10.2.5.tgz",
+			"hasInstallScript": false,
+			"tier": "B",
+			"reviewedBy": "Diego Szychowski",
+			"reviewedAt": "2026-08-09",
+			"capabilities": [
+				"glob pattern matching / RegExp compilation only",
+				"one process.env read (dist/commonjs/index.js:73, __MINIMATCH_TESTING_PLATFORM__) purely to choose '/' vs '\\\\' as separator in tests"
+			],
+			"notes": "Clean. dist/commonjs/index.js read in full (1127 lines) plus assert-valid-pattern/escape/unescape: string and regex operations only — no fs, child_process, eval/new Function, or network. package.json has repository + BlueOak-1.0.0 license and no install-time lifecycle scripts (prepare/pretest are dev-time tshy/tap and do not apply to an installed tarball). Depends on brace-expansion, also reviewed here. Reached via glob."
+		},
+		"minipass@7.1.3": {
+			"verdict": "allow",
+			"integrity": "sha512-tEBHqDnIoM/1rXME1zgka9g6Q2lcoCkxHLuc7ODJ5BxbP5d4c2Z5cGgtXAku59200Cx7diuHTOYfSBD8n6mm8A==",
+			"resolved": "https://registry.npmjs.org/minipass/-/minipass-7.1.3.tgz",
+			"hasInstallScript": false,
+			"tier": "B",
+			"reviewedBy": "Diego Szychowski",
+			"reviewedAt": "2026-08-09",
+			"capabilities": [
+				"in-memory PassThrough-style stream (EventEmitter-based read/write/pipe buffering); imports only node:events, node:stream (instanceof checks) and node:string_decoder"
+			],
+			"notes": "Clean. dist/commonjs/index.js read in full (1037 lines): no fs, child_process, network, eval, process.env reads or dynamic require. repository + BlueOak-1.0.0 license, no lifecycle scripts. Reached via path-scurry."
+		},
+		"ms@2.1.3": {
+			"verdict": "allow",
+			"integrity": "sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==",
+			"resolved": "https://registry.npmjs.org/ms/-/ms-2.1.3.tgz",
+			"hasInstallScript": false,
+			"tier": "B",
+			"reviewedBy": "Diego Szychowski",
+			"reviewedAt": "2026-08-09",
+			"capabilities": [
+				"none — regex parse plus arithmetic only"
+			],
+			"notes": "Clean. Single 163-line file converting millisecond strings to/from numbers; no env/fs/net/child_process/eval anywhere. Consumed only by debug's humanize()."
+		},
+		"openai@6.26.0": {
+			"verdict": "allow",
+			"decision": "DECISION 2026-08-08 — ACCEPT, with the coverage boundary stated rather than glossed. ~440 of 452 files were covered by full-tree capability greps (network hosts, child_process, eval/vm, fs writes, native/WASM, dynamic require, env reads, telemetry) plus targeted reads of the client/auth/env entry points — NOT line-by-line. A backdoor confined to one rare resource file and triggered by an unusual parameter would evade that method, and this verdict accepts that. Trust rests on the integrity pin, OpenAI's verified-publisher provenance, and strape's wrappers always passing an explicit baseURL and apiKey so the SDK's env defaults never decide where traffic goes. NON-BLOCKING FOLLOW-UPS: bin/cli's migrate subcommand is a latent RCE surface that strape never invokes and must never expose; helpers/audio.js spawns ffplay/ffmpeg and is not imported. Re-check both on every SDK bump.",
+			"integrity": "sha512-zd23dbWTjiJ6sSAX6s0HrCZi41JwTA1bQVs0wLQPZ2/5o2gxOJA5wh7yOAUgwYybfhDXyhwlpeQf7Mlgx8EOCA==",
+			"resolved": "https://registry.npmjs.org/openai/-/openai-6.26.0.tgz",
+			"hasInstallScript": false,
+			"tier": "C",
+			"reviewedBy": "Diego Szychowski",
+			"reviewedAt": "2026-08-09",
+			"capabilities": [
+				"network: outbound HTTPS to https://api.openai.com/v1 by default (client.js:132), or any operator-configured baseURL",
+				"process.env reads, named vars only: OPENAI_API_KEY/ORG_ID/PROJECT_ID/WEBHOOK_SECRET/BASE_URL/LOG/API_VERSION, AZURE_OPENAI_ENDPOINT/API_KEY (internal/utils/env.js) — no broad enumeration",
+				"child_process.spawn('ffplay'/'ffmpeg') in helpers/audio.js for optional local audio playback — NOT imported by strape",
+				"bin/cli 'migrate' subcommand runs spawnSync('npx', ['-y', '<github release tarball URL>', ...]) — remote code execution, only if a human types `openai migrate`",
+				"no eval/new Function/node:vm, no fs writes, no native .node binaries, no WASM, no telemetry/analytics endpoints"
+			],
+			"notes": "ESCALATE (Tier C: coverage is grep-based, not a line-by-line read — a human must accept that boundary). Zero lifecycle scripts, verified directly. Ships readable TypeScript source alongside CJS/ESM builds; sampled highest-density files and found ordinary Stainless codegen, not minification. Apache-2.0, repository field, official OpenAI publisher, pinned here by sha512. strape's wrappers (packages/ai/src/api/{openai-completions,openai-responses,openai-codex-responses,azure-openai-responses,openrouter-images}.ts) always pass an explicit baseURL and apiKey, so the SDK's env defaults do not determine where traffic goes — strape's model config does. WHAT A HUMAN MUST ACCEPT OR CLOSE: (1) ~440 of 452 files (resources/**, beta/**) were NOT read line by line; coverage was full-tree greps for network hosts, child_process, eval/vm, fs writes, native/WASM, dynamic require, env reads and telemetry strings, plus targeted reads of client.js/azure.js/env.js/index.js/internal/shims.js. A backdoor confined to one rare resource file and triggered by an unusual API parameter could evade those greps. (2) NO tarball-vs-GitHub-tag diff was performed for 6.26.0, so a registry/repo mismatch is not ruled out; trust rests on the integrity pin plus OpenAI's verified-publisher provenance. Consider running `npm audit signatures`/provenance verification and, if the risk appetite requires it, a source diff. (3) bin/cli's migrate subcommand is a latent RCE surface (downloads and executes a third-party GitHub release tarball via npx). strape never invokes the bin — confirm the build cannot expose it, and keep it that way. (4) helpers/audio.js spawns ffplay/ffmpeg but is not imported by strape; re-check after any SDK bump."
+		},
+		"partial-json@0.1.7": {
+			"verdict": "allow",
+			"integrity": "sha512-Njv/59hHaokb/hRUjce3Hdv12wd60MtM9Z5Olmn+nehe0QDAsRtRbJPvJ0Z91TusF0SuZRIvnM+S4l6EIP8leA==",
+			"resolved": "https://registry.npmjs.org/partial-json/-/partial-json-0.1.7.tgz",
+			"hasInstallScript": false,
+			"tier": "B",
+			"reviewedBy": "Diego Szychowski",
+			"reviewedAt": "2026-08-09",
+			"capabilities": [
+				"none — recursive-descent parser for incomplete JSON; only internal require is './options'; no fs, network, child_process, eval/new Function, or process.env reads"
+			],
+			"notes": "Clean. dist/index.js (221 lines) and dist/options.js (73 lines) read in full: string indexing plus JSON.parse on the input, and Error construction. No lifecycle scripts. Live at packages/ai/src/utils/json-parse.ts to incrementally parse streamed tool-call arguments — exactly the stated purpose."
+		},
+		"path-key@3.1.1": {
+			"verdict": "allow",
+			"integrity": "sha512-ojmeN0qd+y0jszEtoY48r0Peq5dwMEkIlCOu6Q5f41lfkswXuKtYrhgoTpLnyIcHm24Uhqx+5Tqm2InSwLhE6Q==",
+			"resolved": "https://registry.npmjs.org/path-key/-/path-key-3.1.1.tgz",
+			"hasInstallScript": false,
+			"tier": "B",
+			"reviewedBy": "Diego Szychowski",
+			"reviewedAt": "2026-08-09",
+			"capabilities": [
+				"reads process.env only to determine the PATH/Path key name on Windows"
+			],
+			"notes": "Clean. 14-line pure function returning 'PATH' on POSIX or the case-insensitive match / 'Path' fallback on win32. No fs, exec, or network; no lifecycle scripts; behaviour matches README exactly. Reached via cross-spawn."
+		},
+		"path-scurry@2.0.2": {
+			"verdict": "allow",
+			"decision": "DECISION 2026-08-08 — ALLOW. Same containment question as glob and it closes the same way: the only consumer in this tree is glob, whose single call site is package-manager.ts:2306. The realpath-has-no-root-concept behaviour and the stale-cache TOCTOU note are recorded as properties to re-check if strape ever feeds a realpath result into a subsequent fs operation without a containment check. Both are openly documented by the package rather than hidden.",
+			"integrity": "sha512-3O/iVVsJAPsOnpwWIeD+d6z/7PmqApyQePUtCndjatj/9I5LylHvt5qluFaBT3I5h3r1ejfR056c+FCv+NnNXg==",
+			"resolved": "https://registry.npmjs.org/path-scurry/-/path-scurry-2.0.2.tgz",
+			"hasInstallScript": false,
+			"tier": "A",
+			"reviewedBy": "Diego Szychowski",
+			"reviewedAt": "2026-08-09",
+			"capabilities": [
+				"fs.lstatSync/readdirSync/readlinkSync/realpathSync plus promise/callback equivalents (dist/commonjs/index.js:38-49)",
+				"in-memory LRU caches of Path objects and resolved strings (index.js:124-154)",
+				"realpath()/realpathSync() call OS-native realpath, fully resolving symlink chains (index.js:1117-1145)",
+				"walk()/stream()/iterate() follow symlinks only when the caller passes follow:true (index.js:1611-1671,1771-1846)",
+				"no network, child_process, eval/vm, process.env reads, or dynamic require; no workspace-boundary enforcement attempted"
+			],
+			"notes": "ESCALATE (same containment question as glob; package itself is clean). glob's internal path cache/walker; only runtime deps are lru-cache and minipass, only consumer in this tree is glob. No lifecycle scripts that run on install (dev-only preversion/postversion/prepublishOnly/prepare), files:['dist'], readable TS-compiled output with doc comments. TWO CALLER-SIDE ITEMS: (1) realpath (index.js:1117-1145) resolves symlinks with NO concept of staying under a root — that is inherent fs.realpath behaviour, but if strape ever feeds a realpath result into a subsequent fs operation without a containment check, an in-repo symlink can redirect it outside the workspace. Pair this check with the glob absolute-pattern review. (2) cached Path/stat/readdir results go stale if the filesystem is mutated mid-session (documented at index.js:894-896,1114-1116,1541-1543) — a TOCTOU note for strape's file tools, openly documented rather than hidden."
+		},
+		"proper-lockfile@4.1.2": {
+			"verdict": "allow",
+			"decision": "DECISION 2026-08-08 — ALLOW the package, with one inconsistency recorded that the original review did not catch. The hardening the reviewer asked for exists on ONE of three call sites: auth-storage.ts:120,131 sets stale: 30_000 (3x the default) with an onCompromised handler, while trust-manager.ts:145 and settings-manager.ts:211 call lockSync with defaults — i.e. the 10s stale that makes time-based reclamation risky under a slow disk, GC pause or laptop suspend. BACKLOG ITEM: bring those two in line with auth-storage. The lock-path permission observation is out of scope: an attacker who can pre-create <file>.lock already has write access to the target file itself. Maintenance risk noted — no release since 2022, so expect no upstream fixes; the code is small enough to vendor if that ever matters.",
+			"integrity": "sha512-TjNPblN4BwAWMXU8s9AEz4JmQxnD1NNL7bNOY/AKUzyamc379FWASUhc/K1pL2noVb+XmZKLL68cjzLsiOAMaA==",
+			"resolved": "https://registry.npmjs.org/proper-lockfile/-/proper-lockfile-4.1.2.tgz",
+			"hasInstallScript": false,
+			"tier": "A",
+			"reviewedBy": "Diego Szychowski",
+			"reviewedAt": "2026-08-09",
+			"capabilities": [
+				"fs.mkdir/rmdir/stat/utimes/realpath via graceful-fs (lib/lockfile.js:29,37,56,90,114,143; lib/mtime-precision.js:9,22,28)",
+				"process-exit hook via signal-exit to clean up held locks (lib/lockfile.js:6,331-337)",
+				"unref'd setTimeout retry/heartbeat loop (lib/lockfile.js:109-183)",
+				"no eval/new Function/vm, no dynamic require, no process.env reads, no child_process, no network"
+			],
+			"notes": "ESCALATE (correctness/race concern in how strape uses it, not a supply-chain finding). Four files, ~450 lines, fully readable; scripts block is lint/test/release only, files:['lib'], MIT + repository field, README matches behaviour. TWO THINGS A HUMAN MUST CHECK: (1) stale-lock reclamation is TIME-based (default 10s, lib/lockfile.js:52,67,84-86,219), not PID/ownership-based — if a legitimate holder stalls past options.stale (slow disk, GC pause, SIGSTOP, laptop suspend) a second local writer steals the lock and BOTH processes believe they hold it; the ECOMPROMISED callback fires only for the original holder while the new acquirer proceeds normally. strape locks auth/session files with this, so review every call site and set a deliberately generous stale/update rather than relying on defaults. (2) the lock path defaults to '<file>.lock' in the SAME directory as the target with no permission hardening (lib/lockfile.js:11-13,29), so a local attacker can pre-create the lock dir to DoS acquisition or observe lock state — no new privilege (they already have write access to the auth file itself), but it defeats strape's own locking guarantee. Also note maintenance risk: no release since 2022 despite ~84M downloads/month, so expect no upstream fixes; the code is small enough to vendor if that ever matters."
+		},
+		"retry@0.12.0": {
+			"verdict": "allow",
+			"integrity": "sha512-9LkiTwjUh6rT555DtE9rTX+BKByPfrMzEAtnlEtdEwr3Nkffwiihqe2bWADg+OQRjt9gl6ICdmB/ZFDCGAtSow==",
+			"resolved": "https://registry.npmjs.org/retry/-/retry-0.12.0.tgz",
+			"shrinkwrapPath": "node_modules/proper-lockfile/node_modules/retry",
+			"hasInstallScript": false,
+			"installScriptApproved": false,
+			"tier": "B",
+			"reviewedBy": "Diego Szychowski",
+			"reviewedAt": "2026-08-09",
+			"capabilities": [],
+			"notes": "Retry/backoff timing helper for proper-lockfile (node_modules/proper-lockfile/lib/lockfile.js:5 requires it; the nested copy is what resolves). Reviewed the CORRECT shipped artifact at node_modules/proper-lockfile/node_modules/retry (0.12.0) by hand after the first agent pass mistakenly reviewed the hoisted dev-tree retry@0.13.1 - see hand-verified-findings.md HV-7. Verified: zero runtime dependencies; no install/postinstall/preinstall/prepare script (package.json scripts are test/release only, which npm does not run on install); shipped lib/ (index.js, lib/retry.js, lib/retry_operation.js) contains no child_process, no eval, no new Function, no network, no fs, no process.env, no prototype mutation - it is arithmetic over setTimeout. The single new Function() in the package is in test/integration/, which is never required by the entry point."
+		},
+		"semver@7.8.0": {
+			"verdict": "allow",
+			"integrity": "sha512-AcM7dV/5ul4EekoQ29Agm5vri8JNqRyj39o0qpX6vDF2GZrtutZl5RwgD1XnZjiTAfncsJhMI48QQH3sN87YNA==",
+			"resolved": "https://registry.npmjs.org/semver/-/semver-7.8.0.tgz",
+			"hasInstallScript": false,
+			"tier": "B",
+			"reviewedBy": "Diego Szychowski",
+			"reviewedAt": "2026-08-09",
+			"capabilities": [
+				"version string parsing/comparison only (pure regex + arithmetic)",
+				"process.env.NODE_DEBUG read for optional debug logging (internal/debug.js:5-7)",
+				"bin/semver.js CLI reads argv, prints to stdout, process.exit(1) — no exec, no network (not invoked by strape)"
+			],
+			"notes": "Clean. npm's canonical semver implementation; no I/O beyond console.log/process.exit in the CLI, no lifecycle scripts. strape uses it as a library from packages/coding-agent/src/core/package-manager.ts and src/utils/version-check.ts, never via the bin."
+		},
+		"shebang-command@2.0.0": {
+			"verdict": "allow",
+			"integrity": "sha512-kHxr2zZpYtdmrN1qDjrrX/Z1rR1kG8Dx+gkpK1G4eXmvXswmcE1hTWBWYUzlraYw1/yZp6YuDY77YtvbN0dmDA==",
+			"resolved": "https://registry.npmjs.org/shebang-command/-/shebang-command-2.0.0.tgz",
+			"hasInstallScript": false,
+			"tier": "B",
+			"reviewedBy": "Diego Szychowski",
+			"reviewedAt": "2026-08-09",
+			"capabilities": [
+				"string parsing only — no I/O"
+			],
+			"notes": "Clean. 19-line index.js extracting an interpreter from a shebang line the CALLER already read (e.g. '#!/usr/bin/env node' -> 'node'). Does not read files, spawn, or reach the network; no lifecycle scripts. Reached via cross-spawn's Windows path."
+		},
+		"shebang-regex@3.0.0": {
+			"verdict": "allow",
+			"integrity": "sha512-7++dFhtcx3353uBaq8DDR4NuxBetBzC7ZQOhmTQInHEd6bSrXdiEyzCvG07Z44UYdLShWUyXt5M/yhz8ekcb1A==",
+			"resolved": "https://registry.npmjs.org/shebang-regex/-/shebang-regex-3.0.0.tgz",
+			"hasInstallScript": false,
+			"tier": "B",
+			"reviewedBy": "Diego Szychowski",
+			"reviewedAt": "2026-08-09",
+			"capabilities": [
+				"none — exports the single regex /^#!(.*)/"
+			],
+			"notes": "Clean. A two-line module with no logic beyond the exported RegExp and no I/O of any kind. Consumed by shebang-command."
+		},
+		"signal-exit@3.0.7": {
+			"verdict": "allow",
+			"decision": "DECISION 2026-08-08 — ALLOW (acknowledge-and-allow; no defect found). Confirmed there is no direct import anywhere in packages/*/src — it arrives transitively through proper-lockfile only, and upstream already carries a regression test for its SIGTERM interaction (test/suite/regressions/5724-sigterm-signal-exit.test.ts). The privilege is acknowledged on the record: patching process.emit and process.reallyExit means any future malicious change here would own all exit handling in the agent, including strape's own cleanup and lock release. NON-BLOCKING FOLLOW-UP: this is the legacy unscoped v3, which receives no upstream attention; consider consolidating onto the modern scoped package when the closure allows.",
+			"integrity": "sha512-wnD2ZE+l+SPC/uoS0vXeE9L1+0wuaMqKlfz9AMUo38JsyLSBWSFcHR1Rri62LZc12vLr1gb3jl7iwQhgwpAbGQ==",
+			"resolved": "https://registry.npmjs.org/signal-exit/-/signal-exit-3.0.7.tgz",
+			"hasInstallScript": false,
+			"tier": "B",
+			"reviewedBy": "Diego Szychowski",
+			"reviewedAt": "2026-08-09",
+			"capabilities": [
+				"monkey-patches process.emit and process.reallyExit (index.js:165-201) — its documented entire purpose",
+				"registers handlers via process.on for a fixed hardcoded POSIX signal list (signals.js:21-53)",
+				"process.kill(process.pid, sig) to re-raise a signal after removing its own listener (index.js:133)"
+			],
+			"notes": "ESCALATE (informational — acknowledge-and-allow; no defect found). Two files, ~256 lines, fully readable, no fs/net/eval/dynamic require, and the only install-adjacent scripts (preversion/postversion/prepublishOnly) never run on a consumer install. The escalation is a privilege observation, not a bug: patching process.emit and process.reallyExit is inherently process-wide high privilege — any future malicious change here silently owns ALL exit handling in the agent, including strape's own cleanup and lock release. Behaviour today matches the documented contract exactly. Human action: acknowledge the privilege, and note this is the legacy UNSCOPED v3 pulled in transitively by proper-lockfile — consider whether the closure can consolidate on the modern scoped signal-exit instead of carrying a v3 that receives no upstream attention."
+		},
+		"typebox@1.3.7": {
+			"verdict": "allow",
+			"integrity": "sha512-meKuifc33Pccx0O6PdIzYMq3Og8zvP4TIi/a+Bw3AEMZMxOD0+RHGQvpglEe6Zdy3wZ8nqn/j95h8LUZLk/6Hg==",
+			"resolved": "https://registry.npmjs.org/typebox/-/typebox-1.3.7.tgz",
+			"hasInstallScript": false,
+			"tier": "B",
+			"reviewedBy": "Diego Szychowski",
+			"reviewedAt": "2026-08-09",
+			"capabilities": [
+				"none — pure JSON-Schema/type builder and validator; no child_process/exec/spawn, eval/new Function, node:vm, fs, net/http, or process.env anywhere in build/"
+			],
+			"notes": "Clean, and specifically checked for the historical risk in this package class: older TypeBox-style validators codegen with new Function, but here Compile() merely instantiates a Validator class (build/compile/compile.mjs:11) with NO dynamic code generation at all. package.json has no scripts block whatsoever and ESM exports point only at build/*.mjs; no bin, no network, no fs writes. The only 'exec' hits are RegExp.exec in build/format/date.mjs:12 and time.mjs:7. Live subset: typebox (Type), typebox/compile, typebox/value, typebox/error, used by packages/ai for tool-call schema definition and validation (src/utils/validation.ts, src/utils/typebox-helpers.ts). Much of the shipped build/ tree is pulled in transitively as pure functions with no I/O."
+		},
+		"undici@8.9.0": {
+			"verdict": "allow",
+			"decision": "DECISION 2026-08-08 — ALLOW the package; the cross-origin redirect exposure is accepted as a code follow-up with the fix already chosen. The artifact itself is exceptionally well evidenced: byte-identical to the registry tarball, shipped lib/ matching the GitHub v8.9.0 tag, both llhttp WASM blobs hashing identically to the tag's .wasm files, and a SLSA v1 provenance attestation. The finding is real and reaches strape: fetch() replays the body on 307/308 cross-origin, and provider code calls the global fetch that undici.install() replaces, so a DNS-hijacked or compromised provider host could receive the full conversation. Bearer credentials are stripped; api-key-style headers would not be. FIX DECIDED: add a dispatcher-level origin allowlist in core/http-dispatcher.ts — that file owns setGlobalDispatcher and undici.install() (lines 98, 108) and is the single funnel — rather than setting redirect:'error' at each provider fetch, because a per-call-site flag is precisely what a future upstream merge drops silently. ALSO TRACK: pin is 8.9.0 while 8.10.0 is current (no advisory affects 8.9.0); package.json's scripts.prepare is inert for a registry dep; on every bump re-diff lib/dispatcher/agent.js and lib/core/request.js:162.",
+			"integrity": "sha512-aWZpUj7XoGonMClx4gdDRfgBjqeA+F473aDmROQQbM9n6PRfK/u1q/a0X4wMTgcHfT8H6fpbt98PFuDUwFg2YA==",
+			"resolved": "https://registry.npmjs.org/undici/-/undici-8.9.0.tgz",
+			"hasInstallScript": false,
+			"tier": "A",
+			"reviewedBy": "Diego Szychowski",
+			"reviewedAt": "2026-08-09",
+			"capabilities": [
+				"net/tls socket creation (lib/core/connect.js:78 tls.connect, :105 net.connect); no rejectUnauthorized:false / checkServerIdentity override / custom ca anywhere in lib/",
+				"WASM instantiation of base64-embedded llhttp parser (lib/dispatcher/client-h1.js:84,94); imports are exactly the 8 env.wasm_on_* parser callbacks, no WASI/fd/socket",
+				"http2 via lazy require('node:http2') (lib/dispatcher/client-h2.js:60,210); strape sets allowH2:false",
+				"7 process.env reads, all benign: http_proxy/HTTPS_PROXY/no_proxy, JEST_WORKER_ID, UNDICI_NO_WASM_SIMD, CI",
+				"fs writes only via opt-in SnapshotAgent with a caller-supplied path (lib/mock/snapshot-recorder.js:462,470) and node:sqlite cache store (dormant)",
+				"globalThis mutation: install() replaces fetch/Headers/Response/Request/FormData/WebSocket/EventSource (strape calls this deliberately at packages/coding-agent/src/core/http-dispatcher.ts:108)",
+				"node:dns (opt-in dns interceptor only), node:diagnostics_channel, node:crypto, node:zlib",
+				"NOT present: child_process/spawn, eval/new Function/node:vm, native .node loads, telemetry, bin entry, hardcoded remote host"
+			],
+			"notes": "ESCALATE (material, needs a human decision on strape's own code — not an undici defect). Package itself is clean: zero runtime deps, node: builtins only, no install scripts, no obfuscation, no hardcoded remote host; node_modules tree is byte-identical to the registry tarball, tarball sha512 matches this integrity field, shipped lib/ matches the GitHub v8.9.0 tag, both embedded llhttp WASM blobs decode to hashes identical to the tag's .wasm files (sha256 18403ee5…/ab4573a0…), and npm carries a SLSA v1 provenance attestation (nodejs/undici release.yml run 30093417650). Escalation is the cross-origin redirect body-replay path: fetch() strips Authorization/Cookie/Proxy-Authorization cross-origin (lib/web/fetch/index.js:1350-1358) but per spec keeps every other header and REPLAYS THE BODY on 307/308. The adversarial pass proved this is a live path, not hypothetical: strape's provider code (@earendil-works/pi-ai openai.js/xai.js) calls the global fetch() that undici.install() replaces, so a DNS-hijacked or compromised provider host answering 307 would POST the full conversation to an attacker origin. Bearer keys are safe today (stripped); api-key/x-api-key-style headers would not be. HUMAN MUST DECIDE: add a dispatcher-level origin allowlist in packages/coding-agent/src/core/http-dispatcher.ts or set redirect:'error' on provider fetches (note stripHeadersOnCrossOriginRedirect exists only for undici.request, not fetch). Also confirm/ack: (a) package.json:109 ships scripts.prepare='husky && node ./scripts/platform-shell.js' — npm never runs prepare for a registry-tarball dep and neither referenced file is in the tarball, so it is inert, but a naive grep-based gate will flag it; (b) pin is 8.9.0 while 8.10.0 is current — no advisory affects 8.9.0, but this is the package where a CVE matters most; (c) index-fetch.js is a second package-root entry that is dead for `import * as undici`; (d) on every undici bump, re-diff lib/dispatcher/agent.js and lib/core/request.js:162 (maxRedirections rejection) — a future default redirect interceptor on Agent/Pool would silently move this trust boundary."
+		},
+		"which@2.0.2": {
+			"verdict": "allow",
+			"decision": "DECISION 2026-08-08 — ALLOW. The 'prepublish' entry in which's own package.json is recorded rather than assumed away: npm does not run prepublish for a registry-tarball dependency, and strape installs with --ignore-scripts. Worth noting that the shrinkwrap's hasInstallScript flag (false) does not capture prepublish-class entries, so a grep-based gate would miss it — this note is the record. Reachability depends on the same win32 gate as cross-spawn (child-process.ts:25,33-35), verified intact 2026-08-08.",
+			"integrity": "sha512-BLI3Tl1TW3Pvl70l3yq3Y64i+awpwXqsGBYWkkqMtnbXgrMD+yj7rhW0kuEDxzJaYXGjEW5ogapKNMEKNMjibA==",
+			"resolved": "https://registry.npmjs.org/which/-/which-2.0.2.tgz",
+			"hasInstallScript": false,
+			"tier": "B",
+			"reviewedBy": "Diego Szychowski",
+			"reviewedAt": "2026-08-09",
+			"capabilities": [
+				"process.env reads: PATH and PATHEXT (which.js:22,27)",
+				"fs reads only, and only indirectly through isexe — no direct fs calls in which.js",
+				"declares a bin entry (node-which)",
+				"despite the name it never spawns or executes anything"
+			],
+			"notes": "ESCALATE (informational — a lifecycle-script entry exists in this package's own package.json). Code is clean: pure PATH search using path.join + isexe, mirroring which(1); bin/node-which is a 52-line wrapper around which.sync() with no extra logic and is not auto-invoked. TWO ITEMS FOR A HUMAN: (1) the adversarial cross-spawn pass found that which@2.0.2's package.json carries a 'prepublish' script. npm does not run prepublish for a registry-tarball dependency and strape installs with --ignore-scripts, so it cannot execute — but it must be recorded rather than assumed away, and note that this file's hasInstallScript flag (false, from the shrinkwrap) does not capture prepublish-class entries. (2) which is a synchronously-invoked runtime dependency on cross-spawn's WINDOWS path only, so on Linux/macOS it is loaded but its search logic never runs; that property depends on strape's win32 gate in packages/coding-agent/src/utils/child-process.ts, not on this package. Consider pinning forward to the modern which major if the closure allows."
+		},
+		"yaml@2.9.0": {
+			"verdict": "allow",
+			"decision": "DECISION 2026-08-08 — ALLOW. Confirmed that parse() is called with NO options at utils/frontmatter.ts:35 (and the same pattern in agent/src/harness/skills.ts and prompt-templates.ts), so the verified safe defaults are what actually run on attacker-influenced skill and prompt frontmatter: core schema with no !!js/function tag in the tree, maxAliasCount 100 blocking billion-laughs, and prototype pollution correctly mitigated via Object.defineProperty. STANDING ITEM: the bin's --visit flag is a genuine code-execution surface (dynamic import of an arbitrary path). It is dead today and must stay dead — nothing may wire up yaml's bin or shell out to it.",
+			"integrity": "sha512-2AvhNX3mb8zd6Zy7INTtSpl1F15HW6Wnqj0srWlkKLcpYl/gMIMJiyuGq2KeI2YFxUPjdlB+3Lc10seMLtL4cA==",
+			"resolved": "https://registry.npmjs.org/yaml/-/yaml-2.9.0.tgz",
+			"hasInstallScript": false,
+			"tier": "A",
+			"reviewedBy": "Diego Szychowski",
+			"reviewedAt": "2026-08-09",
+			"capabilities": [
+				"pure computation: YAML parse/stringify only — no fs writes, no network, no child_process, no eval/new Function/vm on parsed data",
+				"ships a bin (bin.mjs -> dist/cli.mjs) whose --visit flag dynamically import()s a user-supplied module path (dist/cli.mjs:124)"
+			],
+			"notes": "ESCALATE (two things to confirm, no defect found). Zero dependencies, zero lifecycle scripts. strape imports only parse() with NO options at packages/coding-agent/src/utils/frontmatter.ts:35, packages/agent/src/harness/skills.ts:320-322 and prompt-templates.ts:209-211 — i.e. on attacker-influenced skill/prompt frontmatter — so the safe defaults apply and were verified: default schema is 'core' (dist/doc/Document.js:272) with no js-yaml-style !!js/function tag anywhere in the tree, and default maxAliasCount is 100 (dist/nodes/Node.js:28), which blocks billion-laughs via the count*aliasCount check in dist/nodes/Alias.js:70-74. Prototype pollution is explicitly and correctly mitigated: dist/nodes/addPairToJSMap.js:24-31 uses Object.defineProperty instead of assignment whenever the key is already `in` the target (true for __proto__/constructor/toString), so '__proto__' becomes a harmless own data property. HUMAN MUST CONFIRM: (1) nothing ever wires up yaml's bin or shells out to it — the --visit flag is a genuine code-execution surface (dynamic import of an arbitrary path) that is dead today and must stay dead; consider whether the build can strip or block the bin. (2) package.json's exports map the 'node' condition to dist/index.js with a bare 'default' falling back to browser/index.js — verify strape's bundler/runtime resolves the 'node' condition so the audited implementation is what actually runs (both are functionally equivalent parsers, but the audit was done against dist/)."
+		}
+	}
+}

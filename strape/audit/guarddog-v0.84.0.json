@@ -1,0 +1,646 @@
+{
+	"tool": "guarddog",
+	"packages": [
+		{
+			"name": "@mariozechner/clipboard",
+			"version": "0.3.9",
+			"path": "node_modules/@mariozechner/clipboard",
+			"status": "scanned",
+			"threats": [],
+			"capabilities": [
+				"capability-process-spawn"
+			],
+			"riskScore": 0,
+			"riskLabel": "no_risks_detected",
+			"threatDetail": []
+		},
+		{
+			"name": "@mariozechner/clipboard-darwin-arm64",
+			"version": "0.3.9",
+			"path": "node_modules/@mariozechner/clipboard-darwin-arm64",
+			"status": "not-installed",
+			"threats": [],
+			"capabilities": [],
+			"riskScore": null
+		},
+		{
+			"name": "@mariozechner/clipboard-darwin-universal",
+			"version": "0.3.9",
+			"path": "node_modules/@mariozechner/clipboard-darwin-universal",
+			"status": "not-installed",
+			"threats": [],
+			"capabilities": [],
+			"riskScore": null
+		},
+		{
+			"name": "@mariozechner/clipboard-darwin-x64",
+			"version": "0.3.9",
+			"path": "node_modules/@mariozechner/clipboard-darwin-x64",
+			"status": "not-installed",
+			"threats": [],
+			"capabilities": [],
+			"riskScore": null
+		},
+		{
+			"name": "@mariozechner/clipboard-linux-arm64-gnu",
+			"version": "0.3.9",
+			"path": "node_modules/@mariozechner/clipboard-linux-arm64-gnu",
+			"status": "not-installed",
+			"threats": [],
+			"capabilities": [],
+			"riskScore": null
+		},
+		{
+			"name": "@mariozechner/clipboard-linux-arm64-musl",
+			"version": "0.3.9",
+			"path": "node_modules/@mariozechner/clipboard-linux-arm64-musl",
+			"status": "not-installed",
+			"threats": [],
+			"capabilities": [],
+			"riskScore": null
+		},
+		{
+			"name": "@mariozechner/clipboard-linux-riscv64-gnu",
+			"version": "0.3.9",
+			"path": "node_modules/@mariozechner/clipboard-linux-riscv64-gnu",
+			"status": "not-installed",
+			"threats": [],
+			"capabilities": [],
+			"riskScore": null
+		},
+		{
+			"name": "@mariozechner/clipboard-linux-x64-gnu",
+			"version": "0.3.9",
+			"path": "node_modules/@mariozechner/clipboard-linux-x64-gnu",
+			"status": "scanned",
+			"threats": [],
+			"capabilities": [],
+			"riskScore": 0,
+			"riskLabel": "no_risks_detected",
+			"threatDetail": []
+		},
+		{
+			"name": "@mariozechner/clipboard-linux-x64-musl",
+			"version": "0.3.9",
+			"path": "node_modules/@mariozechner/clipboard-linux-x64-musl",
+			"status": "scanned",
+			"threats": [],
+			"capabilities": [],
+			"riskScore": 0,
+			"riskLabel": "no_risks_detected",
+			"threatDetail": []
+		},
+		{
+			"name": "@mariozechner/clipboard-win32-arm64-msvc",
+			"version": "0.3.9",
+			"path": "node_modules/@mariozechner/clipboard-win32-arm64-msvc",
+			"status": "not-installed",
+			"threats": [],
+			"capabilities": [],
+			"riskScore": null
+		},
+		{
+			"name": "@mariozechner/clipboard-win32-x64-msvc",
+			"version": "0.3.9",
+			"path": "node_modules/@mariozechner/clipboard-win32-x64-msvc",
+			"status": "not-installed",
+			"threats": [],
+			"capabilities": [],
+			"riskScore": null
+		},
+		{
+			"name": "@opentelemetry/api",
+			"version": "1.9.0",
+			"path": "node_modules/@opentelemetry/api",
+			"status": "scanned",
+			"threats": [],
+			"capabilities": [],
+			"riskScore": 0,
+			"riskLabel": "no_risks_detected",
+			"threatDetail": []
+		},
+		{
+			"name": "@silvia-odwyer/photon-node",
+			"version": "0.3.4",
+			"path": "node_modules/@silvia-odwyer/photon-node",
+			"status": "scanned",
+			"threats": [],
+			"capabilities": [
+				"capability-process-spawn"
+			],
+			"riskScore": 0,
+			"riskLabel": "no_risks_detected",
+			"threatDetail": []
+		},
+		{
+			"name": "agent-base",
+			"version": "7.1.4",
+			"path": "node_modules/agent-base",
+			"status": "scanned",
+			"threats": [],
+			"capabilities": [
+				"capability-network-outbound"
+			],
+			"riskScore": 0,
+			"riskLabel": "no_risks_detected",
+			"threatDetail": []
+		},
+		{
+			"name": "balanced-match",
+			"version": "4.0.4",
+			"path": "node_modules/balanced-match",
+			"status": "scanned",
+			"threats": [],
+			"capabilities": [],
+			"riskScore": 0,
+			"riskLabel": "no_risks_detected",
+			"threatDetail": []
+		},
+		{
+			"name": "brace-expansion",
+			"version": "5.0.9",
+			"path": "node_modules/brace-expansion",
+			"status": "scanned",
+			"threats": [],
+			"capabilities": [],
+			"riskScore": 0,
+			"riskLabel": "no_risks_detected",
+			"threatDetail": []
+		},
+		{
+			"name": "chalk",
+			"version": "5.6.2",
+			"path": "node_modules/chalk",
+			"status": "scanned",
+			"threats": [],
+			"capabilities": [
+				"capability-process-spawn"
+			],
+			"riskScore": 0,
+			"riskLabel": "no_risks_detected",
+			"threatDetail": []
+		},
+		{
+			"name": "cross-spawn",
+			"version": "7.0.6",
+			"path": "node_modules/cross-spawn",
+			"status": "scanned",
+			"threats": [],
+			"capabilities": [
+				"capability-process-spawn",
+				"capability-network-outbound"
+			],
+			"riskScore": 0,
+			"riskLabel": "no_risks_detected",
+			"threatDetail": []
+		},
+		{
+			"name": "debug",
+			"version": "4.4.3",
+			"path": "node_modules/debug",
+			"status": "scanned",
+			"threats": [],
+			"capabilities": [],
+			"riskScore": 0,
+			"riskLabel": "no_risks_detected",
+			"threatDetail": []
+		},
+		{
+			"name": "diff",
+			"version": "8.0.4",
+			"path": "node_modules/diff",
+			"status": "scanned",
+			"threats": [],
+			"capabilities": [
+				"capability-process-spawn"
+			],
+			"riskScore": 0,
+			"riskLabel": "no_risks_detected",
+			"threatDetail": []
+		},
+		{
+			"name": "get-east-asian-width",
+			"version": "1.6.0",
+			"path": "node_modules/get-east-asian-width",
+			"status": "scanned",
+			"threats": [],
+			"capabilities": [],
+			"riskScore": 0,
+			"riskLabel": "no_risks_detected",
+			"threatDetail": []
+		},
+		{
+			"name": "glob",
+			"version": "13.0.6",
+			"path": "node_modules/glob",
+			"status": "scanned",
+			"threats": [],
+			"capabilities": [
+				"capability-network-download",
+				"capability-network-outbound",
+				"capability-filesystem-read"
+			],
+			"riskScore": 0,
+			"riskLabel": "no_risks_detected",
+			"threatDetail": []
+		},
+		{
+			"name": "graceful-fs",
+			"version": "4.2.11",
+			"path": "node_modules/graceful-fs",
+			"status": "scanned",
+			"threats": [],
+			"capabilities": [
+				"capability-filesystem-read"
+			],
+			"riskScore": 0,
+			"riskLabel": "no_risks_detected",
+			"threatDetail": []
+		},
+		{
+			"name": "grok-mermaid",
+			"version": "0.2.2",
+			"path": "node_modules/grok-mermaid",
+			"status": "scanned",
+			"threats": [],
+			"capabilities": [],
+			"riskScore": 0,
+			"riskLabel": "no_risks_detected",
+			"threatDetail": []
+		},
+		{
+			"name": "highlight.js",
+			"version": "10.7.3",
+			"path": "node_modules/highlight.js",
+			"status": "scanned",
+			"threats": [
+				"threat-runtime-obfuscation-unicode"
+			],
+			"capabilities": [
+				"capability-network-lolbas",
+				"capability-process-spawn"
+			],
+			"riskScore": 4.9,
+			"riskLabel": "low",
+			"threatDetail": [
+				{
+					"rule": "threat-runtime-obfuscation-unicode",
+					"sites": [
+						"lib/languages/1c.js:11: zА"
+					]
+				}
+			]
+		},
+		{
+			"name": "hosted-git-info",
+			"version": "9.0.3",
+			"path": "node_modules/hosted-git-info",
+			"status": "scanned",
+			"threats": [],
+			"capabilities": [
+				"capability-process-spawn"
+			],
+			"riskScore": 0,
+			"riskLabel": "no_risks_detected",
+			"threatDetail": []
+		},
+		{
+			"name": "http-proxy-agent",
+			"version": "7.0.2",
+			"path": "node_modules/http-proxy-agent",
+			"status": "scanned",
+			"threats": [],
+			"capabilities": [],
+			"riskScore": 0,
+			"riskLabel": "no_risks_detected",
+			"threatDetail": []
+		},
+		{
+			"name": "https-proxy-agent",
+			"version": "7.0.6",
+			"path": "node_modules/https-proxy-agent",
+			"status": "scanned",
+			"threats": [],
+			"capabilities": [
+				"capability-filesystem-read",
+				"capability-network-outbound"
+			],
+			"riskScore": 0,
+			"riskLabel": "no_risks_detected",
+			"threatDetail": []
+		},
+		{
+			"name": "ignore",
+			"version": "7.0.5",
+			"path": "node_modules/ignore",
+			"status": "scanned",
+			"threats": [],
+			"capabilities": [],
+			"riskScore": 0,
+			"riskLabel": "no_risks_detected",
+			"threatDetail": []
+		},
+		{
+			"name": "isexe",
+			"version": "2.0.0",
+			"path": "node_modules/isexe",
+			"status": "scanned",
+			"threats": [],
+			"capabilities": [
+				"capability-filesystem-write-executable",
+				"capability-filesystem-delete",
+				"capability-network-outbound"
+			],
+			"riskScore": 0,
+			"riskLabel": "no_risks_detected",
+			"threatDetail": []
+		},
+		{
+			"name": "jiti",
+			"version": "2.7.0",
+			"path": "node_modules/jiti",
+			"status": "scanned",
+			"threats": [
+				"threat-runtime-obfuscation",
+				"threat-filesystem-read"
+			],
+			"capabilities": [
+				"capability-process-spawn",
+				"capability-filesystem-read",
+				"capability-network-outbound"
+			],
+			"riskScore": 6.5,
+			"riskLabel": "suspicious",
+			"threatDetail": [
+				{
+					"rule": "threat-runtime-obfuscation",
+					"sites": [
+						"dist/babel.cjs:242: \\uDE4F\\uDE51\\uDE52\\uDE54\\uDE57\\uDE59\\uDE5B\\uDE5D\\uDE5F\\uDE61"
+					]
+				},
+				{
+					"rule": "threat-filesystem-read",
+					"sites": [
+						"dist/babel.cjs:242: \"process.env\""
+					]
+				}
+			]
+		},
+		{
+			"name": "lru-cache",
+			"version": "11.4.0",
+			"path": "node_modules/lru-cache",
+			"status": "scanned",
+			"threats": [],
+			"capabilities": [
+				"capability-network-download",
+				"capability-network-outbound"
+			],
+			"riskScore": 0,
+			"riskLabel": "no_risks_detected",
+			"threatDetail": []
+		},
+		{
+			"name": "marked",
+			"version": "18.0.5",
+			"path": "node_modules/marked",
+			"status": "scanned",
+			"threats": [],
+			"capabilities": [
+				"capability-network-outbound",
+				"capability-process-spawn"
+			],
+			"riskScore": 0,
+			"riskLabel": "no_risks_detected",
+			"threatDetail": []
+		},
+		{
+			"name": "minimatch",
+			"version": "10.2.5",
+			"path": "node_modules/minimatch",
+			"status": "scanned",
+			"threats": [],
+			"capabilities": [],
+			"riskScore": 0,
+			"riskLabel": "no_risks_detected",
+			"threatDetail": []
+		},
+		{
+			"name": "minipass",
+			"version": "7.1.3",
+			"path": "node_modules/minipass",
+			"status": "scanned",
+			"threats": [],
+			"capabilities": [
+				"capability-network-outbound",
+				"capability-filesystem-read"
+			],
+			"riskScore": 0,
+			"riskLabel": "no_risks_detected",
+			"threatDetail": []
+		},
+		{
+			"name": "ms",
+			"version": "2.1.3",
+			"path": "node_modules/ms",
+			"status": "scanned",
+			"threats": [],
+			"capabilities": [
+				"capability-process-spawn"
+			],
+			"riskScore": 0,
+			"riskLabel": "no_risks_detected",
+			"threatDetail": []
+		},
+		{
+			"name": "openai",
+			"version": "6.26.0",
+			"path": "node_modules/openai",
+			"status": "scanned",
+			"threats": [],
+			"capabilities": [
+				"capability-network-download",
+				"capability-filesystem-read",
+				"capability-network-outbound",
+				"capability-process-spawn"
+			],
+			"riskScore": 0,
+			"riskLabel": "no_risks_detected",
+			"threatDetail": []
+		},
+		{
+			"name": "partial-json",
+			"version": "0.1.7",
+			"path": "node_modules/partial-json",
+			"status": "scanned",
+			"threats": [],
+			"capabilities": [],
+			"riskScore": 0,
+			"riskLabel": "no_risks_detected",
+			"threatDetail": []
+		},
+		{
+			"name": "path-key",
+			"version": "3.1.1",
+			"path": "node_modules/path-key",
+			"status": "scanned",
+			"threats": [],
+			"capabilities": [],
+			"riskScore": 0,
+			"riskLabel": "no_risks_detected",
+			"threatDetail": []
+		},
+		{
+			"name": "path-scurry",
+			"version": "2.0.2",
+			"path": "node_modules/path-scurry",
+			"status": "scanned",
+			"threats": [],
+			"capabilities": [
+				"capability-network-outbound"
+			],
+			"riskScore": 0,
+			"riskLabel": "no_risks_detected",
+			"threatDetail": []
+		},
+		{
+			"name": "proper-lockfile",
+			"version": "4.1.2",
+			"path": "node_modules/proper-lockfile",
+			"status": "scanned",
+			"threats": [],
+			"capabilities": [
+				"capability-network-outbound",
+				"capability-process-spawn"
+			],
+			"riskScore": 0,
+			"riskLabel": "no_risks_detected",
+			"threatDetail": []
+		},
+		{
+			"name": "retry",
+			"version": "0.12.0",
+			"path": "node_modules/proper-lockfile/node_modules/retry",
+			"status": "scanned",
+			"threats": [],
+			"capabilities": [
+				"capability-process-spawn",
+				"capability-network-outbound"
+			],
+			"riskScore": 0,
+			"riskLabel": "no_risks_detected",
+			"threatDetail": []
+		},
+		{
+			"name": "semver",
+			"version": "7.8.0",
+			"path": "node_modules/semver",
+			"status": "scanned",
+			"threats": [],
+			"capabilities": [
+				"capability-process-spawn"
+			],
+			"riskScore": 0,
+			"riskLabel": "no_risks_detected",
+			"threatDetail": []
+		},
+		{
+			"name": "shebang-command",
+			"version": "2.0.0",
+			"path": "node_modules/shebang-command",
+			"status": "scanned",
+			"threats": [],
+			"capabilities": [],
+			"riskScore": 0,
+			"riskLabel": "no_risks_detected",
+			"threatDetail": []
+		},
+		{
+			"name": "shebang-regex",
+			"version": "3.0.0",
+			"path": "node_modules/shebang-regex",
+			"status": "scanned",
+			"threats": [],
+			"capabilities": [],
+			"riskScore": 0,
+			"riskLabel": "no_risks_detected",
+			"threatDetail": []
+		},
+		{
+			"name": "signal-exit",
+			"version": "3.0.7",
+			"path": "node_modules/signal-exit",
+			"status": "scanned",
+			"threats": [],
+			"capabilities": [],
+			"riskScore": 0,
+			"riskLabel": "no_risks_detected",
+			"threatDetail": []
+		},
+		{
+			"name": "typebox",
+			"version": "1.3.7",
+			"path": "node_modules/typebox",
+			"status": "scanned",
+			"threats": [],
+			"capabilities": [
+				"capability-process-spawn"
+			],
+			"riskScore": 0,
+			"riskLabel": "no_risks_detected",
+			"threatDetail": []
+		},
+		{
+			"name": "undici",
+			"version": "8.9.0",
+			"path": "node_modules/undici",
+			"status": "scanned",
+			"threats": [],
+			"capabilities": [
+				"capability-filesystem-read",
+				"capability-network-download",
+				"capability-network-outbound",
+				"capability-process-spawn"
+			],
+			"riskScore": 0,
+			"riskLabel": "no_risks_detected",
+			"threatDetail": []
+		},
+		{
+			"name": "which",
+			"version": "2.0.2",
+			"path": "node_modules/which",
+			"status": "scanned",
+			"threats": [],
+			"capabilities": [
+				"capability-network-outbound"
+			],
+			"riskScore": 0,
+			"riskLabel": "no_risks_detected",
+			"threatDetail": []
+		},
+		{
+			"name": "yaml",
+			"version": "2.9.0",
+			"path": "node_modules/yaml",
+			"status": "scanned",
+			"threats": [
+				"threat-runtime-environment-read"
+			],
+			"capabilities": [
+				"capability-network-outbound",
+				"capability-process-spawn"
+			],
+			"riskScore": 3.3,
+			"riskLabel": "low",
+			"threatDetail": [
+				{
+					"rule": "threat-runtime-environment-read",
+					"sites": [
+						"dist/parse/parser.js:178: process.env.LOG_TOKENS"
+					]
+				}
+			]
+		}
+	]
+}

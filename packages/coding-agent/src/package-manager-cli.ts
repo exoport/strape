@@ -83,7 +83,7 @@ function getPackageCommandUsage(command: PackageCommand): string {
 		case "remove":
 			return `${APP_NAME} remove <source> [-l] [--approve|--no-approve]`;
 		case "update":
-			return `${APP_NAME} update [source|self|pi] [--self|--extensions|--models|--all] [--extension <source>] [--approve|--no-approve] [--force]`;
+			return `${APP_NAME} update [source|self] [--self|--extensions|--models|--all] [--extension <source>] [--approve|--no-approve] [--force]`;
 		case "list":
 			return `${APP_NAME} list [--approve|--no-approve]`;
 	}
@@ -151,24 +151,23 @@ Examples:
 			console.log(`${chalk.bold("Usage:")}
   ${getPackageCommandUsage("update")}
 
-Update pi, installed packages, or model catalogs.
+Update ${APP_NAME}, installed packages, or model catalogs.
 
 Options:
-  --self                  Update pi only (default when no target is given)
+  --self                  Update ${APP_NAME} only (default when no target is given)
   --extensions            Update installed packages only
   --models                Refresh model catalogs only
-  --all                   Update pi and installed packages
+  --all                   Update ${APP_NAME} and installed packages
   --extension <source>    Update one package only
   -a, --approve           Trust project-local files for this command
   -na, --no-approve       Ignore project-local files for this command
-  --force                 Reinstall pi even if the current version is latest
+  --force                 Reinstall ${APP_NAME} even if the current version is latest
 
 Short forms:
-  ${APP_NAME} update                Update pi only
-  ${APP_NAME} update --all          Update pi and all extensions
+  ${APP_NAME} update                Update ${APP_NAME} only
+  ${APP_NAME} update --all          Update ${APP_NAME} and all extensions
   ${APP_NAME} update --models       Refresh model catalogs only
   ${APP_NAME} update <source>       Update one package
-  ${APP_NAME} update pi             Update pi only (self works as alias to pi)
 `);
 			return;
 
@@ -432,7 +431,7 @@ function printSelfUpdateUnavailable(
 	const entrypoint = process.argv[1];
 	if (entrypoint) {
 		console.error("");
-		console.error(`Location of pi executable: ${entrypoint}`);
+		console.error(`Location of ${APP_NAME} executable: ${entrypoint}`);
 	}
 }
 
@@ -473,7 +472,37 @@ interface SelfUpdatePlan {
 	note?: string;
 }
 
+/**
+ * strape hunk 10 — a vendor fork must never self-update.
+ *
+ * Two reasons, both fatal. (1) `getLatestPiRelease` asks pi.dev for a version *and* a `packageName`, and the
+ * plan below installs that server-supplied name globally — the `packageName !== PACKAGE_NAME` branch runs the
+ * install precisely *because* it differs, so the install target is remote-controlled and outside the reviewed
+ * closure entirely. (2) Even the benign path installs upstream's npm package over a build pinned to a reviewed
+ * tag, which is what strape/audit/UPSTREAM_PIN exists to prevent (CLAUDE.md non-negotiable 3).
+ *
+ * Deliberately mirrors upstream's own `isOfficialDistribution` triple (cli/startup-ui.ts:26-42) instead of
+ * importing it: that module pulls in the whole TUI theme stack, and the update path must not depend on it.
+ * Inlined here so the guard retires by itself if strape is ever un-forked.
+ */
+const IS_OFFICIAL_DISTRIBUTION =
+	PACKAGE_NAME === "@earendil-works/pi-coding-agent" && APP_NAME === "pi" && CONFIG_DIR_NAME === ".pi";
+
 async function getSelfUpdatePlan(force: boolean): Promise<SelfUpdatePlan> {
+	if (!IS_OFFICIAL_DISTRIBUTION) {
+		console.error(
+			chalk.yellow(`${APP_NAME} does not self-update: it is a vendor fork pinned to a reviewed upstream tag.`),
+		);
+		console.error(chalk.dim("Adopt a new upstream deliberately: node strape/scripts/sync.mjs --target <tag>"));
+		console.error(chalk.dim("See strape/docs/RELEASE-FLOW.md."));
+		return {
+			packageName: PACKAGE_NAME,
+			installSpec: `${PACKAGE_NAME}@${VERSION}`,
+			version: VERSION,
+			shouldRun: false,
+		};
+	}
+
 	let latestRelease: Awaited<ReturnType<typeof getLatestPiRelease>>;
 	try {
 		latestRelease = await getLatestPiRelease(VERSION, { retry: true });

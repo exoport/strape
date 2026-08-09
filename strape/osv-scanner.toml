@@ -1,0 +1,43 @@
+# osv-scanner configuration for strape.
+#
+# WHY THIS FILE EXISTS
+# strape-security.yml runs two advisory checks with deliberately different scopes:
+#
+#   npm audit --omit=dev   -> the SHIPPED closure only (what a strape user actually installs)
+#   osv-scanner            -> the WHOLE lockfile, dev dependencies included
+#
+# The wider scope is intentional. A compromised dev dependency executes on a developer's workstation with
+# their provider API keys in the environment — the same class as the jiti /tmp/jiti finding — so dev
+# dependencies are in scope for this fork even though they never reach a user.
+#
+# The cost of that choice is that the vite/vitest toolchain produces a steady stream of advisories that
+# cannot affect anyone. Bumping them is not an option: package-lock.json is upstream pi's, and editing it
+# buys a merge conflict at every release (the reasoning behind non-negotiable 5 in CLAUDE.md). So each one
+# is recorded here instead, with a reason and an expiry, in the same shape as the reviewed-deps verdicts
+# and the pinned expected-test-failures: enumerate the known-accepted set, fail on anything new.
+#
+# RULES
+# - Every entry states why it cannot reach a strape user, and cites where that was verified.
+# - Every entry carries an `ignoreUntil`. An expired entry re-fails the gate on purpose — it forces a
+#   re-triage rather than letting an accepted risk become permanent by inattention.
+# - An advisory affecting anything in packages/coding-agent/npm-shrinkwrap.json does NOT belong here. That
+#   is the shipped closure; it gets fixed, dropped or escalated, never ignored.
+
+[[IgnoredVulns]]
+id = "GHSA-2v37-7h3g-55p8"
+ignoreUntil = 2026-11-08
+reason = """
+CVE-2026-67213, nanoid@3.3.16: customAlphabet/customRandom loop forever when size is 0. Denial of service
+only (CVSS 4.0 vector VC:N/VI:N/VA:H; the 8.2 'High' is the v4.0 score, v3.1 rates it 5.9 Medium).
+
+Not in the shipped closure: 0 occurrences of nanoid in packages/coding-agent/npm-shrinkwrap.json, and
+`npm audit --omit=dev` reports 0 vulnerabilities. It is dev-only, four levels down under the test runner:
+pi-monorepo -> @earendil-works/pi-agent-core -> vitest@4.1.9 -> vite@8.0.16 -> postcss@8.5.24 -> nanoid.
+
+Not exploitable even in dev: the flaw needs an attacker-controlled `size` of 0 reaching customAlphabet or
+customRandom. postcss calls nanoid with its own fixed size for source-map identifiers; no strape or vitest
+input reaches that parameter.
+
+Revisit when upstream pi bumps vite/vitest past postcss's nanoid >=3.3.17 range, at which point delete
+this entry rather than extending it.
+"""

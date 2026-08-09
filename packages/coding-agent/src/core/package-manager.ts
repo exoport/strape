@@ -1743,11 +1743,13 @@ export class DefaultPackageManager implements PackageManager {
 	}
 
 	private getGitDependencyInstallArgs(): string[] {
+		// strape (hunk 9): same reasoning as getNpmInstallArgs — a git-sourced extension's dependencies must
+		// not run lifecycle scripts either. This path is reached when installing an extension from a git URL.
 		const configuredCommand = this.settingsManager.getNpmCommand();
 		if (configuredCommand && configuredCommand.length > 0) {
-			return ["install"];
+			return ["install", "--ignore-scripts"];
 		}
-		return ["install", "--omit=dev"];
+		return ["install", "--omit=dev", "--ignore-scripts"];
 	}
 
 	private runNpmCommandSync(args: string[]): string {
@@ -1761,8 +1763,14 @@ export class DefaultPackageManager implements PackageManager {
 		// Disable peer dependency resolution for managed installs (npm's --legacy-peer-deps, and
 		// equivalent bun/pnpm settings) so package managers do not install or solve host-provided
 		// @earendil-works/pi-* peers. Stale auto-installed pi peers can otherwise block updates.
+		// strape (hunk 9): --ignore-scripts on every runtime install. strape's whole build posture is
+		// --ignore-scripts with an empty install-script allowlist, but extension/skill installs happen at
+		// RUNTIME through this path, where upstream passes no such flag — so a dependency's postinstall would
+		// execute with the user's privileges, bypassing the entire review gate (the package was never in the
+		// reviewed closure at all). An extension that genuinely needs a lifecycle script now fails loudly,
+		// which is the correct outcome here: it is a decision for a human, not a silent install-time action.
 		if (packageManagerName === "bun") {
-			return ["install", ...specs, "--cwd", installRoot, "--omit=peer"];
+			return ["install", ...specs, "--cwd", installRoot, "--omit=peer", "--ignore-scripts"];
 		}
 		if (packageManagerName === "pnpm") {
 			return [
@@ -1773,9 +1781,10 @@ export class DefaultPackageManager implements PackageManager {
 				"--config.auto-install-peers=false",
 				"--config.strict-peer-dependencies=false",
 				"--config.strict-dep-builds=false",
+				"--ignore-scripts",
 			];
 		}
-		return ["install", ...specs, "--prefix", installRoot, "--legacy-peer-deps"];
+		return ["install", ...specs, "--prefix", installRoot, "--legacy-peer-deps", "--ignore-scripts"];
 	}
 
 	private async installNpm(source: NpmSource, scope: SourceScope, temporary: boolean): Promise<void> {

@@ -1,0 +1,154 @@
+#!/usr/bin/env bash
+# Run strape inside a bubblewrap sandbox.
+#
+# WHY
+# strape inherits pi's design: the built-in tools run shell commands and read/write files with the
+# privileges of the process, and prompt injection from repository content is unmitigated. Upstream's answer
+# is "containerise it" (packages/coding-agent/docs/containerization.md). This is the lightweight version of
+# that answer: no daemon, no image build, no root — just a user namespace.
+#
+# WHAT IT CONTAINS
+#   - HOME is a disposable sandbox directory. The real home, and therefore ~/.ssh, ~/.aws, ~/.claude,
+#     ~/.strape and every other repo on the machine, is not visible at all.
+#   - The whole filesystem is bound READ-ONLY. The only writable paths are the sandbox home, the workspace
+#     you name, and a private /tmp.
+#   - Credentials obtained inside stay inside: strape writes auth.json into the sandbox home, so a test
+#     login cannot leak into your real agent dir, and you throw it away with --reset.
+#
+# WHAT IT DOES NOT CONTAIN
+#   - The network. It is shared with the host, deliberately: the LLM APIs need it, and OpenAI's OAuth
+#     callback binds localhost:1455, which only works if the sandbox and your browser share a namespace.
+#     So this is a filesystem/privilege boundary, NOT an exfiltration boundary. An agent that decides to
+#     POST your workspace somewhere still can. If you need that boundary too, use a VM.
+#
+# USAGE
+#   strape/sandbox/strape-sandbox --init            # create the sandbox home, seed settings, provision rg/fd
+#   strape/sandbox/strape-sandbox                   # shell into the sandbox (workspace = ./sandbox-workspace)
+#   strape/sandbox/strape-sandbox -- --list-models  # run strape directly with args
+#   strape/sandbox/strape-sandbox --workspace ~/code/thing
+#   strape/sandbox/strape-sandbox --reset           # delete the sandbox home and its credentials
+set -euo pipefail
+
+STRAPE_SRC="${STRAPE_SRC:-$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)}"
+SBX="${STRAPE_SANDBOX_DIR:-$HOME/.strape-sandbox}"
+SBX_HOME="$SBX/home"
+WORKSPACE="${STRAPE_SANDBOX_WORKSPACE:-$SBX/workspace}"
+
+mode=shell
+args=()
+while [[ $# -gt 0 ]]; do
+	case "$1" in
+		--init) mode=init; shift ;;
+		--reset) mode=reset; shift ;;
+		--workspace) WORKSPACE="$(cd "$2" && pwd)"; shift 2 ;;
+		--) shift; mode=run; args=("$@"); break ;;
+		*) echo "unknown option: $1" >&2; exit 2 ;;
+	esac
+done
+
+command -v bwrap >/dev/null || { echo "bubblewrap (bwrap) is not installed: sudo apt install bubblewrap" >&2; exit 1; }
+[[ -f "$STRAPE_SRC/packages/coding-agent/dist/cli.js" ]] || {
+	echo "strape is not built at $STRAPE_SRC — run: npm ci --ignore-scripts && npm run build:offline" >&2; exit 1; }
+
+# Volta's `node` is a shim that resolves its toolchain from $HOME, which the sandbox replaces — so bind the
+# real interpreter directory instead of whatever is first on PATH.
+NODE_BIN="$(dirname "$(readlink -f "$(command -v node)")")"
+if [[ "$(basename "$(readlink -f "$(command -v node)")")" == *shim* ]]; then
+	NODE_BIN="$(dirname "$(readlink -f "$(volta which node 2>/dev/null || command -v node)")")"
+fi
+[[ -x "$NODE_BIN/node" ]] || { echo "could not locate a real node binary (looked in $NODE_BIN)" >&2; exit 1; }
+
+if [[ "$mode" == reset ]]; then
+	echo "Deleting $SBX (including any credentials obtained inside it)"
+	rm -rf "$SBX"
+	exit 0
+fi
+
+mkdir -p "$SBX_HOME/.strape/agent" "$WORKSPACE"
+
+# bwrap layout:
+#   /              read-only view of the host, so tools resolve normally but nothing can be written
+#   /home, /root   tmpfs — this is what hides every real home directory, including your own
+#   /mnt           tmpfs, used as the mount root because the read-only / cannot host new mountpoints
+#   /mnt/home      the sandbox HOME (writable)
+#   /mnt/workspace the directory under test (writable)
+#   /mnt/strape    the built strape tree (read-only — the agent must not rewrite its own gates)
+#   /mnt/node      a real node interpreter (read-only)
+#   /tmp           private tmpfs, so transcript/bash-overflow spill files never touch the host
+bwrap_args=(
+	--ro-bind / /
+	--dev /dev
+	--proc /proc
+	--tmpfs /tmp
+	--tmpfs /home
+	--tmpfs /root
+	--tmpfs /mnt
+	--bind "$SBX_HOME" /mnt/home
+	--bind "$WORKSPACE" /mnt/workspace
+	--ro-bind "$STRAPE_SRC" /mnt/strape
+	--ro-bind "$NODE_BIN" /mnt/node
+	--setenv HOME /mnt/home
+	--setenv PATH "/mnt/node:/usr/local/bin:/usr/bin:/bin"
+	--setenv STRAPE_CODING_AGENT_DIR /mnt/home/.strape/agent
+	--setenv STRAPE_ROOT /mnt/strape
+	--setenv PI_OFFLINE 1
+	--setenv PI_SKIP_VERSION_CHECK 1
+	--setenv TMPDIR /tmp
+	--chdir /mnt/workspace
+	--unshare-pid
+	--unshare-uts
+	--unshare-ipc
+	--die-with-parent
+	--new-session
+)
+# Deliberately NOT --unshare-net: the LLM APIs and OpenAI's localhost:1455 OAuth callback both need the
+# host network namespace. See the header note about what this sandbox does and does not contain.
+
+# Pass through provider credentials that live in the environment. OAuth tokens are NOT passed: log in
+# inside the sandbox so the tokens are written to the sandbox agent dir and stay there.
+for v in GEMINI_API_KEY OPENAI_API_KEY XAI_API_KEY; do
+	if [[ -n "${!v:-}" ]]; then bwrap_args+=(--setenv "$v" "${!v}"); fi
+done
+
+STRAPE_CMD=(/mnt/node/node /mnt/strape/packages/coding-agent/dist/cli.js)
+
+if [[ "$mode" == init ]]; then
+	echo "Seeding sandbox at $SBX"
+	# Settings + the Gemini provider are written by claude-compat against the SANDBOX agent dir.
+	bwrap "${bwrap_args[@]}" -- /mnt/node/node /mnt/strape/strape/scripts/claude-compat.mjs --global || true
+	# rg/fd: PI_OFFLINE=1 blocks upstream's unverified runtime download, so provision the pinned,
+	# hash-verified copies instead. Needs network; runs inside so they land in the sandbox agent dir.
+	bwrap "${bwrap_args[@]}" -- /mnt/node/node /mnt/strape/strape/scripts/provision-tools.mjs || {
+		echo "note: rg/fd provisioning failed (offline?). grep/find will fall back to system binaries." >&2; }
+	echo
+	echo "Sandbox ready."
+	echo "  home      $SBX_HOME   (credentials obtained inside stay here)"
+	echo "  workspace $WORKSPACE"
+	echo
+	echo "Next: authenticate inside the sandbox."
+	echo "  /login is a slash command INSIDE a running strape session — not a shell command, and not the"
+	echo "  'strape auth' subcommand (that only PRINTS an existing credential)."
+	echo
+	echo "    strape/sandbox/strape-sandbox --     # starts a strape session inside the sandbox"
+	echo "    > /login xai                         # at strape's own prompt: device code via your browser"
+	echo "    > /login openai                      # browser callback on localhost:1455"
+	echo
+	echo "  Gemini has no OAuth: export GEMINI_API_KEY before launching (it is passed through)."
+	exit 0
+fi
+
+if [[ "$mode" == run ]]; then
+	exec bwrap "${bwrap_args[@]}" -- "${STRAPE_CMD[@]}" "${args[@]}"
+fi
+
+cat <<EOF
+strape sandbox
+  HOME       /mnt/home      -> $SBX_HOME
+  workspace  /mnt/workspace -> $WORKSPACE
+  strape     /mnt/strape (read-only)   run: strape
+  network    SHARED with the host (needed for APIs and OAuth) — not an exfiltration boundary
+EOF
+exec bwrap "${bwrap_args[@]}" \
+	--setenv PS1 '[strape-sandbox] \w \$ ' \
+	-- /bin/bash --noprofile --norc -c \
+	'strape() { /mnt/node/node /mnt/strape/packages/coding-agent/dist/cli.js "$@"; }; export -f strape; exec /bin/bash --noprofile --norc -i'

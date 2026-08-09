@@ -1,0 +1,44 @@
+# Dependabot for strape.
+#
+# Deliberately narrow. strape does NOT want automated dependency churn: every shipped package must carry a
+# human `allow` verdict in strape/audit/reviewed-deps.json, so an auto-merged bump would either fail the gate
+# (good, but noisy) or tempt someone to rubber-stamp it (bad). What Dependabot is here for is the two things
+# it does that nothing else in the stack does:
+#
+#   1. Malware alerts — matches dependencies against the GitHub Advisory Database, which now ingests OpenSSF's
+#      malicious-packages feed. This is a repository/organisation SETTING, not configured in this file:
+#        Settings -> Advanced Security -> Dependabot alerts, and enable malware alerts.
+#      Without that toggle this file gives you version bumps only.
+#   2. The update cooldown — holds newly published versions before proposing them, which blunts the
+#      worm-propagation window that .npmrc's min-release-age=2 also targets. Belt and braces.
+#
+# Security *updates* are left on (that is the point); routine version bumps are throttled hard so the
+# reviewed-deps gate stays the pace-setter for adopting anything new.
+
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    # Every bump is a dependency-review event, so keep the queue small enough to review properly.
+    open-pull-requests-limit: 3
+    cooldown:
+      default-days: 7
+    commit-message:
+      prefix: "deps"
+    labels:
+      - dependencies
+      - needs-dep-review
+    # Upstream pi packages are adopted through the sync playbook against a reviewed tag, never by Dependabot.
+    ignore:
+      - dependency-name: "@earendil-works/*"
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+    commit-message:
+      prefix: "ci"
+    labels:
+      - dependencies

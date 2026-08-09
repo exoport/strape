@@ -1,4 +1,4 @@
-import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
+import { existsSync, lstatSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { basename, dirname, join, resolve, sep } from "node:path";
 import chalk from "chalk";
 import { CONFIG_DIR_NAME } from "../config.ts";
@@ -25,6 +25,7 @@ import type { Skill } from "./skills.ts";
 import { loadSkills } from "./skills.ts";
 import { createSourceInfo, type SourceInfo } from "./source-info.ts";
 import { resetTimings } from "./timings.ts";
+import { hasTrustRequiringProjectResources, ProjectTrustStore } from "./trust-manager.ts";
 
 export interface ResourceExtensionPaths {
 	skillPaths?: Array<{ path: string; metadata: PathMetadata }>;
@@ -67,12 +68,29 @@ function resolvePromptInput(input: string | undefined, description: string): str
 	return input;
 }
 
-function loadContextFileFromDir(dir: string): { path: string; content: string } | null {
+function loadContextFileFromDir(
+	dir: string,
+	options: { allowSymlink?: boolean } = {},
+): { path: string; content: string } | null {
 	const candidates = ["AGENTS.override.md", "AGENTS.md", "AGENTS.MD", "CLAUDE.md", "CLAUDE.MD"];
 	for (const filename of candidates) {
 		const filePath = join(dir, filename);
 		if (existsSync(filePath)) {
 			try {
+				// strape (hunk 8): statSync follows symlinks, so isFile() is true for CLAUDE.md -> anything.
+				// Context files load with no trust prompt, so a cloned repo shipping a symlinked CLAUDE.md
+				// makes the harness read any file the user can read (~/.ssh/id_rsa, auth.json) and send it to
+				// the model provider. Reproduced before this fix. Symlinks stay allowed in the agent dir,
+				// which the user owns and where strape/scripts/claude-compat.mjs deliberately links
+				// ~/.claude/CLAUDE.md.
+				if (!options.allowSymlink && lstatSync(filePath).isSymbolicLink()) {
+					console.error(
+						chalk.yellow(
+							`Warning: ignoring ${filePath} because it is a symbolic link (strape policy: project context files must be regular files).`,
+						),
+					);
+					continue;
+				}
 				if (!statSync(filePath).isFile()) {
 					continue;
 				}
@@ -125,7 +143,8 @@ export function loadProjectContextFiles(options: {
 	const contextFiles: Array<{ path: string; content: string }> = [];
 	const seenPaths = new Set<string>();
 
-	const globalContext = loadContextFileFromDir(resolvedAgentDir);
+	// The agent dir is the user's own; claude-compat.mjs links ~/.claude/CLAUDE.md into it on purpose.
+	const globalContext = loadContextFileFromDir(resolvedAgentDir, { allowSymlink: true });
 	if (globalContext) {
 		contextFiles.push(globalContext);
 		seenPaths.add(globalContext.path);
@@ -190,6 +209,11 @@ export interface DefaultResourceLoaderOptions {
 	};
 	systemPromptOverride?: (base: string | undefined) => string | undefined;
 	appendSystemPromptOverride?: (base: string[]) => string[];
+	/**
+	 * strape (hunk 11): `--approve` / `--no-approve`, forwarded from `main.ts` so the implicit-trust guard in
+	 * `reload()` can stand aside when the user stated a decision for the whole run.
+	 */
+	projectTrustOverride?: boolean;
 }
 
 export class DefaultResourceLoader implements ResourceLoader {
@@ -249,6 +273,9 @@ export class DefaultResourceLoader implements ResourceLoader {
 	private lastPromptPaths: string[];
 	private lastThemePaths: string[];
 	private loaded: boolean;
+	/** strape (hunk 11): see `shouldRevokeImplicitProjectTrust`. */
+	private projectTrustOverride?: boolean;
+	private trustRequiringResourcesAtLastLoad?: boolean;
 
 	constructor(options: DefaultResourceLoaderOptions) {
 		this.cwd = resolvePath(options.cwd);
@@ -270,6 +297,7 @@ export class DefaultResourceLoader implements ResourceLoader {
 		this.noPromptTemplates = options.noPromptTemplates ?? false;
 		this.noThemes = options.noThemes ?? false;
 		this.noContextFiles = options.noContextFiles ?? false;
+		this.projectTrustOverride = options.projectTrustOverride;
 		this.systemPromptSource = options.systemPrompt;
 		this.appendSystemPromptSource = options.appendSystemPrompt;
 		this.extensionsOverride = options.extensionsOverride;
@@ -384,6 +412,37 @@ export class DefaultResourceLoader implements ResourceLoader {
 		return this.loadCurrentExtensionSet({ includeInlineFactories: true });
 	}
 
+	/**
+	 * strape (hunk 11): has this project *gained* trust-requiring resources since trust was last decided,
+	 * without the user ever saying yes to it?
+	 *
+	 * Upstream re-resolves project trust only when the caller passes `resolveProjectTrust`, and no `/reload`
+	 * caller does — `agent-session.ts` calls `this._resourceLoader.reload()` with no arguments, and so do
+	 * `modes/print-mode.ts` and `modes/rpc/rpc-mode.ts`. A project with nothing trust-requiring at startup is
+	 * implicitly trusted (`project-trust.ts:50-52` returns true when there is nothing to trust). If it then
+	 * gains `${CONFIG_DIR_NAME}/settings.json`, `extensions/`, `skills/` or `SYSTEM.md` mid-session — a `git
+	 * pull`, a branch switch, or the model writing them — the next `/reload` loads and *executes* them under
+	 * that stale decision, and `interactive-mode.ts:4652` then writes it to the trust store as a permanent
+	 * `trusted: true` with no prompt.
+	 *
+	 * strape runs against repositories cloned from the internet, so content that appears in a checkout is
+	 * untrusted input. We fail closed: reload as untrusted and say why. `/trust` remains the deliberate path.
+	 *
+	 * Standing aside is as important as firing:
+	 *   - `--approve` / `--no-approve` — the user stated a decision for the run.
+	 *   - a persisted `trusted: true` for this path — the user already said yes to it.
+	 *   - resources were already present when trust was decided — nothing escalated.
+	 *   - the first load — `main.ts` resolves trust properly there; `trustRequiringResourcesAtLastLoad` is
+	 *     `undefined` until a load completes, so the guard cannot fire before there is a decision to protect.
+	 */
+	private shouldRevokeImplicitProjectTrust(): boolean {
+		if (this.projectTrustOverride !== undefined) return false;
+		if (!this.settingsManager.isProjectTrusted()) return false;
+		if (this.trustRequiringResourcesAtLastLoad !== false) return false;
+		if (!hasTrustRequiringProjectResources(this.cwd)) return false;
+		return new ProjectTrustStore(this.agentDir).get(this.cwd) !== true;
+	}
+
 	async reload(options?: ResourceLoaderReloadOptions): Promise<void> {
 		resetTimings("extensions");
 
@@ -396,7 +455,20 @@ export class DefaultResourceLoader implements ResourceLoader {
 			preTrustExtensions = await this.loadProjectTrustExtensions();
 			const projectTrusted = await options.resolveProjectTrust({ extensionsResult: preTrustExtensions });
 			this.settingsManager.setProjectTrusted(projectTrusted);
+		} else if (this.shouldRevokeImplicitProjectTrust()) {
+			// strape (hunk 11) — see shouldRevokeImplicitProjectTrust().
+			//
+			// Kept short and single-clause on purpose. This is a raw write to a terminal that the TUI owns
+			// during /reload, so a long line gets overdrawn mid-word and reads as corruption. Interactive mode
+			// carries the readable version and the remedy: renderProjectTrustWarningIfNeeded() is called from
+			// the reload path for exactly this. print/rpc mode and the SDK have no TUI, so this line is their
+			// only notice and must stay.
+			this.settingsManager.setProjectTrusted(false);
+			console.error(
+				chalk.yellow(`Warning: ${CONFIG_DIR_NAME} resources appeared after startup — reloading untrusted.`),
+			);
 		}
+		this.trustRequiringResourcesAtLastLoad = hasTrustRequiringProjectResources(this.cwd);
 
 		// reload() preserves SettingsManager.projectTrusted and reloads settings for that trust state.
 		await this.settingsManager.reload();
