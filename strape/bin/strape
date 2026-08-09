@@ -1,0 +1,53 @@
+#!/bin/sh
+# strape launcher — fail-closed network posture.
+#
+# PI_OFFLINE=1 kills every non-LLM network call in the harness:
+#   - https://pi.dev/api/latest-version   (utils/version-check.ts)
+#   - https://pi.dev/api/report-install   (install telemetry)
+#   - https://pi.dev catalog overlay      (core/remote-catalog-provider.ts)
+#   - runtime npm installs of extensions/skills (core/package-manager.ts)
+# It does NOT block LLM API calls to OpenAI/xAI — those are the point.
+#
+# Do NOT use PI_OFFLINE=0 as a per-run override. Upstream parses this variable two different ways, so "0"
+# leaves the harness in a split state — and it opens the paths that matter most:
+#   fails OPEN  ("0" is falsy via isTruthyEnvFlag)  utils/tools-manager.ts:14   unverified rg/fd download
+#                                                   core/package-manager.ts:42  runtime npm installs
+#                                                   main.ts:531                 stops forcing PI_SKIP_VERSION_CHECK
+#   fails CLOSED ("0" is a non-empty string)        utils/version-check.ts:55, core/model-runtime.ts:194,
+#                                                   modes/interactive/interactive-mode.ts:995,1086,1182
+# To exercise an online path deliberately, unset it instead: env -u PI_OFFLINE node .../dist/cli.js …
+set -eu
+
+export PI_OFFLINE="${PI_OFFLINE:-1}"
+export PI_SKIP_VERSION_CHECK="${PI_SKIP_VERSION_CHECK:-1}"
+
+STRAPE_ROOT="${STRAPE_ROOT:-$HOME/.local/lib/strape}"
+CLI="$STRAPE_ROOT/packages/coding-agent/dist/cli.js"
+
+# strape's own identity, printed before delegating. package.json versions are deliberately left at
+# upstream's (see strape/scripts/version.mjs for why), so `--version` alone would report only the upstream
+# base and two different strape builds would look identical. This adds our layer without touching upstream.
+case "${1:-}" in
+	--version | -v)
+		if [ -f "$STRAPE_ROOT/strape/VERSION" ] && [ -f "$STRAPE_ROOT/strape/audit/UPSTREAM_PIN" ]; then
+			printf 'strape %s (upstream pi pin %s)\n' \
+				"$(cat "$STRAPE_ROOT/strape/VERSION")" \
+				"$(cut -d' ' -f1 "$STRAPE_ROOT/strape/audit/UPSTREAM_PIN")"
+		fi
+		;;
+esac
+
+if [ ! -f "$CLI" ]; then
+	echo "strape: $CLI not found." >&2
+	echo "Set STRAPE_ROOT to your built strape checkout, or run: npm run build:offline" >&2
+	exit 1
+fi
+
+# Fail-closed module guard: turns an accidental provider-SDK import into a legible policy error
+# instead of an opaque MODULE_NOT_FOUND. Redundant with hunk 4, deliberately kept.
+GUARD="$STRAPE_ROOT/strape/runtime/deny-modules.mjs"
+if [ -f "$GUARD" ] && [ "${STRAPE_NO_MODULE_GUARD:-0}" != "1" ]; then
+	exec node --import "file://$GUARD" "$CLI" "$@"
+fi
+
+exec node "$CLI" "$@"

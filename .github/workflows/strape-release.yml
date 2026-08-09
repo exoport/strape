@@ -1,0 +1,157 @@
+name: strape release
+
+# Builds a distributable artifact from a tagged commit — and re-runs the full verification rather than
+# trusting the PR run, so a tag can never ship an artifact from an unreviewed or drifted tree.
+#
+# strape is never published to npm. The artifact is a built checkout you install with
+# strape/docs/INSTALL.md, plus a sha256 so the recipient can verify what they got.
+
+on:
+  push:
+    tags:
+      - "strape-v*"
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: Tag or SHA to build
+        required: true
+
+permissions:
+  contents: write # required only to attach the artifact to the release
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      # Blocked, with a list derived from what THIS workflow does — deliberately not a copy of the one in
+      # strape-security.yml. That job runs six network scanners; this one runs only gates that read committed
+      # baselines (verify-overlay, review-attest, version, lockfile-audit, reviewed-deps, capability/sbom/
+      # high-scrutiny --check), then npm ci, an offline build, a pack, and the release upload. Copying the scan
+      # list would allow nine endpoints this job never touches AND still omit the GitHub API hosts it needs —
+      # failing at the final step of a tag build, which is the worst place to learn it.
+      #
+      # api.github.com and uploads.github.com are for action-gh-release (Octokit + asset upload). They are
+      # GitHub's own API, reached with the job's own scoped GITHUB_TOKEN, so allowing them expands no trust
+      # boundary. They cannot be confirmed by a dispatch rehearsal because the attach step is tag-gated, so
+      # they are included from the action's known transport rather than observed — the one entry here not
+      # taken from an audit run. If a tag build ever fails at "Attach to release", Harden-Runner names the
+      # endpoint and the artifact is not lost: add it and re-run.
+      - name: Harden runner
+        uses: step-security/harden-runner@4d991eb9b905ef189e4c376166672c3f2f230481 # v2.11.0
+        with:
+          egress-policy: block
+          allowed-endpoints: >
+            api.github.com:443
+            github.com:443
+            productionresultssa2.blob.core.windows.net:443
+            registry.npmjs.org:443
+            results-receiver.actions.githubusercontent.com:443
+            uploads.github.com:443
+          # github.com                        actions/checkout
+          # registry.npmjs.org                npm ci --ignore-scripts
+          # api.github.com, uploads.github.com    action-gh-release
+          # results-receiver…, productionresultssa2…   Actions results + setup-node's npm cache
+          #
+          # Absent on purpose, unlike strape-security.yml: no api.deps.dev, api.osv.dev, api.socket.dev,
+          # pypi.org, files.pythonhosted.org, hugovk.dev, packages.ecosyste.ms, toolbox-data.anchore.io or
+          # tuf-repo-cdn.sigstore.dev. This workflow downloads no tools and runs no scanner that needs them.
+
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.inputs.ref || github.ref }}
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 22
+          cache: npm
+
+      # --- the gate: identical to the PR checks, re-run on the tagged commit ---
+
+      - name: Overlay invariants
+        run: node strape/scripts/verify-overlay.mjs
+
+      - name: Review attestation
+        run: node strape/scripts/review-attest.mjs --verify
+
+      # Tag must match strape/VERSION, and the pin must be the one that was reviewed — otherwise the
+      # artifact is mislabelled or built on an upstream tag nobody signed off on.
+      - name: Version identity
+        run: node strape/scripts/version.mjs --check
+
+      - name: Install (lifecycle scripts disabled)
+        run: npm ci --ignore-scripts --no-audit --no-fund
+
+      - name: Lockfile hygiene
+        run: node strape/scripts/lockfile-audit.mjs
+
+      - name: Reviewed-dependencies gate
+        run: node strape/scripts/reviewed-deps.mjs --report
+
+      - name: Drift gates
+        run: |
+          PIN=$(cut -d' ' -f1 strape/audit/UPSTREAM_PIN)
+          node strape/scripts/capability-sweep.mjs --check "strape/audit/capability-sweep-$PIN.json"
+          node strape/scripts/sbom.mjs --check "strape/audit/sbom-$PIN.json"
+          node strape/scripts/high-scrutiny-check.mjs
+
+      - name: Build (offline)
+        run: npm run build:offline
+
+      - name: Smoke tests
+        run: |
+          node packages/coding-agent/dist/cli.js --version
+          node packages/coding-agent/dist/cli.js --help | head -1 | grep -q '^strape'
+          node strape/scripts/rebrand-test.mjs
+          node strape/scripts/compat-test.mjs
+          node strape/scripts/trust-regression-test.mjs
+
+      # --- artifact ---
+
+      # Pack only what a user needs to run: built dist, tracked manifests, docs, and the strape overlay.
+      # Deliberately excludes node_modules — the recipient installs production deps from the integrity-pinned
+      # shrinkwrap, or receives file: tarballs via scripts/local-release.mjs.
+      - name: Pack distributable
+        id: pack
+        run: |
+          PIN=$(cut -d' ' -f1 strape/audit/UPSTREAM_PIN)
+          NAME="strape-${GITHUB_REF_NAME}-upstream-${PIN}"
+          mkdir -p "/tmp/$NAME"
+          rsync -a --prune-empty-dirs \
+            --include='packages/***' \
+            --exclude='node_modules' \
+            --exclude='**/test/**' \
+            --include='strape/***' \
+            --exclude='strape/tools/guarddog-venv/**' \
+            --exclude='strape/tools/osv-scanner' \
+            --exclude='strape/tools/syft' \
+            --exclude='strape/tools/cosign' \
+            --include='package.json' --include='package-lock.json' \
+            --include='.npmrc' --include='CLAUDE.md' --include='LICENSE' \
+            --exclude='*' \
+            ./ "/tmp/$NAME/"
+          tar -C /tmp -caf "/tmp/$NAME.tar.zst" "$NAME"
+          sha256sum "/tmp/$NAME.tar.zst" | tee "/tmp/$NAME.tar.zst.sha256"
+          echo "name=$NAME" >> "$GITHUB_OUTPUT"
+
+      # Tag pushes only. Without this guard a workflow_dispatch run — the only way to rehearse this workflow —
+      # would hand action-gh-release a branch ref and try to publish, so there was no way to exercise the
+      # gates, the build and the pack without risking a spurious release. Now a dispatch runs everything up to
+      # here and stops, which is what makes an egress audit of this workflow safe to perform.
+      - name: Attach to release
+        if: startsWith(github.ref, 'refs/tags/strape-v')
+        uses: softprops/action-gh-release@72f2c25fcb47643c292f7107632f7a47c1df5cd8 # v2.3.2
+        with:
+          files: |
+            /tmp/${{ steps.pack.outputs.name }}.tar.zst
+            /tmp/${{ steps.pack.outputs.name }}.tar.zst.sha256
+          body: |
+            Built from `${{ github.sha }}` against upstream pin in `strape/audit/UPSTREAM_PIN`.
+
+            Verified before packing: overlay invariants, **review attestation**, lockfile hygiene,
+            reviewed-dependencies gate, capability/SBOM/high-scrutiny drift, offline build, rebrand smoke
+            tests, Claude Code compatibility, trust-boundary regression.
+
+            Install: see `strape/docs/INSTALL.md`. Verify the archive against the published sha256 first.

@@ -32,7 +32,15 @@ import { listModels } from "./cli/list-models.ts";
 import { createProjectTrustContext } from "./cli/project-trust.ts";
 import { selectSession } from "./cli/session-picker.ts";
 import { shouldRunFirstTimeSetup, showFirstTimeSetup, showStartupSelector } from "./cli/startup-ui.ts";
-import { APP_NAME, ENV_SESSION_DIR, expandTildePath, getAgentDir, getPackageDir, VERSION } from "./config.ts";
+import {
+	APP_NAME,
+	ENV_SESSION_DIR,
+	ensureAgentDirPermissions,
+	expandTildePath,
+	getAgentDir,
+	getPackageDir,
+	VERSION,
+} from "./config.ts";
 import { type CreateAgentSessionRuntimeFactory, createAgentSessionRuntime } from "./core/agent-session-runtime.ts";
 import {
 	type AgentSessionRuntimeDiagnostic,
@@ -67,7 +75,7 @@ import { handleConfigCommand, handlePackageCommand } from "./package-manager-cli
 import { isLocalPath, normalizePath, resolvePath } from "./utils/paths.ts";
 import { cleanupWindowsSelfUpdateQuarantine } from "./utils/windows-self-update.ts";
 
-const EXTENSION_LOAD_FAILURE_HINT = 'Hint: Start without extensions using "pi -ne".';
+const EXTENSION_LOAD_FAILURE_HINT = `Hint: Start without extensions using "${APP_NAME} -ne".`;
 
 /**
  * Read all content from piped stdin.
@@ -585,6 +593,9 @@ export async function main(args: string[], options?: MainOptions) {
 
 	const cwd = process.cwd();
 	const agentDir = getAgentDir();
+	// strape (hunk 12): before the first read or write, so every later mkdirSync only creates leaves inside
+	// an already-0700 tree. See config.ts ensureAgentDirPermissions().
+	ensureAgentDirPermissions(agentDir);
 	const bootstrapSettingsManager = SettingsManager.create(cwd, agentDir, { projectTrusted: false });
 	applyHttpProxySettings(bootstrapSettingsManager.getGlobalSettings().httpProxy);
 	configureHttpDispatcher();
@@ -655,7 +666,14 @@ export async function main(args: string[], options?: MainOptions) {
 	const { migratedAuthProviders: migratedProviders, deprecationWarnings } = runMigrations(cwd);
 	time("runMigrations");
 
-	const startupSettingsManager = SettingsManager.create(cwd, agentDir);
+	// strape (hunk 7): honor project settings here only if this project was ALREADY trusted in a previous
+	// session. SettingsManager.create defaults projectTrusted to true (settings-manager.ts:325), and this
+	// manager is created before trust is resolved below — so upstream lets a never-trusted repo's
+	// .strape/settings.json choose sessionDir, redirecting the whole session transcript (file contents,
+	// command output, anything pasted) to an attacker-chosen path. Reading the persisted decision needs no
+	// prompt, so already-trusted projects keep working exactly as before.
+	const startupProjectTrusted = new ProjectTrustStore(agentDir).get(cwd) === true;
+	const startupSettingsManager = SettingsManager.create(cwd, agentDir, { projectTrusted: startupProjectTrusted });
 	reportDiagnostics(collectSettingsDiagnostics(startupSettingsManager, "startup session lookup"));
 
 	// Experimental first-time setup: theme choice and analytics opt-in.
@@ -773,6 +791,9 @@ export async function main(args: string[], options?: MainOptions) {
 				noContextFiles: parsed.noContextFiles,
 				systemPrompt: parsed.systemPrompt,
 				appendSystemPrompt: parsed.appendSystemPrompt,
+				// strape (hunk 11): so the loader's implicit-trust guard stands aside when the user stated a
+				// decision for the run. See core/resource-loader.ts shouldRevokeImplicitProjectTrust().
+				projectTrustOverride: parsed.projectTrustOverride,
 				extensionFactories,
 			},
 		});

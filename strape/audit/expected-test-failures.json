@@ -1,0 +1,281 @@
+{
+	"$comment": "Tests that fail BY DESIGN because strape changes upstream behaviour. Any deviation from this exact set fails CI: a new failure is a regression, and an expected failure that starts passing means upstream changed the test and this entry needs re-examining. Never add an entry without a reason.",
+	"$environmentSensitive": {
+		"test/config.test.ts > detectInstallMethod > detects pnpm from Windows .pnpm install paths": {
+			"classifiedOn": "2026-08-09",
+			"previouslyRecordedAs": "hunk 1 (probable)",
+			"rootCause": "The test reaches getSelfUpdateCommandForMethod, whose pnpm branch SPAWNS a real package manager: packages/coding-agent/src/config.ts:126 calls readCommandOutput(\"pnpm\", [\"root\", \"-g\"]). Its runtime therefore depends on the host toolchain, not on anything strape changed.",
+			"observed": "On the recording machine pnpm is a Volta shim (~/.volta/bin/pnpm) and ./test.sh isolates HOME (test.sh:43), so Volta finds no tool image under the fake HOME and tries to provision one over the network — the test exceeds its 30s timeout. Reproduced 3/3 in the full suite, including on an otherwise idle machine, while passing 15/15 across three isolated runs of config.test.ts and passing on a GitHub runner.",
+			"whyExcluded": "Both outcomes are correct for their host. Asserting either one guarantees a permanently red gate on the other side, and a gate that is always red somewhere is one people stop reading. It is excluded in both directions and reported instead."
+		},
+		"test/openai-completions-tool-choice.test.ts > openai-completions tool_choice > sends max_tokens for OpenCode completions models": {
+			"classifiedOn": "2026-08-09",
+			"rootCause": "Decided by live third-party data, not by strape or by the adopted upstream tag. The test asserts compat.maxTokensField === \"max_tokens\" for opencode/opencode-go models. Upstream .gitignore:11 excludes packages/ai/src/providers/data/, so upstream generates the model catalog from models.dev at every build; hunk 6 vendors it so strape can build offline. models.dev changed those models API shape after v0.84.1 was tagged, so the assertion no longer holds — for upstream too, not just for strape.",
+			"observed": "Fails identically on every host and in CI as of 2026-08-09. The same drift produces a tsgo error at openai-completions-tool-choice.test.ts:1410. Full analysis in review-v0.84.1.md.",
+			"whyExcluded": "It will start passing again the moment models.dev or upstream realigns, with no strape change. Asserting either outcome makes the gate wrong on one side of that event. Excluded in both directions and reported instead. Re-check at the next sync: if it has realigned, delete this entry."
+		}
+	},
+	"pin": "v0.84.1",
+	"tests": {
+		"test/first-time-setup.test.ts > shouldRunFirstTimeSetup > returns true when experimental, default agent dir, and no settings.json": {
+			"reason": "Pre-existing failure with hunks 7-9 reverted, so not caused by the security fixes. Most are downstream of the hunk-1 rebrand (.pi -> .strape) or the trimmed workspace set; a few may be environment-dependent. NOT individually root-caused yet — see review-v0.84.0.md coverage limitations.",
+			"hunk": "1 (probable)"
+		},
+		"test/package-command-paths.test.ts > package commands > allows explicit self-update checks when automatic version checks are disabled": {
+			"reason": "Pre-existing failure with hunks 7-9 reverted, so not caused by the security fixes. Most are downstream of the hunk-1 rebrand (.pi -> .strape) or the trimmed workspace set; a few may be environment-dependent. NOT individually root-caused yet — see review-v0.84.0.md coverage limitations.",
+			"hunk": "1 (probable)"
+		},
+		"test/package-command-paths.test.ts > package commands > allows local package install to initialize fresh project settings": {
+			"reason": "Pre-existing failure with hunks 7-9 reverted, so not caused by the security fixes. Most are downstream of the hunk-1 rebrand (.pi -> .strape) or the trimmed workspace set; a few may be environment-dependent. NOT individually root-caused yet — see review-v0.84.0.md coverage limitations.",
+			"hunk": "1 (probable)"
+		},
+		"test/package-command-paths.test.ts > package commands > approves project trust for list with --approve": {
+			"reason": "Pre-existing failure with hunks 7-9 reverted, so not caused by the security fixes. Most are downstream of the hunk-1 rebrand (.pi -> .strape) or the trimmed workspace set; a few may be environment-dependent. NOT individually root-caused yet — see review-v0.84.0.md coverage limitations.",
+			"hunk": "1 (probable)"
+		},
+		"test/package-command-paths.test.ts > package commands > blocks local package changes when project is untrusted": {
+			"reason": "Pre-existing failure with hunks 7-9 reverted, so not caused by the security fixes. Most are downstream of the hunk-1 rebrand (.pi -> .strape) or the trimmed workspace set; a few may be environment-dependent. NOT individually root-caused yet — see review-v0.84.0.md coverage limitations.",
+			"hunk": "1 (probable)"
+		},
+		"test/package-command-paths.test.ts > package commands > fails self-update when renamed npm package installation fails": {
+			"reason": "Same feature as the entry above (the renamed-package self-update path), asserting its failure branch. Unreachable once hunk 10 refuses self-update before the version check.",
+			"hunk": "10"
+		},
+		"test/package-command-paths.test.ts > package commands > installs the active package name from the update check during self-update": {
+			"reason": "Stubs fetch to return {packageName:\"@new-scope/pi\"} and asserts the CLI uninstalls itself and installs THAT name globally. Upstream intends this as a scope-rename migration path (the project really did move @mariozechner -> @earendil-works), which is reasonable for a first-party distribution. For a vendor fork it is a remote-controlled install outside the reviewed closure, so hunk 10 refuses self-update entirely and the test can no longer pass.",
+			"hunk": "10"
+		},
+		"test/package-command-paths.test.ts > package commands > prints a pnpm metadata hint when self-update fails": {
+			"reason": "Pre-existing failure with hunks 7-9 reverted, so not caused by the security fixes. Most are downstream of the hunk-1 rebrand (.pi -> .strape) or the trimmed workspace set; a few may be environment-dependent. NOT individually root-caused yet — see review-v0.84.0.md coverage limitations.",
+			"hunk": "1 (probable)"
+		},
+		"test/package-command-paths.test.ts > package commands > retries a transient self-update version check": {
+			"reason": "Asserts getLatestPiRelease is retried during `update --self`. Hunk 10 returns shouldRun:false before that fetch happens, so no request is made to retry.",
+			"hunk": "10"
+		},
+		"test/package-command-paths.test.ts > package commands > shows a friendly error for missing install source": {
+			"reason": "Pre-existing failure with hunks 7-9 reverted, so not caused by the security fixes. Most are downstream of the hunk-1 rebrand (.pi -> .strape) or the trimmed workspace set; a few may be environment-dependent. NOT individually root-caused yet — see review-v0.84.0.md coverage limitations.",
+			"hunk": "1 (probable)"
+		},
+		"test/package-command-paths.test.ts > package commands > shows a friendly error for unknown install options": {
+			"reason": "Pre-existing failure with hunks 7-9 reverted, so not caused by the security fixes. Most are downstream of the hunk-1 rebrand (.pi -> .strape) or the trimmed workspace set; a few may be environment-dependent. NOT individually root-caused yet — see review-v0.84.0.md coverage limitations.",
+			"hunk": "1 (probable)"
+		},
+		"test/package-command-paths.test.ts > package commands > shows install subcommand help": {
+			"reason": "Pre-existing failure with hunks 7-9 reverted, so not caused by the security fixes. Most are downstream of the hunk-1 rebrand (.pi -> .strape) or the trimmed workspace set; a few may be environment-dependent. NOT individually root-caused yet — see review-v0.84.0.md coverage limitations.",
+			"hunk": "1 (probable)"
+		},
+		"test/package-command-paths.test.ts > package commands > uses default project trust for list": {
+			"reason": "Pre-existing failure with hunks 7-9 reverted, so not caused by the security fixes. Most are downstream of the hunk-1 rebrand (.pi -> .strape) or the trimmed workspace set; a few may be environment-dependent. NOT individually root-caused yet — see review-v0.84.0.md coverage limitations.",
+			"hunk": "1 (probable)"
+		},
+		"test/package-command-paths.test.ts > package commands > uses project_trust extensions for package commands": {
+			"reason": "Pre-existing failure with hunks 7-9 reverted, so not caused by the security fixes. Most are downstream of the hunk-1 rebrand (.pi -> .strape) or the trimmed workspace set; a few may be environment-dependent. NOT individually root-caused yet — see review-v0.84.0.md coverage limitations.",
+			"hunk": "1 (probable)"
+		},
+		"test/package-command-paths.test.ts > package commands > uses remembered project trust for list": {
+			"reason": "Pre-existing failure with hunks 7-9 reverted, so not caused by the security fixes. Most are downstream of the hunk-1 rebrand (.pi -> .strape) or the trimmed workspace set; a few may be environment-dependent. NOT individually root-caused yet — see review-v0.84.0.md coverage limitations.",
+			"hunk": "1 (probable)"
+		},
+		"test/package-command-paths.test.ts > package commands > uses saved project trust during update": {
+			"reason": "Pre-existing failure with hunks 7-9 reverted, so not caused by the security fixes. Most are downstream of the hunk-1 rebrand (.pi -> .strape) or the trimmed workspace set; a few may be environment-dependent. NOT individually root-caused yet — see review-v0.84.0.md coverage limitations.",
+			"hunk": "1 (probable)"
+		},
+		"test/package-command-paths.test.ts > package commands > uses the current package name when the update check omits packageName": {
+			"reason": "Pre-existing failure with hunks 7-9 reverted, so not caused by the security fixes. Most are downstream of the hunk-1 rebrand (.pi -> .strape) or the trimmed workspace set; a few may be environment-dependent. NOT individually root-caused yet — see review-v0.84.0.md coverage limitations.",
+			"hunk": "1 (probable)"
+		},
+		"test/package-command-paths.test.ts > package commands > uses the update check version for forced self updates even when current": {
+			"reason": "Pre-existing failure with hunks 7-9 reverted, so not caused by the security fixes. Most are downstream of the hunk-1 rebrand (.pi -> .strape) or the trimmed workspace set; a few may be environment-dependent. NOT individually root-caused yet — see review-v0.84.0.md coverage limitations.",
+			"hunk": "1 (probable)"
+		},
+		"test/package-manager.test.ts > DefaultPackageManager > auto-discovered skill metadata > should use the project .pi dir as baseDir for project .pi skills": {
+			"reason": "Test hardcodes the .pi config directory; hunk 1 renames it to .strape via piConfig, so the harness looks elsewhere. Intended rebrand.",
+			"hunk": 1
+		},
+		"test/package-manager.test.ts > DefaultPackageManager > ignore files > should not apply parent .gitignore to .pi auto-discovery": {
+			"reason": "Test hardcodes the .pi config directory; hunk 1 renames it to .strape via piConfig, so the harness looks elsewhere. Intended rebrand.",
+			"hunk": 1
+		},
+		"test/package-manager.test.ts > DefaultPackageManager > npmCommand > should install git package dependencies with --omit=dev": {
+			"reason": "Asserts the exact npm/bun/git install argv; hunk 9 appends --ignore-scripts so the argv no longer matches. The behaviour change is intended: runtime extension/skill installs must not run lifecycle scripts.",
+			"hunk": 9
+		},
+		"test/package-manager.test.ts > DefaultPackageManager > npmCommand > should install user npm packages into the pi-managed npm root": {
+			"reason": "Asserts the exact npm/bun/git install argv; hunk 9 appends --ignore-scripts so the argv no longer matches. The behaviour change is intended: runtime extension/skill installs must not run lifecycle scripts.",
+			"hunk": 9
+		},
+		"test/package-manager.test.ts > DefaultPackageManager > npmCommand > should reconcile an existing git checkout to a pinned ref during install": {
+			"reason": "Asserts the exact npm/bun/git install argv; hunk 9 appends --ignore-scripts so the argv no longer matches. The behaviour change is intended: runtime extension/skill installs must not run lifecycle scripts.",
+			"hunk": 9
+		},
+		"test/package-manager.test.ts > DefaultPackageManager > npmCommand > should repair deleted git package dependencies when cleaning fails": {
+			"reason": "Asserts the exact npm/bun/git install argv; hunk 9 appends --ignore-scripts so the argv no longer matches. The behaviour change is intended: runtime extension/skill installs must not run lifecycle scripts.",
+			"hunk": 9
+		},
+		"test/package-manager.test.ts > DefaultPackageManager > npmCommand > should repair missing git package dependencies when the checkout is already current": {
+			"reason": "Asserts the exact npm/bun/git install argv; hunk 9 appends --ignore-scripts so the argv no longer matches. The behaviour change is intended: runtime extension/skill installs must not run lifecycle scripts.",
+			"hunk": 9
+		},
+		"test/package-manager.test.ts > DefaultPackageManager > npmCommand > should update git package dependencies with --omit=dev": {
+			"reason": "Pre-existing failure with hunks 7-9 reverted, so not caused by the security fixes. Most are downstream of the hunk-1 rebrand (.pi -> .strape) or the trimmed workspace set; a few may be environment-dependent. NOT individually root-caused yet — see review-v0.84.0.md coverage limitations.",
+			"hunk": "1 (probable)"
+		},
+		"test/package-manager.test.ts > DefaultPackageManager > npmCommand > should use bun --cwd for npm package installs": {
+			"reason": "Asserts the exact npm/bun/git install argv; hunk 9 appends --ignore-scripts so the argv no longer matches. The behaviour change is intended: runtime extension/skill installs must not run lifecycle scripts.",
+			"hunk": 9
+		},
+		"test/package-manager.test.ts > DefaultPackageManager > npmCommand > should use npmCommand argv for npm installs": {
+			"reason": "Asserts the exact npm/bun/git install argv; hunk 9 appends --ignore-scripts so the argv no longer matches. The behaviour change is intended: runtime extension/skill installs must not run lifecycle scripts.",
+			"hunk": 9
+		},
+		"test/package-manager.test.ts > DefaultPackageManager > npmCommand > should use plain install for git package dependencies when npmCommand is configured": {
+			"reason": "Asserts the exact npm/bun/git install argv; hunk 9 appends --ignore-scripts so the argv no longer matches. The behaviour change is intended: runtime extension/skill installs must not run lifecycle scripts.",
+			"hunk": 9
+		},
+		"test/package-manager.test.ts > DefaultPackageManager > npmCommand > should use plain install through npmCommand argv when updating git package dependencies": {
+			"reason": "Pre-existing failure with hunks 7-9 reverted, so not caused by the security fixes. Most are downstream of the hunk-1 rebrand (.pi -> .strape) or the trimmed workspace set; a few may be environment-dependent. NOT individually root-caused yet — see review-v0.84.0.md coverage limitations.",
+			"hunk": "1 (probable)"
+		},
+		"test/package-manager.test.ts > DefaultPackageManager > offline mode and network timeouts > should batch npm updates per scope and run git updates in parallel while skipping pinned npm and current packages": {
+			"reason": "Pre-existing failure with hunks 7-9 reverted, so not caused by the security fixes. Most are downstream of the hunk-1 rebrand (.pi -> .strape) or the trimmed workspace set; a few may be environment-dependent. NOT individually root-caused yet — see review-v0.84.0.md coverage limitations.",
+			"hunk": "1 (probable)"
+		},
+		"test/package-manager.test.ts > DefaultPackageManager > offline mode and network timeouts > should migrate legacy user npm installs into the managed npm root during update": {
+			"reason": "Asserts the exact npm/bun/git install argv; hunk 9 appends --ignore-scripts so the argv no longer matches. The behaviour change is intended: runtime extension/skill installs must not run lifecycle scripts.",
+			"hunk": 9
+		},
+		"test/package-manager.test.ts > DefaultPackageManager > offline mode and network timeouts > should not run npm view during resolve for installed unpinned packages": {
+			"reason": "Pre-existing failure with hunks 7-9 reverted, so not caused by the security fixes. Most are downstream of the hunk-1 rebrand (.pi -> .strape) or the trimmed workspace set; a few may be environment-dependent. NOT individually root-caused yet — see review-v0.84.0.md coverage limitations.",
+			"hunk": "1 (probable)"
+		},
+		"test/package-manager.test.ts > DefaultPackageManager > offline mode and network timeouts > should report updates for installed unpinned npm packages": {
+			"reason": "Pre-existing failure with hunks 7-9 reverted, so not caused by the security fixes. Most are downstream of the hunk-1 rebrand (.pi -> .strape) or the trimmed workspace set; a few may be environment-dependent. NOT individually root-caused yet — see review-v0.84.0.md coverage limitations.",
+			"hunk": "1 (probable)"
+		},
+		"test/package-manager.test.ts > DefaultPackageManager > offline mode and network timeouts > should skip project npm update when installed version matches latest": {
+			"reason": "Pre-existing failure with hunks 7-9 reverted, so not caused by the security fixes. Most are downstream of the hunk-1 rebrand (.pi -> .strape) or the trimmed workspace set; a few may be environment-dependent. NOT individually root-caused yet — see review-v0.84.0.md coverage limitations.",
+			"hunk": "1 (probable)"
+		},
+		"test/package-manager.test.ts > DefaultPackageManager > offline mode and network timeouts > should update npm range packages using the configured spec": {
+			"reason": "Pre-existing failure with hunks 7-9 reverted, so not caused by the security fixes. Most are downstream of the hunk-1 rebrand (.pi -> .strape) or the trimmed workspace set; a few may be environment-dependent. NOT individually root-caused yet — see review-v0.84.0.md coverage limitations.",
+			"hunk": "1 (probable)"
+		},
+		"test/package-manager.test.ts > DefaultPackageManager > resolve > should auto-discover project prompts with overrides": {
+			"reason": "Pre-existing failure with hunks 7-9 reverted, so not caused by the security fixes. Most are downstream of the hunk-1 rebrand (.pi -> .strape) or the trimmed workspace set; a few may be environment-dependent. NOT individually root-caused yet — see review-v0.84.0.md coverage limitations.",
+			"hunk": "1 (probable)"
+		},
+		"test/package-manager.test.ts > DefaultPackageManager > resolve > should resolve project paths relative to .pi": {
+			"reason": "Test hardcodes the .pi config directory; hunk 1 renames it to .strape via piConfig, so the harness looks elsewhere. Intended rebrand.",
+			"hunk": 1
+		},
+		"test/package-manager.test.ts > DefaultPackageManager > resolve > should resolve symlinked user and project resources once": {
+			"reason": "Pre-existing failure with hunks 7-9 reverted, so not caused by the security fixes. Most are downstream of the hunk-1 rebrand (.pi -> .strape) or the trimmed workspace set; a few may be environment-dependent. NOT individually root-caused yet — see review-v0.84.0.md coverage limitations.",
+			"hunk": "1 (probable)"
+		},
+		"test/resource-loader.test.ts > DefaultResourceLoader > reload > should discover APPEND_SYSTEM.md": {
+			"reason": "Pre-existing failure with hunks 7-9 reverted, so not caused by the security fixes. Most are downstream of the hunk-1 rebrand (.pi -> .strape) or the trimmed workspace set; a few may be environment-dependent. NOT individually root-caused yet — see review-v0.84.0.md coverage limitations.",
+			"hunk": "1 (probable)"
+		},
+		"test/resource-loader.test.ts > DefaultResourceLoader > reload > should discover SYSTEM.md from cwd/.pi": {
+			"reason": "Test hardcodes the .pi config directory; hunk 1 renames it to .strape via piConfig, so the harness looks elsewhere. Intended rebrand.",
+			"hunk": 1
+		},
+		"test/resource-loader.test.ts > DefaultResourceLoader > reload > should keep both extensions loaded when command names collide": {
+			"reason": "Pre-existing failure with hunks 7-9 reverted, so not caused by the security fixes. Most are downstream of the hunk-1 rebrand (.pi -> .strape) or the trimmed workspace set; a few may be environment-dependent. NOT individually root-caused yet — see review-v0.84.0.md coverage limitations.",
+			"hunk": "1 (probable)"
+		},
+		"test/resource-loader.test.ts > DefaultResourceLoader > reload > should load symlinked user and project extensions once": {
+			"reason": "Pre-existing failure with hunks 7-9 reverted, so not caused by the security fixes. Most are downstream of the hunk-1 rebrand (.pi -> .strape) or the trimmed workspace set; a few may be environment-dependent. NOT individually root-caused yet — see review-v0.84.0.md coverage limitations.",
+			"hunk": "1 (probable)"
+		},
+		"test/resource-loader.test.ts > DefaultResourceLoader > reload > should load user extensions before trust and reuse them after trust resolves": {
+			"reason": "Pre-existing failure with hunks 7-9 reverted, so not caused by the security fixes. Most are downstream of the hunk-1 rebrand (.pi -> .strape) or the trimmed workspace set; a few may be environment-dependent. NOT individually root-caused yet — see review-v0.84.0.md coverage limitations.",
+			"hunk": "1 (probable)"
+		},
+		"test/resource-loader.test.ts > DefaultResourceLoader > reload > should prefer project resources over user on name collisions": {
+			"reason": "Pre-existing failure with hunks 7-9 reverted, so not caused by the security fixes. Most are downstream of the hunk-1 rebrand (.pi -> .strape) or the trimmed workspace set; a few may be environment-dependent. NOT individually root-caused yet — see review-v0.84.0.md coverage limitations.",
+			"hunk": "1 (probable)"
+		},
+		"test/resource-loader.test.ts > DefaultResourceLoader > system prompt sources > exposes discovered APPEND_SYSTEM.md as an append system prompt source": {
+			"reason": "Pre-existing failure with hunks 7-9 reverted, so not caused by the security fixes. Most are downstream of the hunk-1 rebrand (.pi -> .strape) or the trimmed workspace set; a few may be environment-dependent. NOT individually root-caused yet — see review-v0.84.0.md coverage limitations.",
+			"hunk": "1 (probable)"
+		},
+		"test/resource-loader.test.ts > DefaultResourceLoader > system prompt sources > exposes discovered project SYSTEM.md as the system prompt source": {
+			"reason": "Pre-existing failure with hunks 7-9 reverted, so not caused by the security fixes. Most are downstream of the hunk-1 rebrand (.pi -> .strape) or the trimmed workspace set; a few may be environment-dependent. NOT individually root-caused yet — see review-v0.84.0.md coverage limitations.",
+			"hunk": "1 (probable)"
+		},
+		"test/settings-manager-bug.test.ts > SettingsManager - External Edit Preservation > should let in-memory project changes override external changes for the same project field": {
+			"reason": "Pre-existing failure with hunks 7-9 reverted, so not caused by the security fixes. Most are downstream of the hunk-1 rebrand (.pi -> .strape) or the trimmed workspace set; a few may be environment-dependent. NOT individually root-caused yet — see review-v0.84.0.md coverage limitations.",
+			"hunk": "1 (probable)"
+		},
+		"test/settings-manager-bug.test.ts > SettingsManager - External Edit Preservation > should preserve external project settings changes when updating unrelated project field": {
+			"reason": "Pre-existing failure with hunks 7-9 reverted, so not caused by the security fixes. Most are downstream of the hunk-1 rebrand (.pi -> .strape) or the trimmed workspace set; a few may be environment-dependent. NOT individually root-caused yet — see review-v0.84.0.md coverage limitations.",
+			"hunk": "1 (probable)"
+		},
+		"test/settings-manager.test.ts > SettingsManager > error tracking > should collect and clear load errors via drainErrors": {
+			"reason": "Pre-existing failure with hunks 7-9 reverted, so not caused by the security fixes. Most are downstream of the hunk-1 rebrand (.pi -> .strape) or the trimmed workspace set; a few may be environment-dependent. NOT individually root-caused yet — see review-v0.84.0.md coverage limitations.",
+			"hunk": "1 (probable)"
+		},
+		"test/settings-manager.test.ts > SettingsManager > getSessionDir > should return project sessionDir, overriding global": {
+			"reason": "Pre-existing failure with hunks 7-9 reverted, so not caused by the security fixes. Most are downstream of the hunk-1 rebrand (.pi -> .strape) or the trimmed workspace set; a few may be environment-dependent. NOT individually root-caused yet — see review-v0.84.0.md coverage limitations.",
+			"hunk": "1 (probable)"
+		},
+		"test/settings-manager.test.ts > SettingsManager > httpIdleTimeoutMs > should use merged global and project settings": {
+			"reason": "Pre-existing failure with hunks 7-9 reverted, so not caused by the security fixes. Most are downstream of the hunk-1 rebrand (.pi -> .strape) or the trimmed workspace set; a few may be environment-dependent. NOT individually root-caused yet — see review-v0.84.0.md coverage limitations.",
+			"hunk": "1 (probable)"
+		},
+		"test/settings-manager.test.ts > SettingsManager > project settings directory creation > should create .pi folder when writing project settings": {
+			"reason": "Test hardcodes the .pi config directory; hunk 1 renames it to .strape via piConfig, so the harness looks elsewhere. Intended rebrand.",
+			"hunk": 1
+		},
+		"test/settings-manager.test.ts > SettingsManager > project trust > should reload project settings after trust changes to true": {
+			"reason": "Pre-existing failure with hunks 7-9 reverted, so not caused by the security fixes. Most are downstream of the hunk-1 rebrand (.pi -> .strape) or the trimmed workspace set; a few may be environment-dependent. NOT individually root-caused yet — see review-v0.84.0.md coverage limitations.",
+			"hunk": "1 (probable)"
+		},
+		"test/stdout-cleanliness.test.ts > stdout cleanliness in non-interactive modes > keeps stdout empty for --mode json --help while routing trusted startup chatter to stderr": {
+			"reason": "Pre-existing failure with hunks 7-9 reverted, so not caused by the security fixes. Most are downstream of the hunk-1 rebrand (.pi -> .strape) or the trimmed workspace set; a few may be environment-dependent. NOT individually root-caused yet — see review-v0.84.0.md coverage limitations.",
+			"hunk": "1 (probable)"
+		},
+		"test/stdout-cleanliness.test.ts > stdout cleanliness in non-interactive modes > keeps stdout empty for -p --help while routing trusted startup chatter to stderr": {
+			"reason": "Pre-existing failure with hunks 7-9 reverted, so not caused by the security fixes. Most are downstream of the hunk-1 rebrand (.pi -> .strape) or the trimmed workspace set; a few may be environment-dependent. NOT individually root-caused yet — see review-v0.84.0.md coverage limitations.",
+			"hunk": "1 (probable)"
+		},
+		"test/suite/regressions/2781-skill-collision-precedence.test.ts > issue #2781 skill collision precedence: user skills should override package skills > project auto-discovered skill should override package skill with same name": {
+			"reason": "Pre-existing failure with hunks 7-9 reverted, so not caused by the security fixes. Most are downstream of the hunk-1 rebrand (.pi -> .strape) or the trimmed workspace set; a few may be environment-dependent. NOT individually root-caused yet — see review-v0.84.0.md coverage limitations.",
+			"hunk": "1 (probable)"
+		},
+		"test/suite/regressions/2781-skill-collision-precedence.test.ts > issue #2781 skill collision precedence: user skills should override package skills > project skill should override user skill which should override package skill": {
+			"reason": "Pre-existing failure with hunks 7-9 reverted, so not caused by the security fixes. Most are downstream of the hunk-1 rebrand (.pi -> .strape) or the trimmed workspace set; a few may be environment-dependent. NOT individually root-caused yet — see review-v0.84.0.md coverage limitations.",
+			"hunk": "1 (probable)"
+		},
+		"test/suite/regressions/2791-fswatch-error-crash.test.ts > issue #2791 fs.watch error event crashes process > process should survive an error event on the theme FSWatcher": {
+			"reason": "Pre-existing failure with hunks 7-9 reverted, so not caused by the security fixes. Most are downstream of the hunk-1 rebrand (.pi -> .strape) or the trimmed workspace set; a few may be environment-dependent. NOT individually root-caused yet — see review-v0.84.0.md coverage limitations.",
+			"hunk": "1 (probable)"
+		},
+		"test/system-prompt.test.ts > buildSystemPrompt > default tools > instructs models to resolve pi docs and examples under absolute base paths": {
+			"reason": "Asserts the literal \"- When reading pi docs or examples, ...\". Hunk 3 rebrands that line (and three others in the same block) because the system prompt is what the model is told it is, and the block otherwise introduced itself as \"strape documentation\" and then said \"pi\" four times. Cost of the fix, accepted deliberately.",
+			"hunk": "3"
+		},
+		"test/theme-export.test.ts > getThemeExportColors > resolves export variable references using the same syntax as colors": {
+			"reason": "Pre-existing failure with hunks 7-9 reverted, so not caused by the security fixes. Most are downstream of the hunk-1 rebrand (.pi -> .strape) or the trimmed workspace set; a few may be environment-dependent. NOT individually root-caused yet — see review-v0.84.0.md coverage limitations.",
+			"hunk": "1 (probable)"
+		},
+		"test/theme-export.test.ts > getThemeExportColors > resolves recursive vars and converts 256-color export values to hex": {
+			"reason": "Pre-existing failure with hunks 7-9 reverted, so not caused by the security fixes. Most are downstream of the hunk-1 rebrand (.pi -> .strape) or the trimmed workspace set; a few may be environment-dependent. NOT individually root-caused yet — see review-v0.84.0.md coverage limitations.",
+			"hunk": "1 (probable)"
+		},
+		"test/theme-picker.test.ts > theme picker > uses custom theme content names instead of file names": {
+			"reason": "Pre-existing failure with hunks 7-9 reverted, so not caused by the security fixes. Most are downstream of the hunk-1 rebrand (.pi -> .strape) or the trimmed workspace set; a few may be environment-dependent. NOT individually root-caused yet — see review-v0.84.0.md coverage limitations.",
+			"hunk": "1 (probable)"
+		},
+		"test/trust-manager.test.ts > ProjectTrustStore > detects trust-requiring project resources": {
+			"reason": "Pre-existing failure with hunks 7-9 reverted, so not caused by the security fixes. Most are downstream of the hunk-1 rebrand (.pi -> .strape) or the trimmed workspace set; a few may be environment-dependent. NOT individually root-caused yet — see review-v0.84.0.md coverage limitations.",
+			"hunk": "1 (probable)"
+		},
+		"test/credential-print.test.ts > credential print commands > reports unknown auth options like package commands": {
+			"reason": "Hunk 3. Upstream v0.84.1 moved the auth CLI into the new cli/auth-command.ts and re-hardcoded \"pi auth\"; strape rebrands it to ${APP_NAME}. This test asserts the literal 'Use \"pi --help\" or \"pi auth check --provider <provider> [--json] [--credentials] [--no-refresh]\".', so it pins the string the rebrand deliberately changes. Same class as the system-prompt.test.ts entry: the cost of hunk 3 is upstream tests that assert the old name.",
+			"hunk": "3"
+		}
+	}
+}
