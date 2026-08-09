@@ -1,0 +1,26 @@
+{
+	"$comment": "Binds a human sign-off to the exact content reviewed. CI recomputes the digest and fails if the reviewed scope changed, which forces a re-review instead of silently shipping unreviewed code. Record LOCALLY only — CI must never be able to write this file.",
+	"pin": "v0.84.1",
+	"digest": "f785d8db84dd61f074de379202c98a398ebf8ae80f1778f9951e796cfce274cc",
+	"fileCount": 470,
+	"reviewedBy": "Diego Szychowski",
+	"reviewedAt": "2026-08-09",
+	"scope": {
+		"dirs": [
+			"packages/coding-agent/src",
+			"packages/ai/src",
+			"packages/agent/src",
+			"packages/tui/src"
+		],
+		"files": [
+			"packages/coding-agent/npm-shrinkwrap.json",
+			"packages/coding-agent/package.json",
+			"packages/ai/package.json",
+			"package.json",
+			"scripts/generate-coding-agent-shrinkwrap.mjs",
+			"scripts/generate-coding-agent-install-lock.mjs",
+			".gitignore",
+			".npmrc"
+		]
+	}
+}

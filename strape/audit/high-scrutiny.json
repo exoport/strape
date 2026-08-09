@@ -1,0 +1,42 @@
+{
+	"$comment": "Packages whose risk no scanner reports: young, single-maintainer, low-download, abandoned, or shipping unreadable artifacts. Enforced by strape/scripts/high-scrutiny-check.mjs — any version or integrity change fails CI and forces a re-read. reviewedAt/reviewedBy stay null until a human signs off; the Claude Code dep-review pass produced the capability notes, not the sign-off.",
+	"pin": "v0.84.0",
+	"packages": {
+		"grok-mermaid": {
+			"pinnedVersion": "0.2.2",
+			"integrity": "sha512-XcJEP5dDC8liHBh52mlLjU18fNvu1ckFsu0QpIG3+APZ270fsj9wxpiA6cOURmbUEuoMVgjbC2+UYgTdCqqgzA==",
+			"tier": "A",
+			"reason": "Created 2026-07-28, single maintainer, ~1.2k downloads/month, and a direct production dependency of the CLI. Statically imported by the interactive TUI (packages/coding-agent/src/modes/interactive/components/mermaid.ts), so the runtime module denylist cannot cover it without breaking interactive mode.",
+			"escalation": "If a full read raises any doubt: vendor into strape/vendor/grok-mermaid with a root overrides file: entry (costs one lockfile regeneration), or drop mermaid rendering from the TUI.",
+			"reviewedBy": null,
+			"reviewedAt": null
+		},
+		"proper-lockfile": {
+			"pinnedVersion": "4.1.2",
+			"integrity": "sha512-TjNPblN4BwAWMXU8s9AEz4JmQxnD1NNL7bNOY/AKUzyamc379FWASUhc/K1pL2noVb+XmZKLL68cjzLsiOAMaA==",
+			"tier": "A",
+			"reason": "Unpublished since 2022-06-24 — abandoned upstream despite ~84M downloads/month. An abandoned package with a live npm publish right is a standing account-takeover risk, and it performs filesystem locking on paths strape cares about (session/auth files).",
+			"escalation": "Node's fs primitives plus an atomic temp+rename would replace it; consider vendoring if the account is ever flagged.",
+			"reviewedBy": null,
+			"reviewedAt": null
+		},
+		"@silvia-odwyer/photon-node": {
+			"pinnedVersion": "0.3.4",
+			"integrity": "sha512-bnly4BKB3KDTFxrUIcgCLbaeVVS8lrAkri1pEzskpmxu9MdfGQTy8b8EgcD83ywD3RPMsIulY8xJH5Awa+t9fA==",
+			"tier": "C",
+			"reason": "Single maintainer, and ships WASM — the payload cannot be meaningfully read. Used for image processing of attachments. Review basis is provenance + capability scan + pinning, not a source read.",
+			"escalation": "If image attachment support is not needed for the Grok/OpenAI workflow, removing the feature removes the dependency entirely.",
+			"reviewedBy": null,
+			"reviewedAt": null
+		},
+		"@mariozechner/clipboard": {
+			"pinnedVersion": "0.3.9",
+			"integrity": "sha512-ABnA53mdfkGZwOFUdZNv2S0CWGO/EIuPj8Vv9xmBFmSYg/qFc7ihO6q5FcQjvoE67kZpWkEc4AhD6B/os04yuA==",
+			"tier": "C",
+			"reason": "Loads a prebuilt native .node binary (10 platform-specific sibling packages, all in the shipped closure). Native code is unreadable in review; it is also the only native module left after the hunk-2 trim removed ssh2/cpu-features.",
+			"escalation": "Platform packages are pinned by integrity hash; a changed hash on the same version means republication and must be treated as hostile.",
+			"reviewedBy": null,
+			"reviewedAt": null
+		}
+	}
+}

@@ -1,0 +1,463 @@
+{
+	"source": "registry.npmjs.org attestations",
+	"packages": [
+		{
+			"name": "@mariozechner/clipboard",
+			"version": "0.3.9",
+			"integrity": "sha512-ABnA53mdfkGZwOFUdZNv2S0CWGO/EIuPj8Vv9xmBFmSYg/qFc7ihO6q5FcQjvoE67kZpWkEc4AhD6B/os04yuA==",
+			"provenance": true,
+			"sourceRepo": "https://github.com/badlogic/clipboard@refs/heads/main",
+			"commit": "3a0f58eb7250a9a46ad77863bc4618eee099a248",
+			"builderId": "https://github.com/actions/runner/github-hosted",
+			"workflow": ".github/workflows/CI.yml",
+			"subjectSha512": "0019c0e7799d7e4199c0e15475936fd92d025863bf108b8f8fc56ff7198116649883fa8573b8a13baab915c423be813aee46695a411ce00843e81fe8b34e32b8",
+			"note": "",
+			"digestMatchesShrinkwrap": true
+		},
+		{
+			"name": "@mariozechner/clipboard-darwin-arm64",
+			"version": "0.3.9",
+			"integrity": "sha512-BfgV7vCEWZwJwZJw03r6bP5+tf0iI/ANuQYCxi9RNn7FrWB3yzGuMKCrNLRl6V761vXRdL8+OqZ0wd4TqlsNOQ==",
+			"provenance": true,
+			"sourceRepo": "https://github.com/badlogic/clipboard@refs/heads/main",
+			"commit": "3a0f58eb7250a9a46ad77863bc4618eee099a248",
+			"builderId": "https://github.com/actions/runner/github-hosted",
+			"workflow": ".github/workflows/CI.yml",
+			"subjectSha512": "05f815eef084599c09c19270d37afa6cfe7eb5fd2223f00db90602c62f51367ec5ad6077cb31ae30a0ab34b465e95efad6f5d174bf3e3aa674c1de13aa5b0d39",
+			"note": "",
+			"digestMatchesShrinkwrap": true
+		},
+		{
+			"name": "@mariozechner/clipboard-darwin-universal",
+			"version": "0.3.9",
+			"integrity": "sha512-BGGR4iA9Z2shAjI65eI5xtyb3LYNlDW9X3gxKxDbqtbnREohsrqznov6zpKoIrsRWpzlYVEdKphS7ksJ0/ndSQ==",
+			"provenance": true,
+			"sourceRepo": "https://github.com/badlogic/clipboard@refs/heads/main",
+			"commit": "3a0f58eb7250a9a46ad77863bc4618eee099a248",
+			"builderId": "https://github.com/actions/runner/github-hosted",
+			"workflow": ".github/workflows/CI.yml",
+			"subjectSha512": "046191e2203d676b2102323ae5e239c6dc9bdcb60d9435bd5f78312b10dbaad6e7444a21b2bab39e8bface92a822bb115a9ce561511d2a9852ee4b09d3f9dd49",
+			"note": "",
+			"digestMatchesShrinkwrap": true
+		},
+		{
+			"name": "@mariozechner/clipboard-darwin-x64",
+			"version": "0.3.9",
+			"integrity": "sha512-4kURmCbS6nt8uYhtmWpUcJWyPHfmAr5dTpXD1nO3pIfa+TSQ9DbrGOYCKH+aEFW47XhQ4Vp8ZTszie+wfFvDKg==",
+			"provenance": true,
+			"sourceRepo": "https://github.com/badlogic/clipboard@refs/heads/main",
+			"commit": "3a0f58eb7250a9a46ad77863bc4618eee099a248",
+			"builderId": "https://github.com/actions/runner/github-hosted",
+			"workflow": ".github/workflows/CI.yml",
+			"subjectSha512": "e245119826d2ea7b7cb9886d996a547095b23c77e602be5d4e95c3d673b7a487daf93490f436eb18e602287f9a1055b8ed7850e15a7c653b3389efb07c5bc32a",
+			"note": "",
+			"digestMatchesShrinkwrap": true
+		},
+		{
+			"name": "@mariozechner/clipboard-linux-arm64-gnu",
+			"version": "0.3.9",
+			"integrity": "sha512-g59OkUGP2DDfCOIKypHeYgv2M55u/cKvXa5dSxFbEJ34XvIQMdcVmpKCkGUro3ZgefXiGVdwguvTMQGpHWzIXw==",
+			"provenance": true,
+			"sourceRepo": "https://github.com/badlogic/clipboard@refs/heads/main",
+			"commit": "3a0f58eb7250a9a46ad77863bc4618eee099a248",
+			"builderId": "https://github.com/actions/runner/github-hosted",
+			"workflow": ".github/workflows/CI.yml",
+			"subjectSha512": "839f4e91418fd830df08e20aca91de620bf6339e6efdc2af5dae5d4b115b109df85ef21031d7159a928290652ba3766079f5e219577082ebd33101a91d6cc85f",
+			"note": "",
+			"digestMatchesShrinkwrap": true
+		},
+		{
+			"name": "@mariozechner/clipboard-linux-arm64-musl",
+			"version": "0.3.9",
+			"integrity": "sha512-AGuJdgKsmJdm4Pych7kv3sqe591ERRaAHW3xjLooiFzn8J+PxUyof++7YZrB5Y5tpnTO+K18Og3taj2NpluCRQ==",
+			"provenance": true,
+			"sourceRepo": "https://github.com/badlogic/clipboard@refs/heads/main",
+			"commit": "3a0f58eb7250a9a46ad77863bc4618eee099a248",
+			"builderId": "https://github.com/actions/runner/github-hosted",
+			"workflow": ".github/workflows/CI.yml",
+			"subjectSha512": "006b897602ac989766e0fc9c87b92fdeca9ee7dd444516801d6df18cba28885ce7f09f8fc54ca87fefbb619ac1e58e6da674cef8ad7c3a0ded6a3d8da65b8245",
+			"note": "",
+			"digestMatchesShrinkwrap": true
+		},
+		{
+			"name": "@mariozechner/clipboard-linux-riscv64-gnu",
+			"version": "0.3.9",
+			"integrity": "sha512-DXBEAiuMpk7dhS1a9NzNxVAFi1vaKoPu7rQNgY8LIDLGrK3lnIp3nT10DUum+PKVJoJppIP+NAA8IZe4DMNDPw==",
+			"provenance": true,
+			"sourceRepo": "https://github.com/badlogic/clipboard@refs/heads/main",
+			"commit": "3a0f58eb7250a9a46ad77863bc4618eee099a248",
+			"builderId": "https://github.com/actions/runner/github-hosted",
+			"workflow": ".github/workflows/CI.yml",
+			"subjectSha512": "0d7044022b8ca64edd852d5af4dccdc550058b5bda2a83eeeeb40d818f0b2032c6acade59c8a779d3d740d4ba6f8f295268269a483fe34003c2197b80cc3433f",
+			"note": "",
+			"digestMatchesShrinkwrap": true
+		},
+		{
+			"name": "@mariozechner/clipboard-linux-x64-gnu",
+			"version": "0.3.9",
+			"integrity": "sha512-WORrMLd6EpElEME7JRKfSaY34nW1P5LbdgK5YNCS1ncG2LqmITsSMEJ8nh2mpvxb3TxqbOOKgY7k9eMJYlW9Mw==",
+			"provenance": true,
+			"sourceRepo": "https://github.com/badlogic/clipboard@refs/heads/main",
+			"commit": "3a0f58eb7250a9a46ad77863bc4618eee099a248",
+			"builderId": "https://github.com/actions/runner/github-hosted",
+			"workflow": ".github/workflows/CI.yml",
+			"subjectSha512": "58e46b30b77a12912510c13b25129f49a637e275b53f92db7602b960d092d67706d8baa6213b1230427c9e1da6a6fc5bdd3c6a6ce38a818ee4f5e3096255bd33",
+			"note": "",
+			"digestMatchesShrinkwrap": true
+		},
+		{
+			"name": "@mariozechner/clipboard-linux-x64-musl",
+			"version": "0.3.9",
+			"integrity": "sha512-/DHn+1DrfL6oRaPPWXaOKvonFFrni666fxd+zFqiQEfvBH0tsHVWjq9iqBk0oDp0qaPA72lIMy5BptxISBEhZQ==",
+			"provenance": true,
+			"sourceRepo": "https://github.com/badlogic/clipboard@refs/heads/main",
+			"commit": "3a0f58eb7250a9a46ad77863bc4618eee099a248",
+			"builderId": "https://github.com/actions/runner/github-hosted",
+			"workflow": ".github/workflows/CI.yml",
+			"subjectSha512": "fc31e7fb50eb7cbea845a3cf59768e2afa27145ae78baeba7f177ecc5aa24047ef047d2db075568eaf62a81934a03a74a9a3c0ef6948332e41a6dc4848112165",
+			"note": "",
+			"digestMatchesShrinkwrap": true
+		},
+		{
+			"name": "@mariozechner/clipboard-win32-arm64-msvc",
+			"version": "0.3.9",
+			"integrity": "sha512-O5FHD3ErkMwMhNzAfu3ggy0ug4z7btZuoQgwwxlzPrwV2bxlD6WDpqBY4NCgICAgZdDKdp+loUEKVAVt8aYnhQ==",
+			"provenance": true,
+			"sourceRepo": "https://github.com/badlogic/clipboard@refs/heads/main",
+			"commit": "3a0f58eb7250a9a46ad77863bc4618eee099a248",
+			"builderId": "https://github.com/actions/runner/github-hosted",
+			"workflow": ".github/workflows/CI.yml",
+			"subjectSha512": "3b91470f712b90cc0c84dcc07eede0832d2e838cfb6ed66ea10830c319733ebc15d9bc650fa583a6a058e0d0a020202065d0ca769fa5a1410a54056df1a62785",
+			"note": "",
+			"digestMatchesShrinkwrap": true
+		},
+		{
+			"name": "@mariozechner/clipboard-win32-x64-msvc",
+			"version": "0.3.9",
+			"integrity": "sha512-ihQC3EufqEY81vhXBgVBtK4prL+wc62zJsSvxrgz7K1hsdt6OObz6v9p3Rn1OG3GJksTTKMJF0u/guMISHPhSA==",
+			"provenance": true,
+			"sourceRepo": "https://github.com/badlogic/clipboard@refs/heads/main",
+			"commit": "3a0f58eb7250a9a46ad77863bc4618eee099a248",
+			"builderId": "https://github.com/actions/runner/github-hosted",
+			"workflow": ".github/workflows/CI.yml",
+			"subjectSha512": "8a1402dc4b9fa8463cd6f857060541b4ae29acbfb073adb326c4afc6b833ecad61b1db7a38e6f3eaff69dd19f5386dc6264b134ca309174bbf82e3084873e148",
+			"note": "",
+			"digestMatchesShrinkwrap": true
+		},
+		{
+			"name": "@opentelemetry/api",
+			"version": "1.9.0",
+			"integrity": "sha512-3giAOQvZiH5F9bMlMiv8+GSPMeqg0dbaeo58/0SlA9sxSqZhnUtxzX9/2FzyhS9sWQf5S0GJE0AKBrFqjpeYcg==",
+			"provenance": false,
+			"note": "no attestations published"
+		},
+		{
+			"name": "@silvia-odwyer/photon-node",
+			"version": "0.3.4",
+			"integrity": "sha512-bnly4BKB3KDTFxrUIcgCLbaeVVS8lrAkri1pEzskpmxu9MdfGQTy8b8EgcD83ywD3RPMsIulY8xJH5Awa+t9fA==",
+			"provenance": false,
+			"note": "no attestations published"
+		},
+		{
+			"name": "agent-base",
+			"version": "7.1.4",
+			"integrity": "sha512-MnA+YT8fwfJPgBx3m60MNqakm30XOkyIoH1y6huTQvC0PwZG7ki8NacLBcrPbNoo8vEZy7Jpuk7+jMO+CUovTQ==",
+			"provenance": false,
+			"note": "no attestations published"
+		},
+		{
+			"name": "balanced-match",
+			"version": "4.0.4",
+			"integrity": "sha512-BLrgEcRTwX2o6gGxGOCNyMvGSp35YofuYzw9h1IMTRmKqttAZZVU67bdb9Pr2vUHA8+j3i2tJfjO6C6+4myGTA==",
+			"provenance": false,
+			"note": "no attestations published"
+		},
+		{
+			"name": "brace-expansion",
+			"version": "5.0.9",
+			"integrity": "sha512-ScQ4IuvIEF1TMlP7Zt+vjJ//9zlPb2SDcxWxM3bk8s6t6GGdJ7KO1dCcTidOPJKePW30LE/2cT7wCyPho9/Wxg==",
+			"provenance": false,
+			"note": "no attestations published"
+		},
+		{
+			"name": "chalk",
+			"version": "5.6.2",
+			"integrity": "sha512-7NzBL0rN6fMUW+f7A6Io4h40qQlG+xGmtMxfbnH/K7TAtt8JQWVQK+6g0UXKMeVJoyV5EkkNsErQ8pVD3bLHbA==",
+			"provenance": false,
+			"note": "no attestations published"
+		},
+		{
+			"name": "cross-spawn",
+			"version": "7.0.6",
+			"integrity": "sha512-uV2QOWP2nWzsy2aMp8aRibhi9dlzF5Hgh5SHaB9OiTGEyDTiJJyx0uy51QXdyWbtAHNua4XJzUKca3OzKUd3vA==",
+			"provenance": false,
+			"note": "no attestations published"
+		},
+		{
+			"name": "debug",
+			"version": "4.4.3",
+			"integrity": "sha512-RGwwWnwQvkVfavKVt22FGLw+xYSdzARwm0ru6DhTVA3umU5hZc28V3kO4stgYryrTlLpuvgI9GiijltAjNbcqA==",
+			"provenance": false,
+			"note": "no attestations published"
+		},
+		{
+			"name": "diff",
+			"version": "8.0.4",
+			"integrity": "sha512-DPi0FmjiSU5EvQV0++GFDOJ9ASQUVFh5kD+OzOnYdi7n3Wpm9hWWGfB/O2blfHcMVTL5WkQXSnRiK9makhrcnw==",
+			"provenance": false,
+			"note": "no attestations published"
+		},
+		{
+			"name": "get-east-asian-width",
+			"version": "1.6.0",
+			"integrity": "sha512-QRbvDIbx6YklUe6RxeTeleMR0yv3cYH6PsPZHcnVn7xv7zO1BHN8r0XETu8n6Ye3Q+ahtSarc3WgtNWmehIBfA==",
+			"provenance": false,
+			"note": "no attestations published"
+		},
+		{
+			"name": "glob",
+			"version": "13.0.6",
+			"integrity": "sha512-Wjlyrolmm8uDpm/ogGyXZXb1Z+Ca2B8NbJwqBVg0axK9GbBeoS7yGV6vjXnYdGm6X53iehEuxxbyiKp8QmN4Vw==",
+			"provenance": false,
+			"note": "no attestations published"
+		},
+		{
+			"name": "graceful-fs",
+			"version": "4.2.11",
+			"integrity": "sha512-RbJ5/jmFcNNCcDV5o9eTnBLJ/HszWV0P73bc+Ff4nS/rJj+YaS6IGyiOL0VoBYX+l1Wrl3k63h/KrH+nhJ0XvQ==",
+			"provenance": false,
+			"note": "no attestations published"
+		},
+		{
+			"name": "grok-mermaid",
+			"version": "0.2.2",
+			"integrity": "sha512-XcJEP5dDC8liHBh52mlLjU18fNvu1ckFsu0QpIG3+APZ270fsj9wxpiA6cOURmbUEuoMVgjbC2+UYgTdCqqgzA==",
+			"provenance": true,
+			"sourceRepo": "https://github.com/xl0/grok-mermaid@refs/tags/v0.2.2",
+			"commit": "3430584a71350d72b5a0310e91bcd55578a9f981",
+			"builderId": "https://github.com/actions/runner/github-hosted",
+			"workflow": ".github/workflows/publish.yml",
+			"subjectSha512": "5dc2443f97430bc9621c1879da694b8d4d7c7cdbeed5c905b2ed10a481b7f803d9dbbd1fb23f70c69880e9c3944666d412ea0c5608db0b6f946204dd0aaaa0cc",
+			"note": "",
+			"digestMatchesShrinkwrap": true
+		},
+		{
+			"name": "highlight.js",
+			"version": "10.7.3",
+			"integrity": "sha512-tzcUFauisWKNHaRkN4Wjl/ZA07gENAjFl3J/c480dprkGTg5EQstgaNFqBfUqCq54kZRIEcreTsAgF/m2quD7A==",
+			"provenance": false,
+			"note": "no attestations published"
+		},
+		{
+			"name": "hosted-git-info",
+			"version": "9.0.3",
+			"integrity": "sha512-Hc+ghLoSt6QaYZUv0WBiIvmMDZuZZ7oaDvdH8MbfOO4lOsxdXLEvuC6ePoGs9H1X9oCLyq6+NVN0MKqD+ydxyg==",
+			"provenance": true,
+			"sourceRepo": "https://github.com/npm/hosted-git-info@refs/heads/main",
+			"commit": "8f9bdaf5db3f863ee08749e5a8d79c904accf44d",
+			"builderId": "https://github.com/actions/runner/github-hosted",
+			"workflow": ".github/workflows/release.yml",
+			"subjectSha512": "1dcfa084ba12b7a41a61952fd1606222f98c0d9b9967ba1a0ef747f0c6df38ee253acc5d5cb12fb82e9e3e81acf47d57f6808bcaaebe35537430aa83fb2771ca",
+			"note": "",
+			"digestMatchesShrinkwrap": true
+		},
+		{
+			"name": "http-proxy-agent",
+			"version": "7.0.2",
+			"integrity": "sha512-T1gkAiYYDWYx3V5Bmyu7HcfcvL7mUrTWiM6yOfa3PIphViJ/gFPbvidQ+veqSOHci/PxBcDabeUNCzpOODJZig==",
+			"provenance": false,
+			"note": "no attestations published"
+		},
+		{
+			"name": "https-proxy-agent",
+			"version": "7.0.6",
+			"integrity": "sha512-vK9P5/iUfdl95AI+JVyUuIcVtd4ofvtrOr3HNtM2yxC9bnMbEdp3x01OhQNnjb8IJYi38VlTE3mBXwcfvywuSw==",
+			"provenance": false,
+			"note": "no attestations published"
+		},
+		{
+			"name": "ignore",
+			"version": "7.0.5",
+			"integrity": "sha512-Hs59xBNfUIunMFgWAbGX5cq6893IbWg4KnrjbYwX3tx0ztorVgTDA6B2sxf8ejHJ4wz8BqGUMYlnzNBer5NvGg==",
+			"provenance": false,
+			"note": "no attestations published"
+		},
+		{
+			"name": "isexe",
+			"version": "2.0.0",
+			"integrity": "sha512-RHxMLp9lnKHGHRng9QFhRCMbYAcVpn69smSGcq3f36xjgVVWThj4qqLbTLlq7Ssj8B+fIQ1EuCEGI2lKsyQeIw==",
+			"provenance": false,
+			"note": "no attestations published"
+		},
+		{
+			"name": "jiti",
+			"version": "2.7.0",
+			"integrity": "sha512-AC/7JofJvZGrrneWNaEnJeOLUx+JlGt7tNa0wZiRPT4MY1wmfKjt2+6O2p2uz2+skll8OZZmJMNqeke7kKbNgQ==",
+			"provenance": false,
+			"note": "no attestations published"
+		},
+		{
+			"name": "lru-cache",
+			"version": "11.4.0",
+			"integrity": "sha512-W+R+kFL4HgVxONq2bhXPi3bGpzGe/yEhVOp233qw9wCRtgncJ15P3bC+e4zZMu4Cq7d+WAJjXGW0uUkifhcatA==",
+			"provenance": false,
+			"note": "no attestations published"
+		},
+		{
+			"name": "marked",
+			"version": "18.0.5",
+			"integrity": "sha512-S6GcvALHg6K4ohtu4E7x0a1AqhAjp6cV8KhLSyN9qVapnzJkusVBxZRcIU9AeYsbe6P1hKDusSbEOzGyyuce6w==",
+			"provenance": true,
+			"sourceRepo": "https://github.com/markedjs/marked@refs/heads/master",
+			"commit": "b55410f846570a2dbdd1f1afe1d51c6a7dd2a188",
+			"builderId": "https://github.com/actions/runner/github-hosted",
+			"workflow": ".github/workflows/tests.yml",
+			"subjectSha512": "4ba19cbc02c783a2b8a21b6ee04ef1d1ad40aa1023a7a715f0a84b4b237da956a99f3264bac541c5945c214f40798b1b7ba3f584a0eeb126c43b31b2cae71eeb",
+			"note": "",
+			"digestMatchesShrinkwrap": true
+		},
+		{
+			"name": "minimatch",
+			"version": "10.2.5",
+			"integrity": "sha512-MULkVLfKGYDFYejP07QOurDLLQpcjk7Fw+7jXS2R2czRQzR56yHRveU5NDJEOviH+hETZKSkIk5c+T23GjFUMg==",
+			"provenance": false,
+			"note": "no attestations published"
+		},
+		{
+			"name": "minipass",
+			"version": "7.1.3",
+			"integrity": "sha512-tEBHqDnIoM/1rXME1zgka9g6Q2lcoCkxHLuc7ODJ5BxbP5d4c2Z5cGgtXAku59200Cx7diuHTOYfSBD8n6mm8A==",
+			"provenance": false,
+			"note": "no attestations published"
+		},
+		{
+			"name": "ms",
+			"version": "2.1.3",
+			"integrity": "sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==",
+			"provenance": false,
+			"note": "no attestations published"
+		},
+		{
+			"name": "openai",
+			"version": "6.26.0",
+			"integrity": "sha512-zd23dbWTjiJ6sSAX6s0HrCZi41JwTA1bQVs0wLQPZ2/5o2gxOJA5wh7yOAUgwYybfhDXyhwlpeQf7Mlgx8EOCA==",
+			"provenance": false,
+			"note": "no attestations published"
+		},
+		{
+			"name": "partial-json",
+			"version": "0.1.7",
+			"integrity": "sha512-Njv/59hHaokb/hRUjce3Hdv12wd60MtM9Z5Olmn+nehe0QDAsRtRbJPvJ0Z91TusF0SuZRIvnM+S4l6EIP8leA==",
+			"provenance": true,
+			"sourceRepo": "https://github.com/promplate/partial-json-parser-js@refs/heads/main",
+			"commit": "b65f82c541f5dd7dc17e0764db78fca6a8d2a159",
+			"builderId": "https://github.com/actions/runner/github-hosted",
+			"workflow": ".github/workflows/publish.yml",
+			"subjectSha512": "363bffe7d8476a891bfe14548dc7b71ddbf5db077ad0cb4cf59e4e9669fe9de85ed100c0b11b516c93ef27467dd53bac1744ae65122f9ccf92e25e8420ff2578",
+			"note": "",
+			"digestMatchesShrinkwrap": true
+		},
+		{
+			"name": "path-key",
+			"version": "3.1.1",
+			"integrity": "sha512-ojmeN0qd+y0jszEtoY48r0Peq5dwMEkIlCOu6Q5f41lfkswXuKtYrhgoTpLnyIcHm24Uhqx+5Tqm2InSwLhE6Q==",
+			"provenance": false,
+			"note": "no attestations published"
+		},
+		{
+			"name": "path-scurry",
+			"version": "2.0.2",
+			"integrity": "sha512-3O/iVVsJAPsOnpwWIeD+d6z/7PmqApyQePUtCndjatj/9I5LylHvt5qluFaBT3I5h3r1ejfR056c+FCv+NnNXg==",
+			"provenance": false,
+			"note": "no attestations published"
+		},
+		{
+			"name": "proper-lockfile",
+			"version": "4.1.2",
+			"integrity": "sha512-TjNPblN4BwAWMXU8s9AEz4JmQxnD1NNL7bNOY/AKUzyamc379FWASUhc/K1pL2noVb+XmZKLL68cjzLsiOAMaA==",
+			"provenance": false,
+			"note": "no attestations published"
+		},
+		{
+			"name": "retry",
+			"version": "0.12.0",
+			"integrity": "sha512-9LkiTwjUh6rT555DtE9rTX+BKByPfrMzEAtnlEtdEwr3Nkffwiihqe2bWADg+OQRjt9gl6ICdmB/ZFDCGAtSow==",
+			"provenance": false,
+			"note": "no attestations published"
+		},
+		{
+			"name": "semver",
+			"version": "7.8.0",
+			"integrity": "sha512-AcM7dV/5ul4EekoQ29Agm5vri8JNqRyj39o0qpX6vDF2GZrtutZl5RwgD1XnZjiTAfncsJhMI48QQH3sN87YNA==",
+			"provenance": true,
+			"sourceRepo": "https://github.com/npm/node-semver@refs/heads/main",
+			"commit": "efa4be6096c1f9b77d9d27d6132f6220c43b4e31",
+			"builderId": "https://github.com/actions/runner/github-hosted",
+			"workflow": ".github/workflows/release.yml",
+			"subjectSha512": "01c33b755ff9ba5e047a4a10dbd0209b9beb8bc24da91ca3dfda34aa95fabc3176199aedbad665e51c200f55e766389301f9dcb0984c238f10407dec37ced834",
+			"note": "",
+			"digestMatchesShrinkwrap": true
+		},
+		{
+			"name": "shebang-command",
+			"version": "2.0.0",
+			"integrity": "sha512-kHxr2zZpYtdmrN1qDjrrX/Z1rR1kG8Dx+gkpK1G4eXmvXswmcE1hTWBWYUzlraYw1/yZp6YuDY77YtvbN0dmDA==",
+			"provenance": false,
+			"note": "no attestations published"
+		},
+		{
+			"name": "shebang-regex",
+			"version": "3.0.0",
+			"integrity": "sha512-7++dFhtcx3353uBaq8DDR4NuxBetBzC7ZQOhmTQInHEd6bSrXdiEyzCvG07Z44UYdLShWUyXt5M/yhz8ekcb1A==",
+			"provenance": false,
+			"note": "no attestations published"
+		},
+		{
+			"name": "signal-exit",
+			"version": "3.0.7",
+			"integrity": "sha512-wnD2ZE+l+SPC/uoS0vXeE9L1+0wuaMqKlfz9AMUo38JsyLSBWSFcHR1Rri62LZc12vLr1gb3jl7iwQhgwpAbGQ==",
+			"provenance": false,
+			"note": "no attestations published"
+		},
+		{
+			"name": "typebox",
+			"version": "1.3.7",
+			"integrity": "sha512-meKuifc33Pccx0O6PdIzYMq3Og8zvP4TIi/a+Bw3AEMZMxOD0+RHGQvpglEe6Zdy3wZ8nqn/j95h8LUZLk/6Hg==",
+			"provenance": true,
+			"sourceRepo": "https://github.com/sinclairzx81/typebox@refs/tags/1.3.7",
+			"commit": "153184ef6da540963d3ffe97b6a8789e3427c615",
+			"builderId": "https://github.com/actions/runner/github-hosted",
+			"workflow": ".github/workflows/publish.yml",
+			"subjectSha512": "99e2ae89f737dcf71cc743ba3dd23360cab73a0f33bcfe13222fdaf81c37004319331383d3e447190be982511ee99772df067c9ea9ff8fde61f0b5192e4ffa1e",
+			"note": "",
+			"digestMatchesShrinkwrap": true
+		},
+		{
+			"name": "undici",
+			"version": "8.9.0",
+			"integrity": "sha512-aWZpUj7XoGonMClx4gdDRfgBjqeA+F473aDmROQQbM9n6PRfK/u1q/a0X4wMTgcHfT8H6fpbt98PFuDUwFg2YA==",
+			"provenance": true,
+			"sourceRepo": "https://github.com/nodejs/undici@refs/heads/main",
+			"commit": "21a8e1ed1843e74c3004a2926c12bb0ceaca6b71",
+			"builderId": "https://github.com/actions/runner/github-hosted",
+			"workflow": ".github/workflows/release.yml",
+			"subjectSha512": "696669523ed7a06a27302971e2074345f8018ea780f85e3bdda0e644e4106ccf67e8f45f2bfbb5abf6b45f8c0c4e07077d3f07e9fa5bb7df0f16e0d4c0583660",
+			"note": "",
+			"digestMatchesShrinkwrap": true
+		},
+		{
+			"name": "which",
+			"version": "2.0.2",
+			"integrity": "sha512-BLI3Tl1TW3Pvl70l3yq3Y64i+awpwXqsGBYWkkqMtnbXgrMD+yj7rhW0kuEDxzJaYXGjEW5ogapKNMEKNMjibA==",
+			"provenance": false,
+			"note": "no attestations published"
+		},
+		{
+			"name": "yaml",
+			"version": "2.9.0",
+			"integrity": "sha512-2AvhNX3mb8zd6Zy7INTtSpl1F15HW6Wnqj0srWlkKLcpYl/gMIMJiyuGq2KeI2YFxUPjdlB+3Lc10seMLtL4cA==",
+			"provenance": false,
+			"note": "no attestations published"
+		}
+	]
+}

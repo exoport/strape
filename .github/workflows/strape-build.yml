@@ -1,0 +1,180 @@
+name: strape build gate
+
+# Nothing is built until the overlay invariants hold, the lockfile is clean, and every shipped dependency
+# has a recorded human verdict. Action SHAs are pinned (tags are mutable).
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Setup Node
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 22
+          cache: npm
+
+      # Cheapest first: a reverted strape hunk should fail in seconds, not after a 3-minute build.
+      - name: Overlay invariants (are all twelve hunks still in place?)
+        run: node strape/scripts/verify-overlay.mjs
+
+      # THE enforcement point for the local/CI split. The review itself happens locally (it needs an LLM and
+      # human judgment), so CI's job is to prove a named human signed off on THIS content and that nothing has
+      # changed since. Without this, merging upstream and regenerating baselines passes every other gate with
+      # zero review. See strape/docs/RELEASE-FLOW.md.
+      - name: Review attestation (is this tree cleared for release?)
+        run: node strape/scripts/review-attest.mjs --verify
+
+      - name: Version identity
+        run: node strape/scripts/version.mjs
+
+      - name: Install (lifecycle scripts disabled)
+        run: npm ci --ignore-scripts --no-audit --no-fund
+
+      - name: Lockfile hygiene
+        run: node strape/scripts/lockfile-audit.mjs
+
+      - name: Upstream's own dependency checks
+        run: |
+          npm run check:pinned-deps
+          npm run check:shrinkwrap
+          npm run check:install-lock:coding-agent
+
+      - name: Capability drift vs reviewed baseline
+        run: node strape/scripts/capability-sweep.mjs --check strape/audit/capability-sweep-v0.84.1.json
+
+      - name: SBOM drift vs reviewed baseline
+        run: node strape/scripts/sbom.mjs --check strape/audit/sbom-v0.84.1.json
+
+      # THE GATE: fails on any shipped package without an allow verdict + matching integrity hash.
+      - name: Reviewed-dependencies gate
+        run: node strape/scripts/reviewed-deps.mjs --report
+
+      - name: Build (offline — model catalog is vendored)
+        run: npm run build:offline
+
+      # Doubles as a check that no dependency secretly needs its postinstall under --ignore-scripts.
+      - name: Smoke test the rebrand
+        run: |
+          node packages/coding-agent/dist/cli.js --version
+          node packages/coding-agent/dist/cli.js --help | head -1 | grep -q '^strape' \
+            || { echo "help output is not branded strape"; exit 1; }
+
+      # Hunks 3 and 10, asserted against real CLI output rather than source. Every rebrand gap strape has found
+      # was found by a person reading output, so the check that catches the next one has to read output too.
+      # Also proves `update --self` refuses with PI_OFFLINE unset — the code guard, not the launcher.
+      - name: Rebrand + self-update regression
+        run: node strape/scripts/rebrand-test.mjs
+
+      # `--list-models` lists models for providers that have CREDENTIALS — it is not a dump of the vendored
+      # catalog. With no keys in the environment it prints "No models available. Use /login…" and exits 0.
+      # So this step was really asserting "does this machine have provider keys?", which is true on a
+      # developer box and false on a runner: it could never have passed in CI. It went unnoticed because the
+      # build gate never got past the attestation step until 2026-08-09. Dummy keys make the catalog path
+      # observable without touching the network (PI_OFFLINE=1, and listing resolves locally).
+      #
+      # The old check also used `grep -q`, which discards the evidence on the one run where you need it —
+      # the failure printed the assertion message and nothing else, so an empty catalog, a crashed CLI and a
+      # missing credential were indistinguishable. Capture once, assert against the capture, report BOTH
+      # assertions instead of stopping at the first, and dump what was actually seen.
+      - name: Smoke test provider catalog offline
+        env:
+          PI_OFFLINE: "1"
+          PI_SKIP_VERSION_CHECK: "1"
+          # Not secrets: syntactically valid placeholders so the providers resolve. No request is made.
+          XAI_API_KEY: ci-dummy-not-a-real-key
+          OPENAI_API_KEY: ci-dummy-not-a-real-key
+        run: |
+          if ! node packages/coding-agent/dist/cli.js --list-models > /tmp/models.txt 2>&1; then
+            echo "--list-models exited non-zero — this is a CLI failure, not a catalog gap:"
+            cat /tmp/models.txt
+            exit 1
+          fi
+          fail=0
+          grep -qi 'grok' /tmp/models.txt || { echo "xai/grok models missing from catalog"; fail=1; }
+          grep -qi 'gpt' /tmp/models.txt || { echo "openai models missing from catalog"; fail=1; }
+          if [ "$fail" = 1 ]; then
+            echo "--- providers present ---"
+            awk 'NR>1 {print $1}' /tmp/models.txt | sort -u
+            echo "--- line count: $(wc -l < /tmp/models.txt) ---"
+            head -40 /tmp/models.txt
+            exit 1
+          fi
+          echo "catalog ok: $(awk 'NR>1 {print $1}' /tmp/models.txt | sort -u | tr '\n' ' ')"
+
+      - name: Provider SDK guard loads
+        run: node --import ./strape/runtime/deny-modules.mjs -e "console.log('module guard ok')"
+
+      # strape's reason to exist is partly CLAUDE.md + .claude/skills reuse, and that rests on upstream
+      # behaviour we do not control. Assert it on every merge.
+      - name: Claude Code compatibility
+        run: node strape/scripts/compat-test.mjs
+
+      # Hunk 7: an untrusted repo must not be able to redirect the session transcript.
+      # Hunk 11: a project trusted when it had nothing to trust must not escalate itself on /reload.
+      - name: Trust-boundary regression
+        run: node strape/scripts/trust-regression-test.mjs
+
+      # Hunk 12: ~/.strape and ~/.strape/agent must be 0700 — user-scope extensions load from there with no
+      # trust gate, and at umask 002 the default is group-writable.
+      - name: Agent directory permissions
+        run: node strape/scripts/agent-dir-perms-test.mjs
+
+      # Hunk 13: undici's fetch replays the request body on a cross-origin 307/308, so a hijacked provider host
+      # could receive the whole conversation. Drives two real loopback servers and asserts what the attacker
+      # server RECEIVED — a guard that errors after replaying the body would still be a breach.
+      - name: Cross-origin redirect guard
+        run: node strape/scripts/redirect-guard-test.mjs
+
+      # Hunk 14: jiti's fsCache defaults to world-writable /tmp, where transpiled extension code is written and
+      # later re-executed. Also pins the second jiti call-site guarantee (no transformOptions anywhere).
+      - name: jiti cache location
+        run: node strape/scripts/jiti-cache-test.mjs
+
+      # Hunk 15: render() parses model-controlled text with no try/catch up the chain, so a parser throw would
+      # break the whole message. Stubs the parser with one that throws, because feeding pathological mermaid to
+      # the real one passes with or without the guard.
+      - name: Mermaid parser-throw fallback
+        run: node strape/scripts/mermaid-throw-test.mjs
+
+      # Hunk 16: proper-lockfile reclaims on age alone, so a stalled holder loses its lock to a second writer.
+      # Ages a real lock rather than waiting, and asserts a genuinely abandoned one is still reclaimable.
+      - name: Lock stale window
+        run: node strape/scripts/lock-stale-test.mjs
+
+      # The GuardDog gate must fail when GuardDog does not run. It once passed over 42 consecutive scan
+      # errors. Lives here rather than in strape-security.yml on purpose: this workflow runs on every push
+      # and PR, whereas that one is path-filtered and sits behind the reviewed-deps gate.
+      - name: GuardDog gate integrity
+        run: node strape/scripts/guarddog-gate-test.mjs
+
+      # test.sh isolates HOME (test.sh:43), so the harness's own <agentDir>/bin is empty during the suite and
+      # getToolPath() falls through to system PATH (utils/tools-manager.ts:96-98). On a developer box that
+      # silently resolves to /usr/bin/rg — an unpinned binary, which is the very fallback provision-tools
+      # exists to prevent — and on a runner it resolves to nothing, so the grep tool tests fail. Provisioning
+      # the pinned, sha256-verified binaries makes CI match the reviewed posture rather than the machine's.
+      - name: Provision pinned rg/fd (hash-verified)
+        run: |
+          node strape/scripts/provision-tools.mjs
+          node strape/scripts/provision-tools.mjs --verify
+          echo "$HOME/.strape/agent/bin" >> "$GITHUB_PATH"
+
+      # A green suite is impossible by design: upstream's tests pin the behaviour strape deliberately changes
+      # (the .strape config dir, the --ignore-scripts argv). So the gate is "the failure set is EXACTLY the
+      # reviewed one" — a new failure is a regression, and an expected failure that starts passing means
+      # upstream changed the test and the entry must be re-examined.
+      - name: Tests (expected-failure gate)
+        run: |
+          ./test.sh > /tmp/suite.log 2>&1 || true
+          node strape/scripts/test-expectations.mjs --log /tmp/suite.log
