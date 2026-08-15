@@ -93,7 +93,7 @@
 		"@aws-sdk/client-bedrock-runtime": "3.1048.0",
 		"@google/genai": "1.52.0",
 		"@mistralai/mistralai": "2.2.6",
-		"@smithy/node-http-handler": "4.7.3",
+		"@smithy/node-http-handler": "4.9.13",
 		"@types/node": "24.12.4",
 		"canvas": "3.2.3",
 		"vitest": "4.1.9"
