@@ -233,7 +233,7 @@ jobs:
       # here and stops, which is what makes an egress audit of this workflow safe to perform.
       - name: Attach to release
         if: startsWith(github.ref, 'refs/tags/strape-v')
-        uses: softprops/action-gh-release@72f2c25fcb47643c292f7107632f7a47c1df5cd8 # v2.3.2
+        uses: softprops/action-gh-release@efb35369e0ad2afab669f228072c1b0d510eae64 # v3.0.3
         with:
           files: |
             /tmp/${{ steps.pack.outputs.name }}.tar.zst
