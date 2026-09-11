@@ -96,6 +96,6 @@
 		"@smithy/node-http-handler": "4.7.3",
 		"@types/node": "24.12.4",
 		"canvas": "3.2.3",
-		"vitest": "4.1.9"
+		"vitest": "4.1.11"
 	}
 }
